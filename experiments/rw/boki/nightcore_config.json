@@ -1,0 +1,4 @@
+[
+    { "funcName": "TestWrite", "funcId": 1, "minWorkers": 24, "maxWorkers": 24 },
+    { "funcName": "TestRead", "funcId": 2, "minWorkers": 24, "maxWorkers": 24 }
+]

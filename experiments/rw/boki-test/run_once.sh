@@ -2,10 +2,13 @@
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-EXP_DIR=$BASE_DIR/results/$1
+EXP_DIR=$4
 
-CONCURRENCY=$2
-NUM_USERS=10000
+CONCURRENCY=$1
+Percentages=$2
+Skew=$3
+Keyspace=10000
+RWkeys=4
 
 HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
@@ -20,7 +23,7 @@ scp -q $BASE_DIR/docker-compose-generated.yml $MANAGER_HOST:~
 
 ssh -q $MANAGER_HOST -- docker stack rm boki-experiment
 
-sleep 40
+sleep 60
 
 scp -q $ROOT_DIR/scripts/zk_setup.sh $MANAGER_HOST:/tmp/zk_setup.sh
 
@@ -61,22 +64,27 @@ mkdir -p $EXP_DIR
 ssh -q $MANAGER_HOST -- cat /proc/cmdline >>$EXP_DIR/kernel_cmdline
 ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
 
-ssh -q $CLIENT_HOST -- curl -X POST http://$ENTRY_HOST:8080/function/RetwisInit
+# ssh -q $CLIENT_HOST -- curl -X POST http://$ENTRY_HOST:8080/function/RetwisInit
+
+# ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
+#     zjia/boki-retwisbench:sosp-ae \
+#     cp /retwisbench-bin/create_users /tmp/create_users
+
+# ssh -q $CLIENT_HOST -- /tmp/create_users \
+#     --faas_gateway=$ENTRY_HOST:8080 --num_users=$NUM_USERS --concurrency=16
 
 ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
-    zjia/boki-retwisbench:sosp-ae \
-    cp /retwisbench-bin/create_users /tmp/create_users
-
-ssh -q $CLIENT_HOST -- /tmp/create_users \
-    --faas_gateway=$ENTRY_HOST:8080 --num_users=$NUM_USERS --concurrency=16
-
-ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
-    zjia/boki-retwisbench:sosp-ae \
-    cp /retwisbench-bin/benchmark /tmp/benchmark
+    shengqipku/boki-rwbench:test-prefetch \
+    cp /rw-bin/benchmark /tmp/benchmark
 
 ssh -q $CLIENT_HOST -- /tmp/benchmark \
-    --faas_gateway=$ENTRY_HOST:8080 --num_users=$NUM_USERS \
-    --percentages=15,30,50,5 \
-    --duration=15 --concurrency=$CONCURRENCY >$EXP_DIR/results.log
+    --faas_gateway=$ENTRY_HOST:8080 --keyspace=$Keyspace --rw_keys=$RWkeys \
+    --concurrency=$CONCURRENCY --percentages=$Percentages --zipf_skew=$Skew\
+    --duration=15 >$EXP_DIR/results.log
 
 $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR/logs
+
+for HOST in $ALL_ENGINE_HOSTS; do
+    mkdir -p $EXP_DIR/output/$HOST
+    scp -q -r $HOST:/mnt/inmem/boki/output/ $EXP_DIR/output/$HOST/
+done

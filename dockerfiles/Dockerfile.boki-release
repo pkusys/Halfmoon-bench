@@ -1,0 +1,33 @@
+# FROM shengqipku/boki-dev:latest as builder
+# FROM ubuntu:focal as release
+# ENV DEBIAN_FRONTEND=noninteractive
+# ENV TZ=America/Chicago
+# RUN apt update && \
+#     apt upgrade -y && \
+#     apt install -y g++ clang make cmake pkg-config autoconf automake libtool curl unzip
+
+# WORKDIR /boki
+# COPY . .
+# RUN CC=clang CXX=clang++ ./build_deps.sh
+# RUN CXX=clang++ make -j $(nproc)
+
+FROM ubuntu:focal as release
+
+# COPY . /src/boki
+COPY ./boki/bin/release/gateway    /boki/gateway
+COPY ./boki/bin/release/engine     /boki/engine
+COPY ./boki/bin/release/launcher   /boki/launcher
+COPY ./boki/bin/release/sequencer  /boki/sequencer
+COPY ./boki/bin/release/storage    /boki/storage
+COPY ./boki/bin/release/controller /boki/controller
+
+# COPY --from=builder /boki-dev/boki /src/boki
+
+# COPY --from=builder /boki-dev/boki/bin/release/gateway    /boki/gateway
+# COPY --from=builder /boki-dev/boki/bin/release/engine     /boki/engine
+# COPY --from=builder /boki-dev/boki/bin/release/launcher   /boki/launcher
+# COPY --from=builder /boki-dev/boki/bin/release/sequencer  /boki/sequencer
+# COPY --from=builder /boki-dev/boki/bin/release/storage    /boki/storage
+# COPY --from=builder /boki-dev/boki/bin/release/controller /boki/controller
+
+WORKDIR /boki
