@@ -6,3 +6,6 @@
 /experiments/**/docker-compose-generated.yml
 /experiments/**/results
 /experiments/**/machines.json
+
+/workloads/**/bin
+.vscode
