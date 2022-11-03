@@ -33,7 +33,7 @@ services:
       - --slog_engine_enable_cache
       - --slog_engine_cache_cap_mb=1024
       - --slog_engine_propagate_auxdata
-      # - --slog_engine_cache_prefetch
+      - --slog_engine_cache_prefetch
       - --v=1
     depends_on:
       - zookeeper-setup
