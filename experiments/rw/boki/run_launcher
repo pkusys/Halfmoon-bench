@@ -5,5 +5,5 @@
     --root_path_for_ipc=/tmp/boki/ipc \
     --fprocess_output_dir=/tmp/boki/output \
     --fprocess="$1" \
-    --func_id=$2
-    --v=3
+    --func_id=$2 \
+    # --v=1

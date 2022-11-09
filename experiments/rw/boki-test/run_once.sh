@@ -2,6 +2,8 @@
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
+STACK=boki
+
 EXP_DIR=$4
 
 CONCURRENCY=$1
@@ -21,9 +23,9 @@ $HELPER_SCRIPT generate-docker-compose --base-dir=$BASE_DIR
 scp -q $BASE_DIR/docker-compose.yml $MANAGER_HOST:~
 scp -q $BASE_DIR/docker-compose-generated.yml $MANAGER_HOST:~
 
-ssh -q $MANAGER_HOST -- docker stack rm boki-experiment
+ssh -q $MANAGER_HOST -- docker stack rm $STACK
 
-sleep 60
+sleep 40
 
 scp -q $ROOT_DIR/scripts/zk_setup.sh $MANAGER_HOST:/tmp/zk_setup.sh
 
@@ -48,7 +50,7 @@ for HOST in $ALL_STORAGE_HOSTS; do
 done
 
 ssh -q $MANAGER_HOST -- docker stack deploy \
-    -c ~/docker-compose-generated.yml -c ~/docker-compose.yml boki-experiment
+    -c ~/docker-compose-generated.yml -c ~/docker-compose.yml $STACK
 sleep 60
 
 for HOST in $ALL_ENGINE_HOSTS; do
@@ -63,8 +65,6 @@ mkdir -p $EXP_DIR
 
 ssh -q $MANAGER_HOST -- cat /proc/cmdline >>$EXP_DIR/kernel_cmdline
 ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
-
-# ssh -q $CLIENT_HOST -- curl -X POST http://$ENTRY_HOST:8080/function/RetwisInit
 
 # ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
 #     zjia/boki-retwisbench:sosp-ae \
@@ -82,9 +82,9 @@ ssh -q $CLIENT_HOST -- /tmp/benchmark \
     --concurrency=$CONCURRENCY --percentages=$Percentages --zipf_skew=$Skew\
     --duration=15 >$EXP_DIR/results.log
 
-$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR/logs
+$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
 
-for HOST in $ALL_ENGINE_HOSTS; do
-    mkdir -p $EXP_DIR/output/$HOST
-    scp -q -r $HOST:/mnt/inmem/boki/output/ $EXP_DIR/output/$HOST/
-done
+# for HOST in $ALL_ENGINE_HOSTS; do
+#     mkdir -p $EXP_DIR/output/$HOST
+#     scp -q -r $HOST:/mnt/inmem/boki/output/*.stderr $EXP_DIR/output/$HOST/
+# done

@@ -439,33 +439,55 @@ def get_container_id_main(base_dir, service_name, machine_name, machine_host):
 def collect_container_logs_main(base_dir, log_path):
     if not os.path.exists(os.path.join(base_dir, "machines.json")):
         raise Exception("Machines not started")
-    os.makedirs(log_path, exist_ok=True)
+    sys_log = os.path.join(log_path, "logs")
+    func_log = os.path.join(log_path, "output")
+    os.makedirs(sys_log, exist_ok=True)
+    os.makedirs(func_log, exist_ok=True)
     with open(os.path.join(base_dir, "machines.json")) as fin:
         machine_infos = json.load(fin)
     for machine_info in machine_infos.values():
         if machine_info["role"] == "client":
             continue
         container_ids, _ = run_remote_command(
-            machine_info["dns"], ["docker", "ps", "-q"]
+            machine_info["dns"], ["docker", "ps", "-qa"]
         )
         container_ids = container_ids.strip().split()
+        engine_name = None
         for container_id in container_ids:
             container_info, _ = run_remote_command(
                 machine_info["dns"], ["docker", "inspect", container_id]
             )
             container_info = json.loads(container_info)[0]
             container_name = container_info["Name"][1:]  # remove prefix '/'
+            if "engine" in container_name:
+                engine_name = container_name
             log_stdout, log_stderr = run_remote_command(
                 machine_info["dns"], ["docker", "container", "logs", container_id]
             )
-            with open(
-                os.path.join(log_path, "%s.stdout" % container_name), "w"
-            ) as fout:
-                fout.write(log_stdout)
-            with open(
-                os.path.join(log_path, "%s.stderr" % container_name), "w"
-            ) as fout:
+            if len(log_stderr.splitlines()) < 40 and "Exit with failure" in log_stderr:
+                continue
+            # with open(
+            #     os.path.join(log_path, "%s.stdout" % container_name), "w"
+            # ) as fout:
+            #     fout.write(log_stdout)
+            with open(os.path.join(sys_log, "%s.stderr" % container_name), "w") as fout:
                 fout.write(log_stderr)
+        if engine_name is not None:
+            ret = sp.run(
+                [
+                    "scp",
+                    "-q",
+                    machine_info["dns"] + ":/mnt/inmem/boki/output/*.stderr",
+                    os.path.join(func_log, engine_name),
+                ],
+                stdout=sp.PIPE,
+                stderr=sp.PIPE,
+                encoding="utf8",
+            )
+            if ret.returncode != 0:
+                raise Exception(
+                    f"Failed to get func worker output from {engine_name}: {ret.stderr}"
+                )
 
 
 if __name__ == "__main__":
