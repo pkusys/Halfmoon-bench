@@ -51,9 +51,11 @@ def run_remote_command(ssh_str, cmd):
         encoding="utf8",
     )
     if ret.returncode != 0:
-        raise Exception(
-            "Failed to run remote command: " + " ".join(cmd) + "\n" + ret.stderr
-        )
+        # raise Exception(
+        #     "Failed to run remote command: " + " ".join(cmd) + "\n" + ret.stderr
+        # )
+        print("Failed to run remote command: " + " ".join(cmd) + "\n" + ret.stderr)
+        return None, None
     return ret.stdout, ret.stderr
 
 
@@ -445,9 +447,10 @@ def collect_container_logs_main(base_dir, log_path):
     os.makedirs(func_log, exist_ok=True)
     with open(os.path.join(base_dir, "machines.json")) as fin:
         machine_infos = json.load(fin)
-    for machine_info in machine_infos.values():
+    for machine_name, machine_info in machine_infos.items():
         if machine_info["role"] == "client":
             continue
+        print("Collecting logs from {}".format(machine_name))
         container_ids, _ = run_remote_command(
             machine_info["dns"], ["docker", "ps", "-qa"]
         )
@@ -457,14 +460,19 @@ def collect_container_logs_main(base_dir, log_path):
             container_info, _ = run_remote_command(
                 machine_info["dns"], ["docker", "inspect", container_id]
             )
+            if container_info is None:
+                print(f"skipping {container_id}")
+                continue
             container_info = json.loads(container_info)[0]
             container_name = container_info["Name"][1:]  # remove prefix '/'
+            if "boki_boki" not in container_name:
+                continue
             if "engine" in container_name:
                 engine_name = container_name
             log_stdout, log_stderr = run_remote_command(
                 machine_info["dns"], ["docker", "container", "logs", container_id]
             )
-            if len(log_stderr.splitlines()) < 40 and "Exit with failure" in log_stderr:
+            if len(log_stderr.splitlines()) < 50 and "Exit with failure" in log_stderr:
                 continue
             # with open(
             #     os.path.join(log_path, "%s.stdout" % container_name), "w"
@@ -473,6 +481,8 @@ def collect_container_logs_main(base_dir, log_path):
             with open(os.path.join(sys_log, "%s.stderr" % container_name), "w") as fout:
                 fout.write(log_stderr)
         if engine_name is not None:
+            engine_output_dir = os.path.join(func_log, engine_name)
+            os.makedirs(engine_output_dir, exist_ok=True)
             ret = sp.run(
                 [
                     "scp",

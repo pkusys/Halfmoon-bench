@@ -9,3 +9,5 @@
 
 /workloads/**/bin
 .vscode
+.clang-format
+run.log

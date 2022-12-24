@@ -5,17 +5,19 @@ services:
     hostname: zookeeper
     ports:
       - 2181:2181
+    restart: always
 
   zookeeper-setup:
     image: zookeeper:3.6.2
     command: /tmp/boki/zk_setup.sh
     depends_on:
-      - zookeeper
+       - zookeeper
     volumes:
       - /tmp/zk_setup.sh:/tmp/boki/zk_setup.sh
+    restart: always
 
   boki-engine:
-    image: shengqipku/boki:single-reorder
+    image: zjia/boki:sosp-ae
     hostname: faas-engine-{{.Task.Slot}}
     entrypoint:
       - /boki/engine
@@ -30,7 +32,7 @@ services:
       - --enable_shared_log
       - --slog_engine_enable_cache
       - --slog_engine_cache_cap_mb=1024
-      # - --slog_engine_propagate_auxdata
+      - --slog_engine_propagate_auxdata
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -40,22 +42,23 @@ services:
     environment:
       - FAAS_NODE_ID={{.Task.Slot}}
       - FAAS_CGROUP_FS_ROOT=/tmp/root_cgroupfs
+    restart: always
 
   boki-controller:
-    image: shengqipku/boki:single-reorder
+    image: zjia/boki:sosp-ae
     entrypoint:
       - /boki/controller
       - --zookeeper_host=zookeeper:2181
       - --metalog_replicas=3
       - --userlog_replicas=3
-      - --index_replicas=12
+      - --index_replicas=8
       # - --v=1
     depends_on:
       - zookeeper-setup
-    # restart: always
+    restart: always
 
   boki-gateway:
-    image: shengqipku/boki:single-reorder
+    image: zjia/boki:sosp-ae
     hostname: faas-gateway
     ports:
       - 8080:8080
@@ -75,17 +78,16 @@ services:
       - zookeeper-setup
     volumes:
       - /tmp/nightcore_config.json:/tmp/boki/func_config.json
-    # restart: always
+    restart: always
 
   boki-storage:
-    image: shengqipku/boki:single-reorder
+    image: zjia/boki:sosp-ae
     hostname: faas-storage-{{.Task.Slot}}
     entrypoint:
       - /boki/storage
       - --zookeeper_host=zookeeper:2181
       - --listen_iface=eth0
       - --db_path=/tmp/storage/logdata
-      - --cc_db_path=/tmp/storage/ccdata
       - --num_io_workers=2
       - --io_uring_entries=2048
       - --io_uring_fd_slots=4096
@@ -100,32 +102,28 @@ services:
       - /mnt/storage:/tmp/storage
     environment:
       - FAAS_NODE_ID={{.Task.Slot}}
-    # restart: always
+    restart: always
 
   boki-sequencer:
-    image: shengqipku/boki:single-reorder
+    image: zjia/boki:sosp-ae
     hostname: faas-sequencer-{{.Task.Slot}}
     entrypoint:
       - /boki/sequencer
       - --zookeeper_host=zookeeper:2181
       - --listen_iface=eth0
-      - --num_io_workers=4
+      - --num_io_workers=2
       - --io_uring_entries=2048
       - --io_uring_fd_slots=4096
       - --slog_global_cut_interval_us=300
-      - --cc_reorder_batch_size=32
-      - --cc_reorder_quickselect=1
-      - --cc_reorder_max_interval_us=1500
-      - --cc_reorder_max_interval_rel=5
       # - --v=1
     depends_on:
       - zookeeper-setup
     environment:
       - FAAS_NODE_ID={{.Task.Slot}}
-    # restart: always
+    restart: always
 
   retwis-init:
-    image: shengqipku/boki-retwisbench:single-reorder
+    image: zjia/boki-retwisbench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -134,23 +132,22 @@ services:
       - GOGC=200
     depends_on:
       - boki-engine
-    # restart: always
+    restart: always
 
   retwis-register:
-    image: shengqipku/boki-retwisbench:single-reorder
+    image: zjia/boki-retwisbench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=200
-      - MAX_RETRY=100
     depends_on:
       - boki-engine
-    # restart: always
+    restart: always
 
-  retwis-profile:
-    image: shengqipku/boki-retwisbench:single-reorder
+  retwis-login:
+    image: zjia/boki-retwisbench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "3"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -159,36 +156,34 @@ services:
       - GOGC=200
     depends_on:
       - boki-engine
-    # restart: always
+    restart: always
 
-  retwis-follow:
-    image: shengqipku/boki-retwisbench:single-reorder
+  retwis-profile:
+    image: zjia/boki-retwisbench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "4"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=200
-      - MAX_RETRY=5
     depends_on:
       - boki-engine
-    # restart: always
+    restart: always
 
-  retwis-post:
-    image: shengqipku/boki-retwisbench:single-reorder
+  retwis-follow:
+    image: zjia/boki-retwisbench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "5"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=200
-      - MAX_RETRY=5
     depends_on:
       - boki-engine
-    # restart: always
+    restart: always
 
-  retwis-post-list:
-    image: shengqipku/boki-retwisbench:single-reorder
+  retwis-post:
+    image: zjia/boki-retwisbench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "6"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -197,4 +192,16 @@ services:
       - GOGC=200
     depends_on:
       - boki-engine
-    # restart: always
+    restart: always
+
+  retwis-post-list:
+    image: zjia/boki-retwisbench:sosp-ae
+    entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "7"]
+    volumes:
+      - /mnt/inmem/boki:/tmp/boki
+    environment:
+      - FAAS_GO_MAX_PROC_FACTOR=4
+      - GOGC=200
+    depends_on:
+      - boki-engine
+    restart: always

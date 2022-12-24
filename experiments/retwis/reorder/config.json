@@ -29,7 +29,6 @@
         "boki-storage": { "placement_label": "storage_node", "replicas": 3 },
         "boki-sequencer": { "placement_label": "sequencer_node", "replicas": 3 },
         "boki-engine": { "placement_label": "engine_node", "replicas": 12 },
-        "retwis-init": { "placement_label": "engine_node", "replicas": 12 },
         "retwis-register": { "placement_label": "engine_node", "replicas": 12 },
         "retwis-profile": { "placement_label": "engine_node", "replicas": 12 },
         "retwis-follow": { "placement_label": "engine_node", "replicas": 12 },

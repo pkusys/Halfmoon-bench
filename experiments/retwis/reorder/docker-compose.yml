@@ -29,7 +29,7 @@ services:
       - --io_uring_fd_slots=4096
       - --enable_shared_log
       - --slog_engine_enable_cache
-      - --slog_engine_cache_cap_mb=1024
+      - --slog_engine_cache_cap_mb=2048
       # - --slog_engine_propagate_auxdata
       # - --v=1
     depends_on:
@@ -65,7 +65,7 @@ services:
       - --listen_iface=eth0
       - --http_port=8080
       - --func_config_file=/tmp/boki/func_config.json
-      - --num_io_workers=2
+      - --num_io_workers=4
       - --io_uring_entries=2048
       - --io_uring_fd_slots=4096
       - --lb_per_fn_round_robin
@@ -86,7 +86,7 @@ services:
       - --listen_iface=eth0
       - --db_path=/tmp/storage/logdata
       - --cc_db_path=/tmp/storage/ccdata
-      - --num_io_workers=2
+      - --num_io_workers=4
       - --io_uring_entries=2048
       - --io_uring_fd_slots=4096
       - --slog_local_cut_interval_us=300
@@ -124,20 +124,8 @@ services:
       - FAAS_NODE_ID={{.Task.Slot}}
     # restart: always
 
-  retwis-init:
-    image: shengqipku/boki-retwisbench:single-reorder
-    entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "1"]
-    volumes:
-      - /mnt/inmem/boki:/tmp/boki
-    environment:
-      - FAAS_GO_MAX_PROC_FACTOR=4
-      - GOGC=200
-    depends_on:
-      - boki-engine
-    # restart: always
-
   retwis-register:
-    image: shengqipku/boki-retwisbench:single-reorder
+    image: shengqipku/my-retwisbench:single-reorder
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -150,7 +138,7 @@ services:
     # restart: always
 
   retwis-profile:
-    image: shengqipku/boki-retwisbench:single-reorder
+    image: shengqipku/my-retwisbench:single-reorder
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "3"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -162,7 +150,7 @@ services:
     # restart: always
 
   retwis-follow:
-    image: shengqipku/boki-retwisbench:single-reorder
+    image: shengqipku/my-retwisbench:single-reorder
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "4"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -175,7 +163,7 @@ services:
     # restart: always
 
   retwis-post:
-    image: shengqipku/boki-retwisbench:single-reorder
+    image: shengqipku/my-retwisbench:single-reorder
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "5"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -188,7 +176,7 @@ services:
     # restart: always
 
   retwis-post-list:
-    image: shengqipku/boki-retwisbench:single-reorder
+    image: shengqipku/my-retwisbench:single-reorder
     entrypoint: ["/tmp/boki/run_launcher", "/retwisbench-bin/main", "6"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki

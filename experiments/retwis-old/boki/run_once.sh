@@ -2,15 +2,9 @@
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-BENCH_IMAGE=shengqipku/boki-retwisbench:single-reorder
-
-EXP_DIR=$1
+EXP_DIR=$BASE_DIR/results/$1
 
 CONCURRENCY=$2
-SKEW=$3
-MAX_NOTIFY_USERS=$4
-PERCENTAGES=$5
-
 NUM_USERS=10000
 
 HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
@@ -24,9 +18,7 @@ $HELPER_SCRIPT generate-docker-compose --base-dir=$BASE_DIR
 scp -q $BASE_DIR/docker-compose.yml $MANAGER_HOST:~
 scp -q $BASE_DIR/docker-compose-generated.yml $MANAGER_HOST:~
 
-STACK=boki
-
-ssh -q $MANAGER_HOST -- docker stack rm $STACK
+ssh -q $MANAGER_HOST -- docker stack rm boki-experiment
 
 sleep 40
 
@@ -50,13 +42,11 @@ ALL_STORAGE_HOSTS=`$HELPER_SCRIPT get-machine-with-label --base-dir=$BASE_DIR --
 for HOST in $ALL_STORAGE_HOSTS; do
     ssh -q $HOST -- sudo rm -rf   /mnt/storage/logdata
     ssh -q $HOST -- sudo mkdir -p /mnt/storage/logdata
-    ssh -q $HOST -- sudo rm -rf   /mnt/storage/ccdata
-    ssh -q $HOST -- sudo mkdir -p /mnt/storage/ccdata
 done
 
 ssh -q $MANAGER_HOST -- docker stack deploy \
-    -c ~/docker-compose-generated.yml -c ~/docker-compose.yml $STACK
-sleep 80
+    -c ~/docker-compose-generated.yml -c ~/docker-compose.yml boki-experiment
+sleep 60
 
 for HOST in $ALL_ENGINE_HOSTS; do
     ENGINE_CONTAINER_ID=`$HELPER_SCRIPT get-container-id --base-dir=$BASE_DIR --service faas-engine --machine-host $HOST`
@@ -65,28 +55,28 @@ done
 
 sleep 10
 
+rm -rf $EXP_DIR
+mkdir -p $EXP_DIR
+
 ssh -q $MANAGER_HOST -- cat /proc/cmdline >>$EXP_DIR/kernel_cmdline
 ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
 
-# ssh -q $CLIENT_HOST -- curl -X POST http://$ENTRY_HOST:8080/function/RetwisInit
-
-ssh -q $CLIENT_HOST -- docker pull $BENCH_IMAGE
+ssh -q $CLIENT_HOST -- curl -X POST http://$ENTRY_HOST:8080/function/RetwisInit
 
 ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
-    $BENCH_IMAGE \
+    zjia/boki-retwisbench:sosp-ae \
     cp /retwisbench-bin/create_users /tmp/create_users
 
 ssh -q $CLIENT_HOST -- /tmp/create_users \
-    --faas_gateway=$ENTRY_HOST:8080 --num_users=$NUM_USERS --concurrency=16 \
-    --followers_per_user=8 --zipf_skew=$SKEW
+    --faas_gateway=$ENTRY_HOST:8080 --num_users=$NUM_USERS --concurrency=16
 
 ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
-    $BENCH_IMAGE \
+    zjia/boki-retwisbench:sosp-ae \
     cp /retwisbench-bin/benchmark /tmp/benchmark
 
 ssh -q $CLIENT_HOST -- /tmp/benchmark \
-    --faas_gateway=$ENTRY_HOST:8080 --num_users=$NUM_USERS --concurrency=$CONCURRENCY --duration=15 \
-    --percentages=$PERCENTAGES --zipf_skew=$SKEW --max_notify_users=$MAX_NOTIFY_USERS \
-    >$EXP_DIR/results.log
+    --faas_gateway=$ENTRY_HOST:8080 --num_users=$NUM_USERS \
+    --percentages=15,30,50,5 \
+    --duration=15 --concurrency=$CONCURRENCY >$EXP_DIR/results.log
 
-$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
+$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR/logs

@@ -71,7 +71,7 @@ services:
       - --num_io_workers=2
       - --io_uring_entries=2048
       - --io_uring_fd_slots=4096
-      - --lb_per_fn_round_robin
+    - --lb_per_fn_round_robin
       - --max_running_requests=0
       # - --v=1
     depends_on:

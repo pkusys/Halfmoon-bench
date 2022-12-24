@@ -2,7 +2,7 @@
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-BENCH_IMAGE=shengqipku/boki-retwisbench:single-reorder
+BENCH_IMAGE=shengqipku/my-retwisbench:single-reorder
 
 EXP_DIR=$1
 
@@ -68,8 +68,6 @@ sleep 10
 ssh -q $MANAGER_HOST -- cat /proc/cmdline >>$EXP_DIR/kernel_cmdline
 ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
 
-# ssh -q $CLIENT_HOST -- curl -X POST http://$ENTRY_HOST:8080/function/RetwisInit
-
 ssh -q $CLIENT_HOST -- docker pull $BENCH_IMAGE
 
 ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
@@ -85,7 +83,7 @@ ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
     cp /retwisbench-bin/benchmark /tmp/benchmark
 
 ssh -q $CLIENT_HOST -- /tmp/benchmark \
-    --faas_gateway=$ENTRY_HOST:8080 --num_users=$NUM_USERS --concurrency=$CONCURRENCY --duration=15 \
+    --faas_gateway=$ENTRY_HOST:8080 --num_users=$NUM_USERS --concurrency=$CONCURRENCY --duration=20 \
     --percentages=$PERCENTAGES --zipf_skew=$SKEW --max_notify_users=$MAX_NOTIFY_USERS \
     >$EXP_DIR/results.log
 

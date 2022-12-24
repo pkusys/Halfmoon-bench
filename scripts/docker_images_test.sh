@@ -3,20 +3,10 @@
 set -exu
 
 ROOT_DIR=`realpath $(dirname $0)/..`
-TAG=test-prefetch
+TAG=single-reorder
 
 # Use BuildKit as docker builder
 export DOCKER_BUILDKIT=1
-
-# function build_boki {
-#     docker build -t shengqipku/boki-dev \
-#         -f $ROOT_DIR/dockerfiles/Dockerfile.boki-dev \
-#         $ROOT_DIR/boki
-# }
-
-# function commit_dev {
-#     docker commit boki-dev shengqipku/boki-dev
-# }
 
 function build_local {
     cd $ROOT_DIR/boki
@@ -24,43 +14,44 @@ function build_local {
 }
 
 function build_release {
-    # cd $ROOT_DIR/dockerfiles
     docker build -t shengqipku/boki:$TAG -f $ROOT_DIR/dockerfiles/Dockerfile.boki-release $ROOT_DIR
-    # docker build -t shengqipku/boki:$TAG \
-    #     -f $ROOT_DIR/dockerfiles/Dockerfile.boki-release \
-    #     $ROOT_DIR/boki
 }
 
 function build_rwbench {
-    # cd $ROOT_DIR/dockerfiles
     cd $ROOT_DIR/workloads/rw/ && ./build.sh
     docker build -t shengqipku/boki-rwbench:$TAG -f $ROOT_DIR/dockerfiles/Dockerfile.rwbench $ROOT_DIR
-    # docker build -t shengqipku/boki-rwbench:test-prefetch \
-    #     -f $ROOT_DIR/dockerfiles/Dockerfile.rwbench $ROOT_DIR
-        # $ROOT_DIR/workloads/rw
+}
+
+function build_occbench {
+    cd $ROOT_DIR/workloads/occ/ && ./build.sh
+    docker build -t shengqipku/boki-occbench:$TAG -f $ROOT_DIR/dockerfiles/Dockerfile.occbench $ROOT_DIR
+}
+
+function build_boki-retwis {
+    cd $ROOT_DIR/workloads/boki-retwis/ && ./build.sh
+    docker build -t shengqipku/boki-retwisbench:$TAG -f $ROOT_DIR/dockerfiles/Dockerfile.boki-retwisbench $ROOT_DIR
+}
+
+function build_my-retwis {
+    cd $ROOT_DIR/workloads/my-retwis/ && ./build.sh
+    docker build -t shengqipku/my-retwisbench:$TAG -f $ROOT_DIR/dockerfiles/Dockerfile.my-retwisbench $ROOT_DIR
 }
 
 function update {
     # commit_dev
     build_local
     build_release
-    build_rwbench
+    build_boki-retwis
+    build_my-retwis
 }
-
-# function build {
-#     # build_boki
-#     build_rwbench
-# }
 
 function push {
     docker push shengqipku/boki:$TAG
-    docker push shengqipku/boki-rwbench:$TAG
+    docker push shengqipku/boki-retwisbench:$TAG
+    docker push shengqipku/my-retwisbench:$TAG
 }
 
 case "$1" in
-build)
-    build
-    ;;
 push)
     push
     ;;

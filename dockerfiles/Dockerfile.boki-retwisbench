@@ -1,0 +1,6 @@
+FROM ubuntu:focal
+
+COPY ./workloads/boki-retwis/bin /retwisbench-bin
+COPY ./boki/bin/release/launcher /boki/launcher
+
+WORKDIR /retwisbench-bin

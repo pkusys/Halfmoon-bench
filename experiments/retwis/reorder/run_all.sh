@@ -13,9 +13,9 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 # Skews=(1.1 1.2 1.5 2)
 
 concurrency=(384)
-skew=(0.75 0.9)
-notifyUsers=(4 8)
-Percs=("10,10,30,50" "5,5,40,50")
+skew=(0.75)
+notifyUsers=(4)
+Percs=("10,10,30,50")
 
 for c in ${concurrency[@]}; do
     for s in ${skew[@]}; do
