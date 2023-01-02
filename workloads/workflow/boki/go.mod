@@ -15,4 +15,4 @@ require (
 	github.com/golang/snappy v0.0.2
 )
 
-replace cs.utexas.edu/zjia/faas => /src/boki/worker/golang
+replace cs.utexas.edu/zjia/faas => ../../../boki/worker/golang
