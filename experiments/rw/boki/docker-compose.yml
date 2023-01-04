@@ -15,7 +15,7 @@ services:
       - /tmp/zk_setup.sh:/tmp/boki/zk_setup.sh
 
   boki-engine:
-    image: shengqipku/boki:test-prefetch
+    image: shengqipku/boki:readlog
     hostname: faas-engine-{{.Task.Slot}}
     entrypoint:
       - /boki/engine
@@ -31,7 +31,6 @@ services:
       - --slog_engine_enable_cache
       - --slog_engine_cache_cap_mb=1024
       # - --slog_engine_propagate_auxdata
-      # - # -# -slog_engine_cache_prefetch
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -43,7 +42,7 @@ services:
       - FAAS_CGROUP_FS_ROOT=/tmp/root_cgroupfs
 
   boki-controller:
-    image: shengqipku/boki:test-prefetch
+    image: shengqipku/boki:readlog
     entrypoint:
       - /boki/controller
       - --zookeeper_host=zookeeper:2181
@@ -56,7 +55,7 @@ services:
     # restart: always
 
   boki-gateway:
-    image: shengqipku/boki:test-prefetch
+    image: shengqipku/boki:readlog
     hostname: faas-gateway
     ports:
       - 8080:8080
@@ -79,7 +78,7 @@ services:
     # restart: always
 
   boki-storage:
-    image: shengqipku/boki:test-prefetch
+    image: shengqipku/boki:readlog
     hostname: faas-storage-{{.Task.Slot}}
     entrypoint:
       - /boki/storage
@@ -93,6 +92,7 @@ services:
       - --slog_storage_bgthread_interval_ms=1
       - --slog_storage_backend=rocksdb
       - --slog_storage_cache_cap_mb=4096
+      - --cc_db_path=/tmp/storage/ccdata
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -103,7 +103,7 @@ services:
     # restart: always
 
   boki-sequencer:
-    image: shengqipku/boki:test-prefetch
+    image: shengqipku/boki:readlog
     hostname: faas-sequencer-{{.Task.Slot}}
     entrypoint:
       - /boki/sequencer
@@ -113,6 +113,10 @@ services:
       - --io_uring_entries=2048
       - --io_uring_fd_slots=4096
       - --slog_global_cut_interval_us=300
+      - --cc_reorder_batch_size=32
+      - --cc_reorder_quickselect=1
+      - --cc_reorder_max_interval_us=1500
+      - --cc_reorder_max_interval_rel=5
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -120,30 +124,15 @@ services:
       - FAAS_NODE_ID={{.Task.Slot}}
     # restart: always
 
-  test-write:
-    image: shengqipku/boki-rwbench:test-prefetch
+  test:
+    image: shengqipku/boki-rwbench:readlog
     entrypoint: [ "/tmp/boki/run_launcher", "/rw-bin/main", "1" ]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=200
-      # - SyncWrite=1
-      - SetAllAux=1
-    depends_on:
-      - boki-engine
-    # restart: "no"
-
-  test-read:
-    image: shengqipku/boki-rwbench:test-prefetch
-    entrypoint: [ "/tmp/boki/run_launcher", "/rw-bin/main", "2" ]
-    volumes:
-      - /mnt/inmem/boki:/tmp/boki
-    environment:
-      - FAAS_GO_MAX_PROC_FACTOR=4
-      - GOGC=200
-      # - SyncWrite=1
-      - SetAllAux=1
+      - LogReadWrite=1
     depends_on:
       - boki-engine
     # restart: "no"

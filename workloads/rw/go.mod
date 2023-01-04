@@ -7,6 +7,7 @@ require (
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/montanaflynn/stats v0.6.3
+	github.com/openacid/low v0.1.21 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	go.mongodb.org/mongo-driver v1.4.6
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb // indirect

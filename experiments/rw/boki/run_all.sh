@@ -2,50 +2,35 @@
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-# RUN=$1
 
 HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
+RUN=$1
+
+Concurrency=(384)
+Skew=(0.75)
+ReadKeys=(8)
+WriteKeys=(1)
+
 $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR
 
-Cons=(64 128 256)
-Percs=("10,90" "30,70" "50,50" "70,30" "90,10")
-Skews=(1.1 1.2 1.5)
-
-# Cons=(256)
-# Percs=("90,10")
-# Skews=(1.5)
-
-RUN=0
-
-for c in ${Cons[@]}; do
-    for p in ${Percs[@]}; do
-        for s in ${Skews[@]}; do
-            EXP_DIR=$BASE_DIR/results/con${c}_rw${p}_skew${s}
-            $BASE_DIR/run_once.sh $c $p $s $EXP_DIR
-            cp $BASE_DIR/docker-compose.yml $EXP_DIR/
-            mv $EXP_DIR ${EXP_DIR}_$RUN
-            echo "finished con${c}_rw${p}_skew${s}"
+for c in ${Concurrency[@]}; do
+    for s in ${Skew[@]}; do
+        for rk in ${ReadKeys[@]}; do
+            for wk in ${WriteKeys[@]}; do
+                EXP_DIR=$BASE_DIR/results/c${c}_s${s}_r${rk}_w${wk}
+                rm -rf $EXP_DIR
+                mkdir -p $EXP_DIR
+                $BASE_DIR/run_once.sh $EXP_DIR $c $s $rk $wk 2>&1 | tee $EXP_DIR/run.log 
+                cp $BASE_DIR/docker-compose.yml $EXP_DIR/
+                cp $BASE_DIR/docker-compose-generated.yml $EXP_DIR/
+                cp $BASE_DIR/config.json $EXP_DIR/
+                cp $BASE_DIR/nightcore_config.json $EXP_DIR/
+                mv $EXP_DIR ${EXP_DIR}_$RUN
+                echo "finished con${c}_skew${s}_rk${rk}_wk${wk}"
+            done
         done
     done
 done
 
-RUN=1
-
-sed -i '/slog_engine_cache_prefetch/s/# -/-/g' $BASE_DIR/docker-compose.yml
-
-for c in ${Cons[@]}; do
-    for p in ${Percs[@]}; do
-        for s in ${Skews[@]}; do
-            EXP_DIR=$BASE_DIR/results/con${c}_rw${p}_skew${s}
-            $BASE_DIR/run_once.sh $c $p $s $EXP_DIR
-            cp $BASE_DIR/docker-compose.yml $EXP_DIR/
-            mv $EXP_DIR ${EXP_DIR}_$RUN
-            echo "finished con${c}_rw${p}_skew${s}"
-        done
-    done
-done
-
-sed -i '/slog_engine_cache_prefetch/s/-/# -/g' $BASE_DIR/docker-compose.yml
-
-$HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
+# $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR

@@ -16,6 +16,7 @@ type HttpResult struct {
 	StatusCode int
 	Message    string
 	Duration   time.Duration
+	Response   JSONValue
 }
 
 type JSONValue = map[string]interface{}
@@ -57,6 +58,7 @@ func JsonPostRequest(client *http.Client, url string, request JSONValue) *HttpRe
 		Success:    true,
 		StatusCode: 200,
 		Duration:   elapsed,
+		Response:   response,
 	}
 }
 

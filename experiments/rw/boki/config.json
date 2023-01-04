@@ -25,7 +25,6 @@
         "boki-storage": { "placement_label": "storage_node", "replicas": 3 },
         "boki-sequencer": { "placement_label": "sequencer_node", "replicas": 3 },
         "boki-engine": { "placement_label": "engine_node", "replicas": 8 },
-        "test-write": { "placement_label": "engine_node", "replicas": 8 },
-        "test-read": { "placement_label": "engine_node", "replicas": 8 }
+        "test": { "placement_label": "engine_node", "replicas": 8 }
     }
 }

@@ -14,10 +14,8 @@ type funcHandlerFactory struct {
 
 func (f *funcHandlerFactory) New(env types.Environment, funcName string) (types.FuncHandler, error) {
 	switch funcName {
-	case "TestWrite":
-		return handlers.NewTestWriteHandler(env), nil
-	case "TestRead":
-		return handlers.NewTestReadHandler(env), nil
+	case "Test":
+		return handlers.NewTestHandler(env), nil
 	default:
 		return nil, fmt.Errorf("Unknown function name: %s", funcName)
 	}

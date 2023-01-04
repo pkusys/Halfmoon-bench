@@ -3,7 +3,8 @@
 set -exu
 
 ROOT_DIR=`realpath $(dirname $0)/..`
-TAG=single-reorder
+# TAG=single-reorder
+TAG=readlog
 
 # Use BuildKit as docker builder
 export DOCKER_BUILDKIT=1
@@ -41,14 +42,16 @@ function update {
     # commit_dev
     build_local
     build_release
-    build_boki-retwis
-    build_my-retwis
+    # build_boki-retwis
+    # build_my-retwis
+    build_rwbench
 }
 
 function push {
     docker push shengqipku/boki:$TAG
-    docker push shengqipku/boki-retwisbench:$TAG
-    docker push shengqipku/my-retwisbench:$TAG
+    # docker push shengqipku/boki-retwisbench:$TAG
+    # docker push shengqipku/my-retwisbench:$TAG
+    docker push shengqipku/boki-rwbench:$TAG
 }
 
 case "$1" in

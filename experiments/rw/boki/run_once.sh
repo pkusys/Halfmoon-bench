@@ -2,15 +2,16 @@
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-STACK=boki
+BENCH_IMAGE=shengqipku/boki-rwbench:readlog
 
-EXP_DIR=$4
+EXP_DIR=$1
 
-CONCURRENCY=$1
-Percentages=$2
+CONCURRENCY=$2
 Skew=$3
+ReadKeys=$4
+WriteKeys=$5
+
 Keyspace=10000
-RWkeys=4
 
 HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
@@ -22,6 +23,8 @@ ALL_HOSTS=`$HELPER_SCRIPT get-all-server-hosts --base-dir=$BASE_DIR`
 $HELPER_SCRIPT generate-docker-compose --base-dir=$BASE_DIR
 scp -q $BASE_DIR/docker-compose.yml $MANAGER_HOST:~
 scp -q $BASE_DIR/docker-compose-generated.yml $MANAGER_HOST:~
+
+STACK=boki
 
 ssh -q $MANAGER_HOST -- docker stack rm $STACK
 
@@ -47,11 +50,13 @@ ALL_STORAGE_HOSTS=`$HELPER_SCRIPT get-machine-with-label --base-dir=$BASE_DIR --
 for HOST in $ALL_STORAGE_HOSTS; do
     ssh -q $HOST -- sudo rm -rf   /mnt/storage/logdata
     ssh -q $HOST -- sudo mkdir -p /mnt/storage/logdata
+    ssh -q $HOST -- sudo rm -rf   /mnt/storage/ccdata
+    ssh -q $HOST -- sudo mkdir -p /mnt/storage/ccdata
 done
 
 ssh -q $MANAGER_HOST -- docker stack deploy \
     -c ~/docker-compose-generated.yml -c ~/docker-compose.yml $STACK
-sleep 60
+sleep 80
 
 for HOST in $ALL_ENGINE_HOSTS; do
     ENGINE_CONTAINER_ID=`$HELPER_SCRIPT get-container-id --base-dir=$BASE_DIR --service faas-engine --machine-host $HOST`
@@ -73,13 +78,15 @@ ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
 # ssh -q $CLIENT_HOST -- /tmp/create_users \
 #     --faas_gateway=$ENTRY_HOST:8080 --num_users=$NUM_USERS --concurrency=16
 
+ssh -q $CLIENT_HOST -- docker pull $BENCH_IMAGE
+
 ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
-    shengqipku/boki-rwbench:test-prefetch \
+    $BENCH_IMAGE \
     cp /rw-bin/benchmark /tmp/benchmark
 
 ssh -q $CLIENT_HOST -- /tmp/benchmark \
-    --faas_gateway=$ENTRY_HOST:8080 --keyspace=$Keyspace --rw_keys=$RWkeys \
-    --concurrency=$CONCURRENCY --percentages=$Percentages --zipf_skew=$Skew\
+    --faas_gateway=$ENTRY_HOST:8080 --keyspace=$Keyspace --read_keys=$ReadKeys --write_keys=$WriteKeys \
+    --concurrency=$CONCURRENCY --zipf_skew=$Skew \
     --duration=15 >$EXP_DIR/results.log
 
 $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR

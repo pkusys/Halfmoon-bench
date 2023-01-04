@@ -13,4 +13,4 @@ require (
 	github.com/mitchellh/mapstructure v1.3.3
 )
 
-replace cs.utexas.edu/zjia/faas => /src/boki/worker/golang
+replace cs.utexas.edu/zjia/faas => ../../../boki/worker/golang
