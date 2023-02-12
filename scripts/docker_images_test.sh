@@ -58,6 +58,9 @@ case "$1" in
 push)
     push
     ;;
+build)
+    build_local
+    ;;
 update)
     update
     push
