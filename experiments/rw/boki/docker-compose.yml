@@ -31,6 +31,7 @@ services:
       - --slog_engine_enable_cache
       - --slog_engine_cache_cap_mb=1024
       # - --slog_engine_propagate_auxdata
+      - --use_txn_engine
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -92,7 +93,7 @@ services:
       - --slog_storage_bgthread_interval_ms=1
       - --slog_storage_backend=rocksdb
       - --slog_storage_cache_cap_mb=4096
-      - --cc_db_path=/tmp/storage/ccdata
+      - --use_txn_engine
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -113,10 +114,6 @@ services:
       - --io_uring_entries=2048
       - --io_uring_fd_slots=4096
       - --slog_global_cut_interval_us=300
-      - --cc_reorder_batch_size=32
-      - --cc_reorder_quickselect=1
-      - --cc_reorder_max_interval_us=1500
-      - --cc_reorder_max_interval_rel=5
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -132,7 +129,7 @@ services:
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=200
-      - LogReadWrite=1
+      - LoggingMode=write
     depends_on:
       - boki-engine
     # restart: "no"

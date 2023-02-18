@@ -7,7 +7,7 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
 RUN=$1
 
-Concurrency=(384)
+Concurrency=(320)
 Skew=(0.75)
 ReadKeys=(8)
 WriteKeys=(1)

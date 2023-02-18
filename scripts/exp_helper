@@ -472,8 +472,8 @@ def collect_container_logs_main(base_dir, log_path):
             log_stdout, log_stderr = run_remote_command(
                 machine_info["dns"], ["docker", "container", "logs", container_id]
             )
-            if len(log_stderr.splitlines()) < 50 and "Exit with failure" in log_stderr:
-                continue
+            # if len(log_stderr.splitlines()) < 50 and "Exit with failure" in log_stderr:
+            #     continue
             # with open(
             #     os.path.join(log_path, "%s.stdout" % container_name), "w"
             # ) as fout:

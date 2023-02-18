@@ -137,13 +137,13 @@ func printFnResult(fnName string, duration time.Duration, results []*utils.FaasC
 	failed := total - succeeded - txnConflit
 	fmt.Printf("[%s]\n", fnName)
 	fmt.Printf("Throughput: %.1f requests per sec\n", float64(total)/duration.Seconds())
-	if txnConflit > 0 {
-		ratio := float64(txnConflit) / float64(txnConflit+succeeded)
-		fmt.Printf("Transaction conflits: %d (%.2f%%)\n", txnConflit, ratio*100.0)
-	}
+	// if txnConflit > 0 {
+	// 	ratio := float64(txnConflit) / float64(txnConflit+succeeded)
+	// 	fmt.Printf("Transaction conflits: %d (%.2f%%)\n", txnConflit, ratio*100.0)
+	// }
 	if failed > 0 {
 		ratio := float64(failed) / float64(total)
-		fmt.Printf("Transaction conflits: %d (%.2f%%)\n", failed, ratio*100.0)
+		fmt.Printf("Failed functions: %d (%.2f%%)\n", failed, ratio*100.0)
 	}
 	if len(latencies) > 0 {
 		median, _ := stats.Median(latencies)

@@ -9,19 +9,53 @@ import (
 	"time"
 
 	"cs.utexas.edu/zjia/faas/types"
+	"github.com/cespare/xxhash/v2"
+	"github.com/lithammer/shortuuid"
 )
 
-var LogReadWrite = false
+var logMode = "all"
 
 func init() {
-	if os.Getenv("LogReadWrite") == "1" {
-		LogReadWrite = true
+	if mode := os.Getenv("LoggingMode"); mode != "" {
+		logMode = mode
 	}
+	if logMode != "all" && logMode != "read" && logMode != "write" {
+		log.Fatalf("[FATAL] invalid log mode: %s", logMode)
+	}
+	log.Printf("[INFO] log mode: %s", logMode)
+}
+
+const nLowBits uint64 = 2
+const reservedLowBits uint64 = 0
+const keyTagLowBits uint64 = 1
+const intentStepStreamLowBits uint64 = 2
+
+func IntentStepStreamTag(instanceId string) uint64 {
+	h := xxhash.Sum64String(instanceId)
+	tag := (h << nLowBits) + intentStepStreamLowBits
+	if tag == 0 || (^tag) == 0 {
+		panic("Invalid tag")
+	}
+	return tag
+}
+
+func KeyTag(key uint64) uint64 {
+	h := xxhash.Sum64String(fmt.Sprintf("k%v", key))
+	tag := (h << nLowBits) + keyTagLowBits
+	if tag == 0 || (^tag) == 0 {
+		panic("Invalid tag")
+	}
+	return tag
 }
 
 type LogEditor struct {
-	env types.Environment
-	ctx context.Context
+	env                 types.Environment
+	ctx                 context.Context
+	instanceId          string
+	intentStepStreamTag uint64
+	step                uint32
+	seqnum              uint64
+	callId              uint32
 }
 
 // func (le *LogEditor) setAuxData(auxData map[uint64]interface{}, seqNum uint64) error {
@@ -44,20 +78,35 @@ type LogEditor struct {
 // 	auxData map[uint64]interface{}
 // }
 
-func (le *LogEditor) Read(tag uint64, seqNum uint64) (int64, error) {
+func (le *LogEditor) Read(key uint64, seqNum uint64) (int64, error) {
+	tag := KeyTag(key)
+	log.Printf("[INFO] callId=%v instanceId=%s tag=%v step=%v read key=%v seqnum=%x", le.callId, le.instanceId, le.intentStepStreamTag, le.step, tag, le.seqnum)
 	start := time.Now()
 	_, err := le.env.SharedLogReadPrev(le.ctx, tag, seqNum)
 	if err != nil {
 		log.Fatalf("[FATAL] failed to read log: %s", err.Error())
 	}
-	if LogReadWrite {
-		le.env.SharedLogAppend(le.ctx, []uint64{1}, []byte(fmt.Sprintf("read %v %v", tag, seqNum)))
+	switch logMode {
+	case "all", "read":
+		seqnum, err := le.env.SharedLogConditionalAppend(le.ctx, []uint64{}, []byte(fmt.Sprintf("read %v %v", tag, seqNum)), le.intentStepStreamTag, le.step)
+		if err != nil {
+			log.Fatalf("[FATAL] instanceId=%s tag=%v conflicts on read: %s", le.instanceId, le.intentStepStreamTag, err.Error())
+		} else {
+			le.seqnum = seqnum
+			le.step++
+		}
+	default:
 	}
 	elapsed := time.Since(start).Microseconds()
 	return elapsed, nil
 }
 
-func (le *LogEditor) Write(tags []uint64, value interface{}) (uint64, int64, error) {
+func (le *LogEditor) Write(keys []uint64, value interface{}) (uint64, int64, error) {
+	tags := make([]uint64, 0, len(keys))
+	for _, k := range keys {
+		tags = append(tags, KeyTag(k))
+	}
+	log.Printf("[INFO] callId=%v instanceId=%s tag=%v step=%v write keys=%v", le.callId, le.instanceId, le.intentStepStreamTag, le.step, tags)
 	start := time.Now()
 	valueBytes, err := Encode(value)
 	if err != nil {
@@ -67,8 +116,16 @@ func (le *LogEditor) Write(tags []uint64, value interface{}) (uint64, int64, err
 	if err != nil {
 		log.Fatalf("[FATAL] failed to append log: %s", err.Error())
 	}
-	if LogReadWrite {
-		le.env.SharedLogAppend(le.ctx, []uint64{1}, []byte(fmt.Sprintf("write %v %v", tags, seqnum)))
+	switch logMode {
+	case "all", "write":
+		writelogSeqnum, err := le.env.SharedLogConditionalAppend(le.ctx, []uint64{}, []byte(fmt.Sprintf("write %v %v", tags, seqnum)), le.intentStepStreamTag, le.step)
+		if err != nil {
+			log.Fatalf("[FATAL] instanceId=%s tag=%v conflicts on write: %s", le.instanceId, le.intentStepStreamTag, err.Error())
+		} else {
+			le.seqnum = writelogSeqnum
+			le.step++
+		}
+	default:
 	}
 	elapsed := time.Since(start).Microseconds()
 	return seqnum, elapsed, nil
@@ -76,14 +133,20 @@ func (le *LogEditor) Write(tags []uint64, value interface{}) (uint64, int64, err
 
 func (le *LogEditor) onRequest(input *TestInput) *TestOutput {
 	start := time.Now()
-	seqnum, err := le.env.SharedLogAppend(le.ctx, []uint64{1}, []byte("start"))
+	intentStepStreamTag := IntentStepStreamTag(input.InstanceId)
+	seqnum, err := le.env.SharedLogConditionalAppend(le.ctx, []uint64{}, []byte("invoke"), intentStepStreamTag, 0)
 	if err != nil {
-		log.Fatalf("[FATAL] failed to append start log: %s", err.Error())
+		log.Fatalf("[FATAL] instanceId=%s tag=%v conflicts on invoke: %s", input.InstanceId, intentStepStreamTag, err.Error())
 	}
+	log.Printf("[INFO] callId=%v instanceId=%s tag=%v start invoked at seqnum=%x", le.callId, input.InstanceId, intentStepStreamTag, seqnum)
+	le.instanceId = input.InstanceId
+	le.intentStepStreamTag = intentStepStreamTag
+	le.step = 1
+	le.seqnum = seqnum
 	readLatency := make([]int64, 0, len(input.ReadKeys))
 	writeLatency := make([]int64, 0, len(input.WriteKeys))
 	for _, k := range input.ReadKeys {
-		t, _ := le.Read(k, seqnum)
+		t, _ := le.Read(k, le.seqnum)
 		readLatency = append(readLatency, t)
 	}
 	for _, k := range input.WriteKeys {
@@ -196,8 +259,9 @@ func (le *LogEditor) onRequest(input *TestInput) *TestOutput {
 // }
 
 type TestInput struct {
-	ReadKeys  []uint64 `json:"readkeys"`
-	WriteKeys []uint64 `json:"writekeys"`
+	InstanceId string   `json:"instanceId"`
+	ReadKeys   []uint64 `json:"readkeys"`
+	WriteKeys  []uint64 `json:"writekeys"`
 }
 
 type TestOutput struct {
@@ -221,7 +285,11 @@ func (h *TestHandler) Call(ctx context.Context, input []byte) ([]byte, error) {
 	if err := json.Unmarshal(input, &parsedInput); err != nil {
 		return nil, err
 	} else {
+		if parsedInput.InstanceId == "" {
+			parsedInput.InstanceId = shortuuid.New()
+		}
 		h.ctx = ctx
+		h.callId = ctx.Value("CallId").(uint32)
 		output := h.onRequest(&parsedInput)
 		return json.Marshal(output)
 	}
