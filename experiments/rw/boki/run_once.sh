@@ -50,8 +50,6 @@ ALL_STORAGE_HOSTS=`$HELPER_SCRIPT get-machine-with-label --base-dir=$BASE_DIR --
 for HOST in $ALL_STORAGE_HOSTS; do
     ssh -q $HOST -- sudo rm -rf   /mnt/storage/logdata
     ssh -q $HOST -- sudo mkdir -p /mnt/storage/logdata
-    ssh -q $HOST -- sudo rm -rf   /mnt/storage/ccdata
-    ssh -q $HOST -- sudo mkdir -p /mnt/storage/ccdata
 done
 
 ssh -q $MANAGER_HOST -- docker stack deploy \

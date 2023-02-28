@@ -10,9 +10,12 @@ RUN cd /workflow/beldi && make hotel
 RUN cd /workflow/beldi && make media
 RUN cd /workflow/boki && make hotel
 RUN cd /workflow/boki && make media
+RUN cd /workflow/optimal && make hotel
+RUN cd /workflow/optimal && make media
 
 FROM ubuntu:focal
 
 COPY --from=builder  /workflow/beldi/bin  /beldi-bin
 COPY --from=builder  /workflow/boki/bin   /bokiflow-bin
+COPY --from=builder  /workflow/optimal/bin /optimal-bin
 COPY --from=boki     /boki/launcher       /boki/launcher

@@ -43,7 +43,7 @@ func LibRead(tablename string, key aws.JSONValue, projection []string) aws.JSONV
 }
 
 func LibWrite(tablename string, key aws.JSONValue,
-		update map[expression.NameBuilder]expression.OperandBuilder) {
+	update map[expression.NameBuilder]expression.OperandBuilder) {
 	Key, err := dynamodbattribute.MarshalMap(key)
 	CHECK(err)
 	if len(update) == 0 {
@@ -135,8 +135,8 @@ func LibScan(tablename string, projection []string) []aws.JSONValue {
 }
 
 func CondWrite(env *Env, tablename string, key string,
-		update map[expression.NameBuilder]expression.OperandBuilder,
-		cond expression.ConditionBuilder) {
+	update map[expression.NameBuilder]expression.OperandBuilder,
+	cond expression.ConditionBuilder) {
 	newLog, preWriteLog := ProposeNextStep(env, aws.JSONValue{
 		"type":  "PreWrite",
 		"key":   key,
@@ -147,7 +147,7 @@ func CondWrite(env *Env, tablename string, key string,
 		CheckLogDataField(preWriteLog, "table", tablename)
 		CheckLogDataField(preWriteLog, "key", key)
 		log.Printf("[INFO] Seen PreWrite log for step %d", preWriteLog.StepNumber)
-		resultLog := FetchStepResultLog(env, preWriteLog.StepNumber, /* catch= */ false)
+		resultLog := FetchStepResultLog(env, preWriteLog.StepNumber /* catch= */, false)
 		if resultLog != nil {
 			CheckLogDataField(resultLog, "type", "PostWrite")
 			CheckLogDataField(resultLog, "table", tablename)
@@ -187,9 +187,9 @@ func CondWrite(env *Env, tablename string, key string,
 	}
 
 	LogStepResult(env, env.InstanceId, preWriteLog.StepNumber, aws.JSONValue{
-		"type":    "PostWrite",
-		"key":     key,
-		"table":   tablename,
+		"type":  "PostWrite",
+		"key":   key,
+		"table": tablename,
 	})
 }
 
@@ -213,9 +213,9 @@ func Read(env *Env, tablename string, key string) interface{} {
 			res = nil
 		}
 		newLog, intentLog = ProposeNextStep(env, aws.JSONValue{
-			"type": "Read",
-			"key": key,
-			"table": tablename,
+			"type":   "Read",
+			"key":    key,
+			"table":  tablename,
 			"result": res,
 		})
 	}
@@ -242,8 +242,8 @@ func Scan(env *Env, tablename string) interface{} {
 			res = append(res, item["V"])
 		}
 		newLog, intentLog = ProposeNextStep(env, aws.JSONValue{
-			"type": "Scan",
-			"table": tablename,
+			"type":   "Scan",
+			"table":  tablename,
 			"result": res,
 		})
 	}

@@ -147,7 +147,7 @@ func LibScanWithLast(tablename string, projection []string, filter expression.Co
 			expr, err := expression.NewBuilder().WithFilter(filter).Build()
 			CHECK(err)
 			res, err = DBClient.Scan(&dynamodb.ScanInput{
-				TableName:                 aws.String(kTablePrefix + tablename),
+				TableName:                 aws.String(tablename),
 				ExpressionAttributeNames:  expr.Names(),
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
@@ -157,7 +157,7 @@ func LibScanWithLast(tablename string, projection []string, filter expression.Co
 			expr, err := expression.NewBuilder().WithFilter(filter).WithProjection(BuildProjection(projection)).Build()
 			CHECK(err)
 			res, err = DBClient.Scan(&dynamodb.ScanInput{
-				TableName:                 aws.String(kTablePrefix + tablename),
+				TableName:                 aws.String(tablename),
 				ExpressionAttributeNames:  expr.Names(),
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
@@ -170,7 +170,7 @@ func LibScanWithLast(tablename string, projection []string, filter expression.Co
 			expr, err := expression.NewBuilder().WithFilter(filter).Build()
 			CHECK(err)
 			res, err = DBClient.Scan(&dynamodb.ScanInput{
-				TableName:                 aws.String(kTablePrefix + tablename),
+				TableName:                 aws.String(tablename),
 				ExpressionAttributeNames:  expr.Names(),
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
@@ -181,7 +181,7 @@ func LibScanWithLast(tablename string, projection []string, filter expression.Co
 			expr, err := expression.NewBuilder().WithFilter(filter).WithProjection(BuildProjection(projection)).Build()
 			CHECK(err)
 			res, err = DBClient.Scan(&dynamodb.ScanInput{
-				TableName:                 aws.String(kTablePrefix + tablename),
+				TableName:                 aws.String(tablename),
 				ExpressionAttributeNames:  expr.Names(),
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),

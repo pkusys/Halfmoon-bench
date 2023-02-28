@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==== READ BEFORE USE ====
-# This sccript will setup ssh client on the current machine to use the SSH
+# This script will setup ssh client on the current machine to use the SSH
 # key below to login all hosts matching `*.compute.internal`. Please check
 # your current `~/.ssh/config` to see if it conflicts with other entires.
 # Boki's base VM image (`ami-0c6de836734de3280`) is hard-coded to trust

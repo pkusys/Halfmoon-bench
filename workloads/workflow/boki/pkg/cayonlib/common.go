@@ -1,9 +1,10 @@
 package cayonlib
 
 import (
+	"os"
+
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"os"
 )
 
 var sess = session.Must(session.NewSessionWithOptions(session.Options{
