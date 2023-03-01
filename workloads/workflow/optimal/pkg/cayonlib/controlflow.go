@@ -120,7 +120,7 @@ func SyncInvoke(env *Env, callee string, input interface{}) (interface{}, string
 		"callee":     callee,
 		"DONE":       false,
 		"ASYNC":      false,
-		// "INPUT":      input,
+		"INPUT":      input,
 		"ST": time.Now().Unix(),
 	})
 	// conditonal append failed
@@ -185,7 +185,7 @@ func ProposeInvoke(env *Env, callee string, input interface{}) *IntentLogEntry {
 		"callee":     callee,
 		"DONE":       false,
 		"ASYNC":      false,
-		// "INPUT":      input,
+		"INPUT":      input,
 		"ST": time.Now().Unix(),
 	})
 	// conditonal append failed
@@ -258,7 +258,7 @@ func AsyncInvoke(env *Env, callee string, input interface{}) string {
 		"callee":     callee,
 		"DONE":       false,
 		"ASYNC":      false,
-		// "INPUT":      input,
+		"INPUT":      input,
 		"ST": time.Now().Unix(),
 	})
 	// conditonal append failed

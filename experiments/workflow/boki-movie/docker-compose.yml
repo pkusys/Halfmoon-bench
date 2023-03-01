@@ -17,7 +17,7 @@ services:
     restart: always
 
   boki-engine:
-    image: zjia/boki:sosp-ae
+    image: shengqipku/boki:workflow
     hostname: boki-engine-{{.Task.Slot}}
     entrypoint:
       - /boki/engine
@@ -32,7 +32,7 @@ services:
       - --enable_shared_log
       - --slog_engine_enable_cache
       - --slog_engine_cache_cap_mb=1024
-      - --slog_engine_propagate_auxdata
+      # - --slog_engine_propagate_auxdata
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -45,7 +45,7 @@ services:
     restart: always
 
   boki-controller:
-    image: zjia/boki:sosp-ae
+    image: shengqipku/boki:workflow
     entrypoint:
       - /boki/controller
       - --zookeeper_host=zookeeper:2181
@@ -58,7 +58,7 @@ services:
     restart: always
 
   boki-gateway:
-    image: zjia/boki:sosp-ae
+    image: shengqipku/boki:workflow
     hostname: faas-gateway
     ports:
       - 8080:8080
@@ -83,7 +83,7 @@ services:
     restart: always
 
   boki-storage:
-    image: zjia/boki:sosp-ae
+    image: shengqipku/boki:workflow
     hostname: faas-storage-{{.Task.Slot}}
     entrypoint:
       - /boki/storage
@@ -107,7 +107,7 @@ services:
     restart: always
 
   boki-sequencer:
-    image: zjia/boki:sosp-ae
+    image: shengqipku/boki:workflow
     hostname: faas-sequencer-{{.Task.Slot}}
     entrypoint:
       - /boki/sequencer
@@ -125,7 +125,7 @@ services:
     restart: always
 
   frontend:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/Frontend", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -138,7 +138,7 @@ services:
     restart: always
 
   cast-info-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/CastInfo", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -151,7 +151,7 @@ services:
     restart: always
 
   review-storage-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/ReviewStorage", "3"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -164,7 +164,7 @@ services:
     restart: always
 
   user-review-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/UserReview", "4"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -177,7 +177,7 @@ services:
     restart: always
 
   movie-review-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/MovieReview", "5"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -190,7 +190,7 @@ services:
     restart: always
 
   compose-review-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/ComposeReview", "6"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -203,7 +203,7 @@ services:
     restart: always
 
   text-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/Text", "7"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -216,7 +216,7 @@ services:
     restart: always
 
   user-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/User", "8"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -229,7 +229,7 @@ services:
     restart: always
 
   unique-id-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/UniqueId", "9"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -242,7 +242,7 @@ services:
     restart: always
 
   rating-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/Rating", "10"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -255,7 +255,7 @@ services:
     restart: always
 
   movie-id-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/MovieId", "11"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -268,7 +268,7 @@ services:
     restart: always
 
   plot-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/Plot", "12"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -281,7 +281,7 @@ services:
     restart: always
 
   movie-info-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/MovieInfo", "13"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -294,7 +294,7 @@ services:
     restart: always
 
   page-service:
-    image: zjia/boki-beldibench:sosp-ae
+    image: shengqipku/boki-beldibench:workflow
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/media/Page", "14"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki

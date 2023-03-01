@@ -42,12 +42,10 @@ function build_beldibench {
     cd $ROOT_DIR/workloads/workflow
     cd ./beldi && make hotel-baseline && cd ..
     cd ./beldi && make media-baseline && cd ..
-    cd ./beldi && make hotel && cd ..
-    cd ./beldi && make media && cd ..
     cd ./boki && make hotel && cd ..
     cd ./boki && make media && cd ..
     cd ./optimal && make hotel && cd ..
-    # cd ./optimal && make media && cd ..
+    cd ./optimal && make media && cd ..
     docker build -t shengqipku/boki-beldibench:$TAG -f $ROOT_DIR/dockerfiles/Dockerfile.my-beldibench $ROOT_DIR
 }
 

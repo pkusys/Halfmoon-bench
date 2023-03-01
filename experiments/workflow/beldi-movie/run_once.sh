@@ -1,8 +1,15 @@
 #!/bin/bash
+
+set -xu
+
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-AWS_REGION=us-east-2
+BENCH_IMAGE=shengqipku/boki-beldibench:workflow
+
+STACK=boki
+
+AWS_REGION=ap-southeast-1
 
 EXP_DIR=$BASE_DIR/results/$1
 QPS=$2
@@ -19,23 +26,25 @@ $HELPER_SCRIPT generate-docker-compose --base-dir=$BASE_DIR
 scp -q $BASE_DIR/docker-compose.yml $MANAGER_HOST:~
 scp -q $BASE_DIR/docker-compose-generated.yml $MANAGER_HOST:~
 
-ssh -q $MANAGER_HOST -- docker stack rm boki-experiment
+ssh -q $MANAGER_HOST -- docker stack rm $STACK
 
 sleep 40
 
-TABLE_PREFIX=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+TABLE_PREFIX=$(head -c 64 /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
 TABLE_PREFIX="${TABLE_PREFIX}-"
 
+ssh -q $CLIENT_HOST -- docker pull $BENCH_IMAGE
+
 ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
-    zjia/boki-beldibench:sosp-ae \
-    cp -r /beldi-bin/media /tmp/
+    $BENCH_IMAGE \
+    cp -r /beldi-bin/bmedia /tmp/
 
 scp -q $ROOT_DIR/workloads/workflow/beldi/internal/media/data/compressed.json $CLIENT_HOST:/tmp
 
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION \
-    /tmp/media/init create beldi
+    /tmp/bmedia/init create baseline
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION \
-    /tmp/media/init populate beldi /tmp/compressed.json
+    /tmp/bmedia/init populate baseline /tmp/compressed.json
 
 scp -q $ROOT_DIR/scripts/zk_setup.sh $MANAGER_HOST:/tmp/zk_setup.sh
 ssh -q $MANAGER_HOST -- sudo mkdir -p /mnt/inmem/store
@@ -61,11 +70,11 @@ for HOST in $ALL_STORAGE_HOSTS; do
 done
 
 ssh -q $MANAGER_HOST -- TABLE_PREFIX=$TABLE_PREFIX docker stack deploy \
-    -c ~/docker-compose-generated.yml -c ~/docker-compose.yml boki-experiment
+    -c ~/docker-compose-generated.yml -c ~/docker-compose.yml $STACK
 sleep 60
 
 for HOST in $ALL_ENGINE_HOSTS; do
-    ENGINE_CONTAINER_ID=`$HELPER_SCRIPT get-container-id --base-dir=$BASE_DIR --service faas-engine --machine-host $HOST`
+    ENGINE_CONTAINER_ID=`$HELPER_SCRIPT get-container-id --base-dir=$BASE_DIR --service boki-engine --machine-host $HOST`
     echo 4096 | ssh -q $HOST -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/$ENGINE_CONTAINER_ID/cpu.shares
 done
 sleep 10
@@ -94,6 +103,6 @@ scp -q $MANAGER_HOST:/mnt/inmem/store/async_results $EXP_DIR
 $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
 
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION \
-    /tmp/media/init clean beldi
+    /tmp/bmedia/init clean baseline
 
-$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR/logs
+$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR

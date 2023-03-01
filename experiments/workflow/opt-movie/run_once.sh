@@ -13,6 +13,7 @@ AWS_REGION=ap-southeast-1
 
 EXP_DIR=$BASE_DIR/results/$1
 QPS=$2
+LOGMODE=read
 
 HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 WRK_DIR=/usr/local/bin
@@ -37,13 +38,13 @@ ssh -q $CLIENT_HOST -- docker pull $BENCH_IMAGE
 
 ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
     $BENCH_IMAGE \
-    cp -r /bokiflow-bin/media /tmp/
+    cp -r /optimal-bin/media /tmp/
 
 scp -q $ROOT_DIR/workloads/workflow/boki/internal/media/data/compressed.json $CLIENT_HOST:/tmp
 
-ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION \
+ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION LoggingMode=$LOGMODE \
     /tmp/media/init create cayon
-ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION \
+ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION LoggingMode=$LOGMODE \
     /tmp/media/init populate cayon /tmp/compressed.json
 
 scp -q $ROOT_DIR/scripts/zk_setup.sh $MANAGER_HOST:/tmp/zk_setup.sh
@@ -85,7 +86,7 @@ mkdir -p $EXP_DIR
 ssh -q $MANAGER_HOST -- cat /proc/cmdline >>$EXP_DIR/kernel_cmdline
 ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
 
-scp -q $ROOT_DIR/workloads/workflow/boki/benchmark/media/workload.lua $CLIENT_HOST:/tmp
+scp -q $ROOT_DIR/workloads/workflow/optimal/benchmark/media/workload.lua $CLIENT_HOST:/tmp
 
 ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 30 -L -U \
     -s /tmp/workload.lua \
@@ -102,7 +103,7 @@ sleep 10
 scp -q $MANAGER_HOST:/mnt/inmem/store/async_results $EXP_DIR
 $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
 
-ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION \
+ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION LoggingMode=$LOGMODE \
     /tmp/media/init clean cayon
 
 $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR

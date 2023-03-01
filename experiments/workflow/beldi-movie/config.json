@@ -31,5 +31,5 @@
         "movie-info-service": { "placement_label": "engine_node", "replicas": 8, "need_aws_env": true, "mount_certs": true },
         "page-service": { "placement_label": "engine_node", "replicas": 8, "need_aws_env": true, "mount_certs": true }
     },
-    "aws_region": "us-east-2"
+    "aws_region": "ap-southeast-1"
 }

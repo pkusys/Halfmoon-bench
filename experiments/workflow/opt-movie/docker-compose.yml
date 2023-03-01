@@ -18,7 +18,7 @@ services:
 
   boki-engine:
     image: shengqipku/boki:workflow
-    hostname: faas-engine-{{.Task.Slot}}
+    hostname: boki-engine-{{.Task.Slot}}
     entrypoint:
       - /boki/engine
       - --zookeeper_host=zookeeper:2181
@@ -29,6 +29,11 @@ services:
       - --instant_rps_p_norm=0.8
       - --io_uring_entries=2048
       - --io_uring_fd_slots=4096
+      - --enable_shared_log
+      - --slog_engine_enable_cache
+      - --slog_engine_cache_cap_mb=1024
+      # - --slog_engine_propagate_auxdata
+      - --use_txn_engine
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -38,6 +43,19 @@ services:
     environment:
       - FAAS_NODE_ID={{.Task.Slot}}
       - FAAS_CGROUP_FS_ROOT=/tmp/root_cgroupfs
+    restart: always
+
+  boki-controller:
+    image: shengqipku/boki:workflow
+    entrypoint:
+      - /boki/controller
+      - --zookeeper_host=zookeeper:2181
+      - --metalog_replicas=3
+      - --userlog_replicas=3
+      - --index_replicas=8
+      # - --v=1
+    depends_on:
+      - zookeeper-setup
     restart: always
 
   boki-gateway:
@@ -65,184 +83,241 @@ services:
       - /mnt/inmem/store:/tmp/store
     restart: always
 
+  boki-storage:
+    image: shengqipku/boki:workflow
+    hostname: faas-storage-{{.Task.Slot}}
+    entrypoint:
+      - /boki/storage
+      - --zookeeper_host=zookeeper:2181
+      - --listen_iface=eth0
+      - --db_path=/tmp/storage/logdata
+      - --num_io_workers=2
+      - --io_uring_entries=2048
+      - --io_uring_fd_slots=4096
+      - --slog_local_cut_interval_us=300
+      - --slog_storage_bgthread_interval_ms=1
+      - --slog_storage_backend=rocksdb
+      - --slog_storage_cache_cap_mb=4096
+      - --use_txn_engine
+      # - --v=1
+    depends_on:
+      - zookeeper-setup
+    volumes:
+      - /mnt/storage:/tmp/storage
+    environment:
+      - FAAS_NODE_ID={{.Task.Slot}}
+    restart: always
+
+  boki-sequencer:
+    image: shengqipku/boki:workflow
+    hostname: faas-sequencer-{{.Task.Slot}}
+    entrypoint:
+      - /boki/sequencer
+      - --zookeeper_host=zookeeper:2181
+      - --listen_iface=eth0
+      - --num_io_workers=2
+      - --io_uring_entries=2048
+      - --io_uring_fd_slots=4096
+      - --slog_global_cut_interval_us=300
+      # - --v=1
+    depends_on:
+      - zookeeper-setup
+    environment:
+      - FAAS_NODE_ID={{.Task.Slot}}
+    restart: always
+
   frontend:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/Frontend", "1"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/Frontend", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   cast-info-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/CastInfo", "2"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/CastInfo", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   review-storage-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/ReviewStorage", "3"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/ReviewStorage", "3"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   user-review-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/UserReview", "4"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/UserReview", "4"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   movie-review-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/MovieReview", "5"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/MovieReview", "5"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   compose-review-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/ComposeReview", "6"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/ComposeReview", "6"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   text-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/Text", "7"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/Text", "7"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   user-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/User", "8"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/User", "8"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   unique-id-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/UniqueId", "9"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/UniqueId", "9"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   rating-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/Rating", "10"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/Rating", "10"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   movie-id-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/MovieId", "11"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/MovieId", "11"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   plot-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/Plot", "12"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/Plot", "12"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   movie-info-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/MovieInfo", "13"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/MovieInfo", "13"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
 
   page-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/Page", "14"]
+    entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/Page", "14"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
+      - LoggingMode=read
     depends_on:
       - boki-engine
     restart: always
