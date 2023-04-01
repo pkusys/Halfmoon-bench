@@ -16,14 +16,13 @@ var DBClient = dynamodb.New(sess) // aws.NewConfig().WithLogLevel(aws.LogDebugWi
 
 var T = int64(60)
 
-var TYPE = "WRITELOG" // options: READLOG, WRITELOG
+var TYPE = "READLOG" // options: READLOG, WRITELOG
 
 func init() {
 	switch os.Getenv("LoggingMode") {
 	case "":
-		log.Println("[INFO] LoggingMode not set, defaulting to WRITELOG")
-		TYPE = "WRITELOG"
-		return
+		TYPE = "READLOG"
+		// log.Println("[INFO] LoggingMode not set, defaulting to READLOG")
 	case "read":
 		TYPE = "READLOG"
 	case "write":
@@ -31,7 +30,7 @@ func init() {
 	default:
 		log.Fatalf("[FATAL] invalid LoggingMode: %s", os.Getenv("LoggingMode"))
 	}
-	log.Printf("[INFO] log mode: %s", TYPE)
+	// log.Printf("[INFO] log mode: %s", TYPE)
 }
 
 func CHECK(err error) {

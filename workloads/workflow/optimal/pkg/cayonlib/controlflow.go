@@ -32,6 +32,7 @@ type InputWrapper struct {
 	TxnId       string      `mapstructure:"TxnId"`
 	Instruction string      `mapstructure:"Instruction"`
 	Async       bool        `mapstructure:"Async"`
+	LogSize     int         `mapstructure:"LogSize"`
 }
 
 func (iw *InputWrapper) Serialize() []byte {
@@ -66,8 +67,9 @@ type InvokeError struct {
 }
 
 type OutputWrapper struct {
-	Status string
-	Output interface{}
+	Status  string
+	LogSize int
+	Output  interface{}
 }
 
 func (ow *OutputWrapper) Serialize() []byte {
@@ -110,6 +112,7 @@ func PrepareEnv(iw *InputWrapper, lambdaId string) *Env {
 		Input:       iw.Input,
 		TxnId:       iw.TxnId,
 		Instruction: iw.Instruction,
+		LogSize:     iw.LogSize,
 	}
 }
 
@@ -121,7 +124,7 @@ func SyncInvoke(env *Env, callee string, input interface{}) (interface{}, string
 		"DONE":       false,
 		"ASYNC":      false,
 		"INPUT":      input,
-		"ST": time.Now().Unix(),
+		"ST":         time.Now().Unix(),
 	})
 	// conditonal append failed
 	// the outermost function should check env.Instruction = "EXIT"
@@ -150,6 +153,7 @@ func SyncInvoke(env *Env, callee string, input interface{}) (interface{}, string
 		Input:       input,
 		TxnId:       env.TxnId,
 		Instruction: env.Instruction,
+		LogSize:     env.LogSize,
 	}
 	if iw.Instruction == "EXECUTE" {
 		LibAppendLog(env, TransactionStreamTag(env.LambdaId, env.TxnId), &TxnLogEntry{
@@ -170,6 +174,7 @@ func SyncInvoke(env *Env, callee string, input interface{}) (interface{}, string
 	// log.Printf("[INFO] func %v instance %v returned to caller %v", callee, instanceId, env.InstanceId)
 	ow := OutputWrapper{}
 	ow.Deserialize(res)
+	env.LogSize += ow.LogSize
 	switch ow.Status {
 	case "Success":
 		return ow.Output, iw.InstanceId
@@ -186,7 +191,7 @@ func ProposeInvoke(env *Env, callee string, input interface{}) *IntentLogEntry {
 		"DONE":       false,
 		"ASYNC":      false,
 		"INPUT":      input,
-		"ST": time.Now().Unix(),
+		"ST":         time.Now().Unix(),
 	})
 	// conditonal append failed
 	// the outermost function should check env.Instruction = "EXIT"
@@ -224,6 +229,7 @@ func AssignedSyncInvoke(env *Env, callee string, preInvokeLog *IntentLogEntry) (
 		Input:       preInvokeLog.Data["INPUT"],
 		TxnId:       env.TxnId,
 		Instruction: env.Instruction,
+		LogSize:     env.LogSize,
 	}
 	if iw.Instruction == "EXECUTE" {
 		LibAppendLog(env, TransactionStreamTag(env.LambdaId, env.TxnId), &TxnLogEntry{
@@ -243,6 +249,7 @@ func AssignedSyncInvoke(env *Env, callee string, preInvokeLog *IntentLogEntry) (
 	}
 	ow := OutputWrapper{}
 	ow.Deserialize(res)
+	env.LogSize += ow.LogSize
 	switch ow.Status {
 	case "Success":
 		return ow.Output, iw.InstanceId
@@ -259,7 +266,7 @@ func AsyncInvoke(env *Env, callee string, input interface{}) string {
 		"DONE":       false,
 		"ASYNC":      false,
 		"INPUT":      input,
-		"ST": time.Now().Unix(),
+		"ST":         time.Now().Unix(),
 	})
 	// conditonal append failed
 	// the outermost function should check env.Instruction = "EXIT"
@@ -285,6 +292,7 @@ func AsyncInvoke(env *Env, callee string, input interface{}) string {
 		Async:      true,
 		InstanceId: instanceId,
 		Input:      input,
+		// logsize = 0
 	}
 
 	/*
@@ -424,8 +432,9 @@ func wrapperInternal(f func(*Env) interface{}, iw *InputWrapper, env *Env) (Outp
 	// log.Printf("[INFO] finishing instance %v caller %v", env.InstanceId, iw.CallerName)
 
 	return OutputWrapper{
-		Status: "Success",
-		Output: output,
+		Status:  "Success",
+		LogSize: env.LogSize,
+		Output:  output,
 	}, nil
 }
 

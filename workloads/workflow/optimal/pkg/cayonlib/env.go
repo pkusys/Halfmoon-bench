@@ -23,4 +23,5 @@ type Env struct {
 	FaasCtx     context.Context
 	FaasEnv     types.Environment
 	Fsm         *IntentFsm
+	LogSize     int
 }

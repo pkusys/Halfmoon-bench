@@ -143,6 +143,7 @@ func FetchStepResultLog(env *Env, stepNumber int32, catch bool) *IntentLogEntry 
 func LibAppendLog(env *Env, tag uint64, data interface{}) uint64 {
 	serializedData, err := json.Marshal(data)
 	CHECK(err)
+	env.LogSize += len(serializedData)
 	encoded := snappy.Encode(nil, serializedData)
 	seqNum, err := env.FaasEnv.SharedLogAppend(env.FaasCtx, []uint64{tag}, encoded)
 	CHECK(err)

@@ -1,0 +1,5 @@
+[
+    { "funcName": "nop", "funcId": 1, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "singleop", "funcId": 2, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "prewarm", "funcId": 3, "minWorkers": 1, "maxWorkers": 1 }
+]

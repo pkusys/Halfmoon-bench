@@ -1,8 +1,9 @@
 package cayonlib
 
 import (
-	"cs.utexas.edu/zjia/faas/types"
 	"context"
+
+	"cs.utexas.edu/zjia/faas/types"
 )
 
 type LogEntry struct {
@@ -21,4 +22,5 @@ type Env struct {
 	FaasCtx     context.Context
 	FaasEnv     types.Environment
 	Fsm         *IntentFsm
+	LogSize     int
 }

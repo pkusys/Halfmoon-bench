@@ -10,27 +10,18 @@
 -- end
 
 request = function()
-    local path = os.getenv("ENDPOINT")
-    local method = "POST"
-    local headers = {}
-    -- local param = {
-    --     InstanceId = uuid(),
-    --     CallerName = "",
-    --     Async = true,
-    --     Input = {
-    --         Type = os.getenv("TYPE"),
-    --     }
-    -- }
-    local body = '{' ..
-    --   '"InstanceId": "' .. uuid() .. '",' ..
-      '"InstanceId": "",' ..
-      '"CallerName": "",' .. '"Async": true,' ..
-      '"Input":{}' ..
-    '}'
-    -- local body = JSON:encode(param)
-    headers["Content-Type"] = "application/json"
+  local path = '/asyncFunction/singleop'
+  local method = "POST"
+  local headers = {}
+  local body = '{' ..
+    '"InstanceId": "",' ..
+    '"CallerName": "",' .. '"Async": true,' ..
+    '"Input":{}' ..
+  '}'
+  -- local body = JSON:encode(param)
+  headers["Content-Type"] = "application/json"
 
-    return wrk.format(method, path, headers, body)
+  return wrk.format(method, path, headers, body)
 end
 
 function init(rand_seed)

@@ -70,6 +70,7 @@ func (fsm *IntentFsm) Catch(env *Env) {
 			// log.Printf("[INFO] Found my log: seqnum=%d, step=%d", logEntry.SeqNum, intentLog.StepNumber)
 			intentLog.SeqNum = logEntry.SeqNum
 			fsm.applyLog(&intentLog)
+			env.LogSize += len(logEntry.Data)
 		} else {
 			log.Fatalf("[FATAL] Hash collision on intent step stream of instance %v tag %v: other instance=%v step=%d seqnum=%d", fsm.instanceId, tag, intentLog.InstanceId, intentLog.StepNumber, logEntry.SeqNum)
 		}
@@ -124,6 +125,7 @@ func ProposeNextStep(env *Env, tags []uint64, data aws.JSONValue) (bool, *Intent
 func LogStepResultForCaller(env *Env, instanceId string, stepNumber int32, data aws.JSONValue) {
 	serializedData, err := json.Marshal(data)
 	CHECK(err)
+	env.LogSize += len(serializedData)
 	encoded := snappy.Encode(nil, serializedData)
 	err = env.FaasEnv.SharedLogOverwrite(env.FaasCtx, IntentStepStreamTag(instanceId), uint32(stepNumber), encoded)
 	CHECK(err)
@@ -137,12 +139,16 @@ func LibConditionalAppendLog(env *Env, tags []uint64, data interface{}, condTag 
 	if seqNum == protocol.InvalidLogSeqnum {
 		panic(err)
 	}
+	if err == nil {
+		env.LogSize += len(serializedData)
+	}
 	return seqNum, err == nil // if not nil then conditon failed but seqnum is valid
 }
 
 func LibAppendLog(env *Env, tag uint64, data interface{}) uint64 {
 	serializedData, err := json.Marshal(data)
 	CHECK(err)
+	env.LogSize += len(serializedData)
 	encoded := snappy.Encode(nil, serializedData)
 	seqNum, err := env.FaasEnv.SharedLogAppend(env.FaasCtx, []uint64{tag}, encoded)
 	CHECK(err)

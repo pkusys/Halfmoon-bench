@@ -1,58 +1,50 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
-	"github.com/eniac/Beldi/pkg/cayonlib"
 	"os"
-	// "time"
+	"strconv"
+
+	"github.com/eniac/Beldi/pkg/cayonlib"
 )
 
-func ClearAll() {
-	cayonlib.DeleteLambdaTables("singleop")
-	cayonlib.DeleteLambdaTables("nop")
-	// beldilib.DeleteTable("bsingleop")
-	// beldilib.DeleteTable("bnop")
-	// beldilib.DeleteLambdaTables("tsingleop")
-	// beldilib.DeleteLambdaTables("tnop")
+const table = "singleop"
+
+var nKeys = 10000
+var value = 1
+
+func init() {
+	if nk, err := strconv.Atoi(os.Getenv("NUM_KEYS")); err == nil {
+		nKeys = nk
+	} else {
+		panic("invalid NUM_KEYS")
+	}
+}
+
+func clean() {
+	cayonlib.DeleteLambdaTables(table)
+	cayonlib.WaitUntilDeleted(table)
+}
+
+func create() {
+	cayonlib.CreateLambdaTables(table)
+	cayonlib.WaitUntilActive(table)
+}
+
+func populate() {
+	for i := 0; i < nKeys; i++ {
+		cayonlib.Populate(table, strconv.Itoa(i), value, false)
+	}
 }
 
 func main() {
-	if len(os.Args) >= 2 {
-		option := os.Args[1]
-		if option == "clean" {
-			ClearAll()
-			return
-		}
+	option := os.Args[1]
+	if option == "clean" {
+		clean()
+	} else if option == "create" {
+		create()
+	} else if option == "populate" {
+		populate()
+	} else {
+		panic("unkown option: " + option)
 	}
-	ClearAll()
-	cayonlib.WaitUntilAllDeleted([]string{"singleop", "nop"})
-
-	cayonlib.CreateLambdaTables("singleop")
-	cayonlib.CreateLambdaTables("nop")
-
-	cayonlib.WaitUntilAllActive([]string{"singleop", "nop"})
-
-	// beldilib.CreateBaselineTable("bsingleop")
-	// beldilib.CreateBaselineTable("bnop")
-
-	// beldilib.WaitUntilAllActive([]string{
-	// 	"singleop", "singleop-log", "singleop-collector",
-	// 	"nop", "nop-log", "nop-collector",
-	// 	"bsingleop", "bnop",
-	// })
-
-	// beldilib.CreateTxnTables("tsingleop")
-	// beldilib.CreateTxnTables("tnop")
-
-	// time.Sleep(60 * time.Second)
-	// beldilib.WriteNRows("singleop", "K", 20)
-
-	cayonlib.LibWrite("singleop", aws.JSONValue{"K": "K"}, map[expression.NameBuilder]expression.OperandBuilder{
-		expression.Name("V"): expression.Value(1),
-	})
-
-	// beldilib.LibWrite("tsingleop", aws.JSONValue{"K": "K"}, map[expression.NameBuilder]expression.OperandBuilder{
-	// 	expression.Name("V"): expression.Value(1),
-	// })
 }

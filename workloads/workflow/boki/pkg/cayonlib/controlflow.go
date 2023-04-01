@@ -3,15 +3,17 @@ package cayonlib
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"fmt"
+	"log"
+
 	// "github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+
 	// lambdaSdk "github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/golang/snappy"
 	"github.com/lithammer/shortuuid"
 	"github.com/mitchellh/mapstructure"
-	"github.com/golang/snappy"
 
 	"cs.utexas.edu/zjia/faas/types"
 
@@ -29,6 +31,7 @@ type InputWrapper struct {
 	TxnId       string      `mapstructure:"TxnId"`
 	Instruction string      `mapstructure:"Instruction"`
 	Async       bool        `mapstructure:"Async"`
+	LogSize     int         `mapstructure:"LogSize"`
 }
 
 func (iw *InputWrapper) Serialize() []byte {
@@ -63,8 +66,9 @@ type InvokeError struct {
 }
 
 type OutputWrapper struct {
-	Status string
-	Output interface{}
+	Status  string
+	LogSize int
+	Output  interface{}
 }
 
 func (ow *OutputWrapper) Serialize() []byte {
@@ -106,6 +110,7 @@ func PrepareEnv(iw *InputWrapper, lambdaId string) *Env {
 		Input:       iw.Input,
 		TxnId:       iw.TxnId,
 		Instruction: iw.Instruction,
+		LogSize:     iw.LogSize,
 	}
 }
 
@@ -120,7 +125,7 @@ func SyncInvoke(env *Env, callee string, input interface{}) (interface{}, string
 	if !newLog {
 		CheckLogDataField(preInvokeLog, "type", "PreInvoke")
 		log.Printf("[INFO] Seen PreInvoke log for step %d", preInvokeLog.StepNumber)
-		resultLog := FetchStepResultLog(env, preInvokeLog.StepNumber, /* catch= */ false)
+		resultLog := FetchStepResultLog(env, preInvokeLog.StepNumber /* catch= */, false)
 		if resultLog != nil {
 			CheckLogDataField(resultLog, "type", "InvokeResult")
 			log.Printf("[INFO] Seen InvokeResult log for step %d", preInvokeLog.StepNumber)
@@ -137,6 +142,7 @@ func SyncInvoke(env *Env, callee string, input interface{}) (interface{}, string
 		Input:       input,
 		TxnId:       env.TxnId,
 		Instruction: env.Instruction,
+		LogSize:     env.LogSize,
 	}
 	if iw.Instruction == "EXECUTE" {
 		LibAppendLog(env, TransactionStreamTag(env.LambdaId, env.TxnId), &TxnLogEntry{
@@ -151,6 +157,7 @@ func SyncInvoke(env *Env, callee string, input interface{}) (interface{}, string
 	CHECK(err)
 	ow := OutputWrapper{}
 	ow.Deserialize(res)
+	env.LogSize += ow.LogSize
 	switch ow.Status {
 	case "Success":
 		return ow.Output, iw.InstanceId
@@ -179,7 +186,7 @@ func AssignedSyncInvoke(env *Env, callee string, input interface{}, preInvokeLog
 
 	instanceId := preInvokeLog.Data["instanceId"].(string)
 
-	resultLog := FetchStepResultLog(env, preInvokeLog.StepNumber, /* catch= */ false)
+	resultLog := FetchStepResultLog(env, preInvokeLog.StepNumber /* catch= */, false)
 	if resultLog != nil {
 		CheckLogDataField(resultLog, "type", "InvokeResult")
 		log.Printf("[INFO] Seen InvokeResult log for step %d", preInvokeLog.StepNumber)
@@ -195,6 +202,7 @@ func AssignedSyncInvoke(env *Env, callee string, input interface{}, preInvokeLog
 		Input:       input,
 		TxnId:       env.TxnId,
 		Instruction: env.Instruction,
+		LogSize:     env.LogSize,
 	}
 	if iw.Instruction == "EXECUTE" {
 		LibAppendLog(env, TransactionStreamTag(env.LambdaId, env.TxnId), &TxnLogEntry{
@@ -209,6 +217,7 @@ func AssignedSyncInvoke(env *Env, callee string, input interface{}, preInvokeLog
 	CHECK(err)
 	ow := OutputWrapper{}
 	ow.Deserialize(res)
+	env.LogSize += ow.LogSize
 	switch ow.Status {
 	case "Success":
 		return ow.Output, iw.InstanceId
@@ -228,7 +237,7 @@ func AsyncInvoke(env *Env, callee string, input interface{}) string {
 	if !newLog {
 		CheckLogDataField(preInvokeLog, "type", "PreInvoke")
 		log.Printf("[INFO] Seen PreInvoke log for step %d", preInvokeLog.StepNumber)
-		resultLog := FetchStepResultLog(env, preInvokeLog.StepNumber, /* catch= */ false)
+		resultLog := FetchStepResultLog(env, preInvokeLog.StepNumber /* catch= */, false)
 		if resultLog != nil {
 			CheckLogDataField(resultLog, "type", "InvokeResult")
 			log.Printf("[INFO] Seen InvokeResult log for step %d", preInvokeLog.StepNumber)
@@ -245,12 +254,12 @@ func AsyncInvoke(env *Env, callee string, input interface{}) string {
 		Input:      input,
 	}
 
-/*
-	Should we handle this?
-	LibWrite(env.LogTable, pk, map[expression.NameBuilder]expression.OperandBuilder{
-		expression.Name("RET"): expression.Value(1),
-	})
-*/
+	/*
+		Should we handle this?
+		LibWrite(env.LogTable, pk, map[expression.NameBuilder]expression.OperandBuilder{
+			expression.Name("RET"): expression.Value(1),
+		})
+	*/
 
 	payload := iw.Serialize()
 	err := env.FaasEnv.InvokeFuncAsync(env.FaasCtx, callee, payload)
@@ -331,15 +340,15 @@ func wrapperInternal(f func(*Env) interface{}, iw *InputWrapper, env *Env) (Outp
 	if iw.Async == false || iw.CallerName == "" {
 		LibAppendLog(env, IntentLogTag, aws.JSONValue{
 			"InstanceId": env.InstanceId,
-			"DONE": false,
-			"ASYNC": iw.Async,
-			"INPUT": iw.Input,
-			"ST": time.Now().Unix(),
+			"DONE":       false,
+			"ASYNC":      iw.Async,
+			"INPUT":      iw.Input,
+			"ST":         time.Now().Unix(),
 		})
 	} else {
 		LibAppendLog(env, IntentLogTag, aws.JSONValue{
 			"InstanceId": env.InstanceId,
-			"ST": time.Now().Unix(),
+			"ST":         time.Now().Unix(),
 		})
 	}
 	//ok := LibPut(env.IntentTable, aws.JSONValue{"InstanceId": env.InstanceId},
@@ -379,8 +388,9 @@ func wrapperInternal(f func(*Env) interface{}, iw *InputWrapper, env *Env) (Outp
 	})
 
 	return OutputWrapper{
-		Status: "Success",
-		Output: output,
+		Status:  "Success",
+		LogSize: env.LogSize,
+		Output:  output,
 	}, nil
 }
 
