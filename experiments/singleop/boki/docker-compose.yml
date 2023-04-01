@@ -128,7 +128,7 @@ services:
 
   nop-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/bsingleop/nop", "1"]
+    entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/singleop/nop", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:

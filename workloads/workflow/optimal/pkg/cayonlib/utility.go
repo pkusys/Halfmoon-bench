@@ -11,49 +11,22 @@ import (
 )
 
 func CreateMainTable(lambdaId string) {
-	if TYPE == "READLOG" {
-		_, _ = DBClient.CreateTable(&dynamodb.CreateTableInput{
-			BillingMode: aws.String("PAY_PER_REQUEST"),
-			AttributeDefinitions: []*dynamodb.AttributeDefinition{
-				{
-					AttributeName: aws.String("K"),
-					AttributeType: aws.String("S"),
-				},
+	_, _ = DBClient.CreateTable(&dynamodb.CreateTableInput{
+		BillingMode: aws.String("PAY_PER_REQUEST"),
+		AttributeDefinitions: []*dynamodb.AttributeDefinition{
+			{
+				AttributeName: aws.String("K"),
+				AttributeType: aws.String("S"),
 			},
-			KeySchema: []*dynamodb.KeySchemaElement{
-				{
-					AttributeName: aws.String("K"),
-					KeyType:       aws.String("HASH"),
-				},
+		},
+		KeySchema: []*dynamodb.KeySchemaElement{
+			{
+				AttributeName: aws.String("K"),
+				KeyType:       aws.String("HASH"),
 			},
-			TableName: aws.String(kTablePrefix + lambdaId),
-		})
-	} else { // TYPE == "WRITELOG"
-		_, _ = DBClient.CreateTable(&dynamodb.CreateTableInput{
-			BillingMode: aws.String("PAY_PER_REQUEST"),
-			AttributeDefinitions: []*dynamodb.AttributeDefinition{
-				{
-					AttributeName: aws.String("K"),
-					AttributeType: aws.String("S"),
-				},
-				{
-					AttributeName: aws.String("VERSION"),
-					AttributeType: aws.String("N"),
-				},
-			},
-			KeySchema: []*dynamodb.KeySchemaElement{
-				{
-					AttributeName: aws.String("K"),
-					KeyType:       aws.String("HASH"),
-				},
-				{
-					AttributeName: aws.String("VERSION"),
-					KeyType:       aws.String("RANGE"),
-				},
-			},
-			TableName: aws.String(kTablePrefix + lambdaId),
-		})
-	}
+		},
+		TableName: aws.String(kTablePrefix + lambdaId),
+	})
 }
 
 func CreateLogTable(lambdaId string) {
@@ -156,16 +129,26 @@ func WriteNRows(tablename string, key string, n int) {
 }
 
 func Populate(tablename string, key string, value interface{}, baseline bool) {
-	if TYPE == "READLOG" {
-		LibWrite(tablename, aws.JSONValue{"K": key},
-			map[expression.NameBuilder]expression.OperandBuilder{
-				expression.Name("VERSION"): expression.Value(0),
-				expression.Name("V"):       expression.Value(value),
-			})
-	} else {
-		LibWrite(tablename, aws.JSONValue{"K": key, "VERSION": 0},
-			map[expression.NameBuilder]expression.OperandBuilder{
-				expression.Name("V"): expression.Value(value),
-			})
-	}
+	// if TYPE == "READLOG" {
+	// 	LibWrite(tablename, aws.JSONValue{"K": key},
+	// 		map[expression.NameBuilder]expression.OperandBuilder{
+	// 			expression.Name("VERSION"): expression.Value(0),
+	// 			expression.Name("V"):       expression.Value(value),
+	// 		})
+	// } else {
+	// 	// LibWrite(tablename, aws.JSONValue{"K": key, "VERSION": 0},
+	// 	// 	map[expression.NameBuilder]expression.OperandBuilder{
+	// 	// 		expression.Name("V"): expression.Value(value),
+	// 	// 	})
+	// 	LibWrite(tablename, aws.JSONValue{"K": key + "_0"},
+	// 		map[expression.NameBuilder]expression.OperandBuilder{
+	// 			// expression.Name("VERSION"): expression.Value(0),
+	// 			expression.Name("V"): expression.Value(value),
+	// 		})
+	// }
+	LibWriteSingleVersion(tablename, key, 0,
+		map[expression.NameBuilder]expression.OperandBuilder{
+			// expression.Name("VERSION"): expression.Value(0),
+			expression.Name("V"): expression.Value(value),
+		})
 }

@@ -1,8 +1,0 @@
-[
-    { "funcName": "RetwisInit", "funcId": 1, "minWorkers": 1, "maxWorkers": 1 },
-    { "funcName": "RetwisRegister", "funcId": 2, "minWorkers": 8, "maxWorkers": 8 },
-    { "funcName": "RetwisProfile", "funcId": 3, "minWorkers": 32, "maxWorkers": 32 },
-    { "funcName": "RetwisFollow", "funcId": 4, "minWorkers": 32, "maxWorkers": 32 },
-    { "funcName": "RetwisPost", "funcId": 5, "minWorkers": 32, "maxWorkers": 32 },
-    { "funcName": "RetwisPostList", "funcId": 6, "minWorkers": 32, "maxWorkers": 32 }
-]

@@ -10,7 +10,6 @@ import (
 	"cs.utexas.edu/zjia/faas-retwis/utils"
 
 	"github.com/montanaflynn/stats"
-	"github.com/openacid/low/mathext/zipf"
 )
 
 var FLAGS_faas_gateway string
@@ -28,7 +27,8 @@ var FLAGS_zipf_skew float64
 var FLAGS_keyspace int
 var FLAGS_read_keys int
 var FLAGS_write_keys int
-var rng *zipf.Zipf
+
+// var rng *zipf.Zipf
 
 func init() {
 	flag.StringVar(&FLAGS_faas_gateway, "faas_gateway", "127.0.0.1:8081", "")
@@ -41,7 +41,7 @@ func init() {
 	flag.IntVar(&FLAGS_rand_seed, "rand_seed", 23333, "")
 	flag.Float64Var(&FLAGS_zipf_skew, "zipf_skew", 0.5, "")
 	flag.IntVar(&FLAGS_read_keys, "read_keys", 8, "")
-	flag.IntVar(&FLAGS_write_keys, "write_keys", 1, "")
+	flag.IntVar(&FLAGS_write_keys, "write_keys", 8, "")
 	flag.IntVar(&FLAGS_keyspace, "keyspace", 10000, "")
 
 	rand.Seed(int64(FLAGS_rand_seed))
@@ -69,34 +69,38 @@ func init() {
 // 	return results, nil
 // }
 
-func sampleId() uint64 {
-	id := uint64(rng.Float64(rand.Float64())) + 1
-	if id == 0 {
-		log.Fatalf("generated id is 0")
-	}
-	return id
-}
+// func sampleId() uint64 {
+// 	id := uint64(rng.Float64(rand.Float64())) + 1
+// 	if id == 0 {
+// 		log.Fatalf("generated id is 0")
+// 	}
+// 	return id
+// }
 
 func buildTestRequest() utils.JSONValue {
-	n := FLAGS_read_keys
-	if FLAGS_write_keys > FLAGS_read_keys {
-		n = FLAGS_write_keys
-	}
-	tags := make([]uint64, 0, n)
-	tagsMap := make(map[uint64]struct{})
-	for i := 0; i < n; i++ {
-		for {
-			id := sampleId()
-			if _, ok := tagsMap[id]; !ok {
-				tags = append(tags, id)
-				tagsMap[id] = struct{}{}
-				break
-			}
-		}
-	}
+	// n := FLAGS_read_keys
+	// if FLAGS_write_keys > FLAGS_read_keys {
+	// 	n = FLAGS_write_keys
+	// }
+	// tags := make([]uint64, 0, n)
+	// tagsMap := make(map[uint64]struct{})
+	// for i := 0; i < n; i++ {
+	// 	for {
+	// 		id := sampleId()
+	// 		if _, ok := tagsMap[id]; !ok {
+	// 			tags = append(tags, id)
+	// 			tagsMap[id] = struct{}{}
+	// 			break
+	// 		}
+	// 	}
+	// }
+	// return utils.JSONValue{
+	// 	"readkeys":  tags[:FLAGS_read_keys],
+	// 	"writekeys": tags[:FLAGS_write_keys],
+	// }
 	return utils.JSONValue{
-		"readkeys":  tags[:FLAGS_read_keys],
-		"writekeys": tags[:FLAGS_write_keys],
+		"readkeys":  FLAGS_read_keys,
+		"writekeys": FLAGS_write_keys,
 	}
 }
 
@@ -204,7 +208,7 @@ func benchmark() {
 func main() {
 	flag.Parse()
 
-	rng = zipf.New(1, float64(FLAGS_keyspace), FLAGS_zipf_skew)
+	// rng = zipf.New(1, float64(FLAGS_keyspace), FLAGS_zipf_skew)
 
 	prewarm()
 	benchmark()

@@ -2,16 +2,16 @@
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-BENCH_IMAGE=shengqipku/boki-rwbench:readlog
+BENCH_IMAGE=shengqipku/boki-rwbench:workflow
 
 EXP_DIR=$1
 
 CONCURRENCY=$2
-Skew=$3
+LOGMODE=$3
 ReadKeys=$4
 WriteKeys=$5
 
-Keyspace=10000
+Keyspace=1000
 
 HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
@@ -52,7 +52,7 @@ for HOST in $ALL_STORAGE_HOSTS; do
     ssh -q $HOST -- sudo mkdir -p /mnt/storage/logdata
 done
 
-ssh -q $MANAGER_HOST -- docker stack deploy \
+ssh -q $MANAGER_HOST -- NUM_KEYS=$Keyspace LoggingMode=$LOGMODE docker stack deploy \
     -c ~/docker-compose-generated.yml -c ~/docker-compose.yml $STACK
 sleep 80
 
@@ -83,9 +83,14 @@ ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
     cp /rw-bin/benchmark /tmp/benchmark
 
 ssh -q $CLIENT_HOST -- /tmp/benchmark \
-    --faas_gateway=$ENTRY_HOST:8080 --keyspace=$Keyspace --read_keys=$ReadKeys --write_keys=$WriteKeys \
-    --concurrency=$CONCURRENCY --zipf_skew=$Skew \
-    --duration=15 >$EXP_DIR/results.log
+    --faas_gateway=$ENTRY_HOST:8080 --read_keys=$ReadKeys --write_keys=$WriteKeys \
+    --concurrency=$CONCURRENCY \
+    --duration=20 >$EXP_DIR/warmup.log
+
+ssh -q $CLIENT_HOST -- /tmp/benchmark \
+    --faas_gateway=$ENTRY_HOST:8080 --read_keys=$ReadKeys --write_keys=$WriteKeys \
+    --concurrency=$CONCURRENCY \
+    --duration=60 >$EXP_DIR/results.log
 
 $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
 

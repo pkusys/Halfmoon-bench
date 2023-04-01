@@ -7,7 +7,8 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
 RUN=$1
 
-QPS=(100)
+# QPS=(50 100 150 200 250 300 350 400)
+QPS=(200)
 
 $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
 
@@ -22,4 +23,4 @@ for qps in ${QPS[@]}; do
     echo "finished QPS${qps}"
 done
 
-# $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
+$HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR

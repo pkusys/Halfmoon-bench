@@ -18,4 +18,5 @@ FROM ubuntu:focal
 COPY ./workloads/workflow/beldi/bin  /beldi-bin
 COPY ./workloads/workflow/boki/bin   /bokiflow-bin
 COPY ./workloads/workflow/optimal/bin /optimal-bin
+COPY ./workloads/workflow/optimal-beldi/bin /optbeldi-bin
 COPY ./boki/bin/release/launcher /boki/launcher

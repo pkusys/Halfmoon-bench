@@ -49,5 +49,11 @@ rw:
 	env GOOS=linux go build -o bin/rw/rw internal/rw/main/main.go
 	env GOOS=linux go build -o bin/rw/prewarm internal/rw/prewarm/prewarm.go
 
+switching:
+	env GOOS=linux go build -o bin/switching/init internal/switching/init/init.go
+	env GOOS=linux go build -o bin/switching/rw internal/switching/main/main.go
+	env GOOS=linux go build -o bin/switching/prewarm internal/switching/prewarm/prewarm.go
+	env GOOS=linux go build -o bin/switching/benchmark benchmark/switching/main.go benchmark/switching/client.go
+
 clean:
 	rm -rf ./bin

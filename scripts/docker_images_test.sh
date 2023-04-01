@@ -44,6 +44,12 @@ function build_beldibench {
     cd ./beldi && make media-baseline && cd ..
     cd ./beldi && make rw-baseline && cd ..
     cd ./beldi && make singleop-baseline && cd ..
+    # cd ./beldi && make hotel && cd ..
+    # cd ./beldi && make media && cd ..
+    cd ./beldi && make singleop && cd ..
+    # cd ./optimal-beldi && make hotel && cd ..
+    # cd ./optimal-beldi && make media && cd ..
+    cd ./optimal-beldi && make singleop && cd ..
     cd ./boki && make hotel && cd ..
     cd ./boki && make media && cd ..
     cd ./boki && make rw && cd ..
@@ -52,6 +58,7 @@ function build_beldibench {
     cd ./optimal && make media && cd ..
     cd ./optimal && make rw && cd ..
     cd ./optimal && make singleop && cd ..
+    cd ./optimal && make switching && cd ..
     docker build -t shengqipku/boki-beldibench:$TAG -f $ROOT_DIR/dockerfiles/Dockerfile.my-beldibench $ROOT_DIR
 }
 
@@ -61,6 +68,7 @@ function update {
     build_release
     # build_boki-retwis
     # build_my-retwis
+    # build_rwbench
     build_beldibench
 }
 
@@ -69,6 +77,7 @@ function push {
     # docker push shengqipku/boki-retwisbench:$TAG
     # docker push shengqipku/my-retwisbench:$TAG
     docker push shengqipku/boki-beldibench:$TAG
+    # docker push shengqipku/boki-rwbench:$TAG
 }
 
 case "$1" in

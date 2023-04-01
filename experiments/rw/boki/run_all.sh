@@ -7,21 +7,21 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
 RUN=$1
 
-Concurrency=(320)
-Skew=(0.75)
+Concurrency=(256)
+LOGMODE=("none")
 ReadKeys=(8)
-WriteKeys=(1)
+WriteKeys=(8)
 
 $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR
 
 for c in ${Concurrency[@]}; do
-    for s in ${Skew[@]}; do
+    for m in ${LOGMODE[@]}; do
         for rk in ${ReadKeys[@]}; do
             for wk in ${WriteKeys[@]}; do
-                EXP_DIR=$BASE_DIR/results/c${c}_s${s}_r${rk}_w${wk}
+                EXP_DIR=$BASE_DIR/results/c${c}_${m}_r${rk}_w${wk}
                 rm -rf $EXP_DIR
                 mkdir -p $EXP_DIR
-                $BASE_DIR/run_once.sh $EXP_DIR $c $s $rk $wk 2>&1 | tee $EXP_DIR/run.log 
+                $BASE_DIR/run_once.sh $EXP_DIR $c $m $rk $wk 2>&1 | tee run.log 
                 cp $BASE_DIR/docker-compose.yml $EXP_DIR/
                 cp $BASE_DIR/docker-compose-generated.yml $EXP_DIR/
                 cp $BASE_DIR/config.json $EXP_DIR/
@@ -33,4 +33,4 @@ for c in ${Concurrency[@]}; do
     done
 done
 
-# $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
+$HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR

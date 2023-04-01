@@ -1,0 +1,72 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"time"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+	"github.com/eniac/Beldi/pkg/beldilib"
+)
+
+const table = "singleop"
+
+var nKeys = 10000
+var value = 1
+
+func init() {
+	if nk, err := strconv.Atoi(os.Getenv("NUM_KEYS")); err == nil {
+		nKeys = nk
+	} else {
+		panic("invalid NUM_KEYS")
+	}
+}
+
+func clean() {
+	beldilib.DeleteLambdaTables(fmt.Sprintf("%s", table))
+	beldilib.WaitUntilDeleted(fmt.Sprintf("%s", table))
+	beldilib.WaitUntilDeleted(fmt.Sprintf("%s-log", table))
+	beldilib.WaitUntilDeleted(fmt.Sprintf("%s-collector", table))
+	if beldilib.TYPE == "WRITELOG" {
+		beldilib.DeleteTable("counter")
+	}
+}
+
+func create() {
+	if beldilib.TYPE == "WRITELOG" {
+		beldilib.CreateCounterTable()
+		time.Sleep(3 * time.Second)
+		beldilib.WaitUntilActive("counter")
+	}
+	beldilib.CreateLambdaTables(fmt.Sprintf("%s", table))
+	time.Sleep(10 * time.Second)
+	beldilib.WaitUntilActive(fmt.Sprintf("%s", table))
+	beldilib.WaitUntilActive(fmt.Sprintf("%s-log", table))
+	beldilib.WaitUntilActive(fmt.Sprintf("%s-collector", table))
+}
+
+func populate() {
+	if beldilib.TYPE == "WRITELOG" {
+		beldilib.LibWrite("counter", aws.JSONValue{"K": "counter"}, map[expression.NameBuilder]expression.OperandBuilder{
+			expression.Name("V"): expression.Value(1),
+		})
+	}
+	for i := 0; i < nKeys; i++ {
+		beldilib.Populate(table, strconv.Itoa(i), value, false)
+	}
+}
+
+func main() {
+	option := os.Args[1]
+	if option == "clean" {
+		clean()
+	} else if option == "create" {
+		create()
+	} else if option == "populate" {
+		populate()
+	} else {
+		panic("unkown option: " + option)
+	}
+}

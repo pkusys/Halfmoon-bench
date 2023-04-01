@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
+	"strconv"
 	"time"
 
 	"cs.utexas.edu/zjia/faas/types"
@@ -13,16 +15,23 @@ import (
 	"github.com/lithammer/shortuuid"
 )
 
-var logMode = "all"
+var logMode = "none"
+var nKeys = 10000
 
 func init() {
 	if mode := os.Getenv("LoggingMode"); mode != "" {
 		logMode = mode
 	}
-	if logMode != "all" && logMode != "read" && logMode != "write" {
+	if logMode != "all" && logMode != "read" && logMode != "write" && logMode != "none" {
 		log.Fatalf("[FATAL] invalid log mode: %s", logMode)
 	}
 	log.Printf("[INFO] log mode: %s", logMode)
+	if nk, err := strconv.Atoi(os.Getenv("NUM_KEYS")); err == nil {
+		nKeys = nk
+	} else {
+		panic("invalid NUM_KEYS")
+	}
+	rand.Seed(time.Now().UnixNano())
 }
 
 const nLowBits uint64 = 2
@@ -143,14 +152,18 @@ func (le *LogEditor) onRequest(input *TestInput) *TestOutput {
 	le.intentStepStreamTag = intentStepStreamTag
 	le.step = 1
 	le.seqnum = seqnum
-	readLatency := make([]int64, 0, len(input.ReadKeys))
-	writeLatency := make([]int64, 0, len(input.WriteKeys))
-	for _, k := range input.ReadKeys {
-		t, _ := le.Read(k, le.seqnum)
+	readLatency := make([]int64, 0, input.ReadKeys)
+	writeLatency := make([]int64, 0, input.WriteKeys)
+	k := rand.Intn(nKeys) + 1
+	// for _, k := range input.ReadKeys {
+	for i := 0; uint64(i) < input.ReadKeys; i++ {
+		t, _ := le.Read(uint64(k), le.seqnum)
 		readLatency = append(readLatency, t)
 	}
-	for _, k := range input.WriteKeys {
-		_, t, _ := le.Write([]uint64{k}, struct{}{})
+	// for _, k := range input.WriteKeys {
+	k = rand.Intn(nKeys) + 1
+	for i := 0; uint64(i) < input.WriteKeys; i++ {
+		_, t, _ := le.Write([]uint64{uint64(k)}, struct{}{})
 		writeLatency = append(writeLatency, t)
 	}
 	elapsed := time.Since(start).Microseconds()
@@ -259,9 +272,11 @@ func (le *LogEditor) onRequest(input *TestInput) *TestOutput {
 // }
 
 type TestInput struct {
-	InstanceId string   `json:"instanceId"`
-	ReadKeys   []uint64 `json:"readkeys"`
-	WriteKeys  []uint64 `json:"writekeys"`
+	InstanceId string `json:"instanceId"`
+	// ReadKeys   []uint64 `json:"readkeys"`
+	// WriteKeys  []uint64 `json:"writekeys"`
+	ReadKeys  uint64 `json:"readkeys"`
+	WriteKeys uint64 `json:"writekeys"`
 }
 
 type TestOutput struct {

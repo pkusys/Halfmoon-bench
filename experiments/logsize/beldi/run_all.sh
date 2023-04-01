@@ -7,16 +7,22 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
 RUN=$1
 
-QPS=(100)
+QPS=(30)
 NUM_OPS=(10)
-READ_RATIO=(0.1 0.3 0.5 0.7 0.9)
+# READ_RATIO=(0.1 0.3 0.5 0.7 0.9)
+READ_RATIO=(0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9)
 
-$HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
+# $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
 
 for qps in ${QPS[@]}; do
     for ops in ${NUM_OPS[@]}; do
         for rr in ${READ_RATIO[@]}; do
-            EXP_DIR=ReadRatio${rr}
+            EXP_DIR=ReadRatio${rr}_QPS${qps}_$mode
+            if [ -d "$BASE_DIR/results/${EXP_DIR}_$run" ]; then
+                echo "finished ReadRatio${rr}_$mode"
+                continue
+            fi
+            $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
             $BASE_DIR/run_once.sh $EXP_DIR $qps $ops $rr 2>&1 | tee $BASE_DIR/run.log 
             cp $BASE_DIR/docker-compose.yml $BASE_DIR/results/$EXP_DIR
             cp $BASE_DIR/docker-compose-generated.yml $BASE_DIR/results/$EXP_DIR
@@ -24,8 +30,10 @@ for qps in ${QPS[@]}; do
             cp $BASE_DIR/nightcore_config.json $BASE_DIR/results/$EXP_DIR
             mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
             echo "finished ReadRatio${rr}"
+            $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
+            sleep 60
         done
     done
 done
 
-$HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
+# $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR

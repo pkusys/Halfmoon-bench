@@ -15,7 +15,7 @@ services:
       - /tmp/zk_setup.sh:/tmp/boki/zk_setup.sh
 
   boki-engine:
-    image: shengqipku/boki:readlog
+    image: shengqipku/boki:workflow
     hostname: faas-engine-{{.Task.Slot}}
     entrypoint:
       - /boki/engine
@@ -31,7 +31,7 @@ services:
       - --slog_engine_enable_cache
       - --slog_engine_cache_cap_mb=1024
       # - --slog_engine_propagate_auxdata
-      - --use_txn_engine
+      # - --use_txn_engine
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -43,7 +43,7 @@ services:
       - FAAS_CGROUP_FS_ROOT=/tmp/root_cgroupfs
 
   boki-controller:
-    image: shengqipku/boki:readlog
+    image: shengqipku/boki:workflow
     entrypoint:
       - /boki/controller
       - --zookeeper_host=zookeeper:2181
@@ -56,7 +56,7 @@ services:
     # restart: always
 
   boki-gateway:
-    image: shengqipku/boki:readlog
+    image: shengqipku/boki:workflow
     hostname: faas-gateway
     ports:
       - 8080:8080
@@ -79,7 +79,7 @@ services:
     # restart: always
 
   boki-storage:
-    image: shengqipku/boki:readlog
+    image: shengqipku/boki:workflow
     hostname: faas-storage-{{.Task.Slot}}
     entrypoint:
       - /boki/storage
@@ -93,7 +93,7 @@ services:
       - --slog_storage_bgthread_interval_ms=1
       - --slog_storage_backend=rocksdb
       - --slog_storage_cache_cap_mb=4096
-      - --use_txn_engine
+      # - --use_txn_engine
       # - --v=1
     depends_on:
       - zookeeper-setup
@@ -104,7 +104,7 @@ services:
     # restart: always
 
   boki-sequencer:
-    image: shengqipku/boki:readlog
+    image: shengqipku/boki:workflow
     hostname: faas-sequencer-{{.Task.Slot}}
     entrypoint:
       - /boki/sequencer
@@ -122,14 +122,15 @@ services:
     # restart: always
 
   test:
-    image: shengqipku/boki-rwbench:readlog
+    image: shengqipku/boki-rwbench:workflow
     entrypoint: [ "/tmp/boki/run_launcher", "/rw-bin/main", "1" ]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=200
-      - LoggingMode=write
+      - LoggingMode=${LoggingMode:?}
+      - NUM_KEYS=${NUM_KEYS:?}
     depends_on:
       - boki-engine
     # restart: "no"

@@ -1,8 +1,10 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"math/rand"
 
@@ -21,6 +23,8 @@ var value []byte
 
 var nOps float64
 var readRatio float64
+var nReads int
+var sleepDuration = 5 * time.Millisecond
 
 func init() {
 	if nk, err := strconv.Atoi(os.Getenv("NUM_KEYS")); err == nil {
@@ -44,17 +48,24 @@ func init() {
 	} else {
 		readRatio = rr
 	}
+	nReads = int(nOps * readRatio)
+	log.Printf("[INFO] nKeys=%d, valueSize=%d, nOps=%d, readRatio=%.2f, nReads=%d", nKeys, valueSize, int(nOps), readRatio, nReads)
+
 	value = utils.RandomString(valueSize)
+	rand.Seed(time.Now().UnixNano())
 }
 
 func Handler(env *cayonlib.Env) interface{} {
-	for i := 0; i < int(nOps*readRatio); i++ {
+	// nReads := int(nOps * readRatio)
+	for i := 0; i < nReads; i++ {
 		cayonlib.Read(env, table, strconv.Itoa(rand.Intn(nKeys)))
+		time.Sleep(sleepDuration)
 	}
-	for i := 0; i < int(nOps*(1-readRatio)); i++ {
+	for i := 0; i < int(nOps)-nReads; i++ {
 		cayonlib.Write(env, table, strconv.Itoa(rand.Intn(nKeys)), map[expression.NameBuilder]expression.OperandBuilder{
 			expression.Name("V"): expression.Value(value),
 		})
+		time.Sleep(sleepDuration)
 	}
 	return nil
 }

@@ -11,7 +11,7 @@ STACK=boki
 
 AWS_REGION=ap-southeast-1
 
-NUM_KEYS=10
+NUM_KEYS=100
 
 EXP_DIR=$BASE_DIR/results/$1
 QPS=$2
@@ -88,13 +88,13 @@ ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
 
 scp -q $ROOT_DIR/workloads/workflow/boki/benchmark/singleop/workload.lua $CLIENT_HOST:/tmp
 
-ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 30 -L -U \
+ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 120 -L -U \
     -s /tmp/workload.lua \
     http://$ENTRY_HOST:8080 -R $QPS >$EXP_DIR/wrk_warmup.log
 
 sleep 10
 
-ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 150 -L -U \
+ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 600 -L -U \
     -s /tmp/workload.lua \
     http://$ENTRY_HOST:8080 -R $QPS 2>/dev/null >$EXP_DIR/wrk.log
 
@@ -106,4 +106,4 @@ $BASE_DIR/../singleop_latency.py --async-result-file $EXP_DIR/async_results >$EX
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION NUM_KEYS=$NUM_KEYS \
     /tmp/singleop/init clean
 
-# $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
+$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR

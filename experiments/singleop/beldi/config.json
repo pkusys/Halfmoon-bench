@@ -16,7 +16,7 @@
         "zookeeper-setup": { "placement": "bokiexp-gateway" },
         "boki-gateway": { "placement": "bokiexp-gateway" },
         "boki-engine": { "placement_label": "engine_node", "replicas": 8 },
-        "nop-service": { "placement_label": "engine_node", "replicas": 8},
+        "nop-service": { "placement_label": "engine_node", "replicas": 8, "need_aws_env": true, "mount_certs": true },
         "singleop-service": { "placement_label": "engine_node", "replicas": 8, "need_aws_env": true, "mount_certs": true }
     },
     "aws_region": "ap-southeast-1"

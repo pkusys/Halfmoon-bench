@@ -12,25 +12,25 @@ var sess = session.Must(session.NewSessionWithOptions(session.Options{
 	SharedConfigState: session.SharedConfigEnable,
 }))
 
-var DBClient = dynamodb.New(sess) // aws.NewConfig().WithLogLevel(aws.LogDebugWithHTTPBody)
+var DBClient = dynamodb.New(sess)
 
 var T = int64(60)
 
-var TYPE = "READLOG" // options: READLOG, WRITELOG
+var TYPE = "WRITELOG" // options: READLOG, WRITELOG
 
 func init() {
 	switch os.Getenv("LoggingMode") {
-	case "":
-		TYPE = "READLOG"
-		// log.Println("[INFO] LoggingMode not set, defaulting to READLOG")
 	case "read":
 		TYPE = "READLOG"
 	case "write":
 		TYPE = "WRITELOG"
+	case "":
+		TYPE = "WRITELOG"
+		log.Println("[INFO] LoggingMode not set, defaulting to WRITELOG")
 	default:
 		log.Fatalf("[FATAL] invalid LoggingMode: %s", os.Getenv("LoggingMode"))
 	}
-	// log.Printf("[INFO] log mode: %s", TYPE)
+	log.Printf("[INFO] log mode: %s", TYPE)
 }
 
 func CHECK(err error) {

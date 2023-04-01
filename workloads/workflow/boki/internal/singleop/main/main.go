@@ -23,6 +23,7 @@ func init() {
 	} else {
 		panic("invalid NUM_KEYS")
 	}
+	rand.Seed(time.Now().UnixNano())
 }
 
 func Handler(env *cayonlib.Env) interface{} {

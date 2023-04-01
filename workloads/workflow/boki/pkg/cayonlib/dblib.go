@@ -22,7 +22,7 @@ func LibRead(tablename string, key aws.JSONValue, projection []string) aws.JSONV
 		res, err = DBClient.GetItem(&dynamodb.GetItemInput{
 			TableName:      aws.String(kTablePrefix + tablename),
 			Key:            Key,
-			ConsistentRead: aws.Bool(true),
+			// ConsistentRead: aws.Bool(true),
 		})
 	} else {
 		expr, err := expression.NewBuilder().WithProjection(BuildProjection(projection)).Build()
@@ -32,7 +32,7 @@ func LibRead(tablename string, key aws.JSONValue, projection []string) aws.JSONV
 			Key:                      Key,
 			ProjectionExpression:     expr.Projection(),
 			ExpressionAttributeNames: expr.Names(),
-			ConsistentRead:           aws.Bool(true),
+			// ConsistentRead:           aws.Bool(true),
 		})
 	}
 	CHECK(err)
@@ -78,7 +78,7 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 				ExpressionAttributeNames:  expr.Names(),
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
-				ConsistentRead:            aws.Bool(true),
+				// ConsistentRead:            aws.Bool(true),
 			})
 		} else {
 			expr, err := expression.NewBuilder().WithProjection(BuildProjection(projection)).Build()
@@ -89,7 +89,7 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
 				ProjectionExpression:      expr.Projection(),
-				ConsistentRead:            aws.Bool(true),
+				// ConsistentRead:            aws.Bool(true),
 			})
 		}
 	} else {
@@ -101,7 +101,7 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 				ExpressionAttributeNames:  expr.Names(),
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
-				ConsistentRead:            aws.Bool(true),
+				// ConsistentRead:            aws.Bool(true),
 				ExclusiveStartKey:         last,
 			})
 		} else {
@@ -113,7 +113,7 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
 				ProjectionExpression:      expr.Projection(),
-				ConsistentRead:            aws.Bool(true),
+				// ConsistentRead:            aws.Bool(true),
 				ExclusiveStartKey:         last,
 			})
 		}

@@ -508,7 +508,7 @@ if __name__ == "__main__":
     parser.add_argument("--machine-label", type=str, default=None)
     parser.add_argument("--machine-host", type=str, default=None)
     parser.add_argument("--service", type=str, default=None)
-    parser.add_argument("--spot-instances-waiting-time", type=int, default=10)
+    parser.add_argument("--spot-instances-waiting-time", type=int, default=30)
     parser.add_argument("--instance-iam-role", type=str, default=None)
     parser.add_argument("--log-path", type=str, default=None)
     args = parser.parse_args()

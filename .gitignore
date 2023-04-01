@@ -2,12 +2,15 @@
 
 /workloads/queue/bin
 /workloads/retwis/bin
+/workloads/**/bin
 
 /experiments/**/docker-compose-generated.yml
 /experiments/**/results
 /experiments/**/machines.json
 
-/workloads/**/bin
 .vscode
 .clang-format
-run.log
+
+run*.log
+summary*.json
+*.ipynb
