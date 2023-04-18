@@ -1,0 +1,1827 @@
+Finish setup in 39.572 seconds
++++ dirname /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/run_once.sh
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/beldi
++ BASE_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/../../..
++ ROOT_DIR=/home/ubuntu/boki-benchmarks
++ BENCH_IMAGE=shengqipku/boki-beldibench:workflow
++ STACK=boki
++ AWS_REGION=ap-southeast-1
++ NUM_KEYS=100
++ EXP_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi/results/QPS20
++ QPS=20
++ HELPER_SCRIPT=/home/ubuntu/boki-benchmarks/scripts/exp_helper
++ WRK_DIR=/usr/local/bin
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-docker-manager-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi
++ MANAGER_HOST=ip-172-31-9-91.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-client-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi
++ CLIENT_HOST=ip-172-31-5-202.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-service-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --service=boki-gateway
++ ENTRY_HOST=ip-172-31-9-91.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-all-server-hosts --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi
++ ALL_HOSTS='ip-172-31-12-236.ap-southeast-1.compute.internal
+ip-172-31-1-222.ap-southeast-1.compute.internal
+ip-172-31-10-223.ap-southeast-1.compute.internal
+ip-172-31-9-225.ap-southeast-1.compute.internal
+ip-172-31-12-47.ap-southeast-1.compute.internal
+ip-172-31-14-116.ap-southeast-1.compute.internal
+ip-172-31-14-78.ap-southeast-1.compute.internal
+ip-172-31-13-82.ap-southeast-1.compute.internal
+ip-172-31-9-91.ap-southeast-1.compute.internal'
++ /home/ubuntu/boki-benchmarks/scripts/exp_helper generate-docker-compose --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/docker-compose.yml 'ip-172-31-9-91.ap-southeast-1.compute.internal:~'
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/docker-compose-generated.yml 'ip-172-31-9-91.ap-southeast-1.compute.internal:~'
++ ssh -q ip-172-31-9-91.ap-southeast-1.compute.internal -- docker stack rm boki
+Nothing found in stack: boki
++ sleep 40
+++ fold -w 8
+++ head -n 1
+++ head -c 64 /dev/urandom
+++ tr -dc a-zA-Z0-9
++ TABLE_PREFIX=8CieIT7x
++ TABLE_PREFIX=8CieIT7x-
++ ssh -q ip-172-31-5-202.ap-southeast-1.compute.internal -- docker pull shengqipku/boki-beldibench:workflow
+workflow: Pulling from shengqipku/boki-beldibench
+fb0b3276a519: Pulling fs layer
+04650d0140a3: Pulling fs layer
+2bde0ecdcf0b: Pulling fs layer
+631d66a347c9: Pulling fs layer
+e3176dba68e3: Pulling fs layer
+2c4530d68e03: Pulling fs layer
+e3176dba68e3: Waiting
+2c4530d68e03: Waiting
+631d66a347c9: Waiting
+fb0b3276a519: Verifying Checksum
+fb0b3276a519: Download complete
+2bde0ecdcf0b: Verifying Checksum
+2bde0ecdcf0b: Download complete
+04650d0140a3: Verifying Checksum
+04650d0140a3: Download complete
+fb0b3276a519: Pull complete
+2c4530d68e03: Verifying Checksum
+2c4530d68e03: Download complete
+631d66a347c9: Verifying Checksum
+631d66a347c9: Download complete
+e3176dba68e3: Verifying Checksum
+e3176dba68e3: Download complete
+04650d0140a3: Pull complete
+2bde0ecdcf0b: Pull complete
+631d66a347c9: Pull complete
+e3176dba68e3: Pull complete
+2c4530d68e03: Pull complete
+Digest: sha256:c57fde79b16d5aa3df3eca51642445e387b80e34a3d65a43ecc93e851e968264
+Status: Downloaded newer image for shengqipku/boki-beldibench:workflow
+docker.io/shengqipku/boki-beldibench:workflow
++ ssh -q ip-172-31-5-202.ap-southeast-1.compute.internal -- docker run -v /tmp:/tmp shengqipku/boki-beldibench:workflow cp -r /beldi-bin/singleop /tmp/
++ ssh -q ip-172-31-5-202.ap-southeast-1.compute.internal -- TABLE_PREFIX=8CieIT7x- AWS_REGION=ap-southeast-1 NUM_KEYS=100 /tmp/singleop/init create
+singleop status: CREATING
+singleop status: CREATING
+singleop status: CREATING
+singleop status: ACTIVE
+singleop-log status: ACTIVE
+singleop-collector status: ACTIVE
+nop status: CREATING
+nop status: CREATING
+nop status: CREATING
+nop status: ACTIVE
+nop-log status: ACTIVE
+nop-collector status: ACTIVE
++ ssh -q ip-172-31-5-202.ap-southeast-1.compute.internal -- TABLE_PREFIX=8CieIT7x- AWS_REGION=ap-southeast-1 NUM_KEYS=100 /tmp/singleop/init populate
++ scp -q /home/ubuntu/boki-benchmarks/scripts/zk_setup.sh ip-172-31-9-91.ap-southeast-1.compute.internal:/tmp/zk_setup.sh
++ ssh -q ip-172-31-9-91.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/store
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/nightcore_config.json ip-172-31-12-236.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/nightcore_config.json ip-172-31-1-222.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/nightcore_config.json ip-172-31-10-223.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/nightcore_config.json ip-172-31-9-225.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/nightcore_config.json ip-172-31-12-47.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/nightcore_config.json ip-172-31-14-116.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/nightcore_config.json ip-172-31-14-78.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/nightcore_config.json ip-172-31-13-82.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/nightcore_config.json ip-172-31-9-91.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --machine-label=engine_node
++ ALL_ENGINE_HOSTS='ip-172-31-12-236.ap-southeast-1.compute.internal
+ip-172-31-1-222.ap-southeast-1.compute.internal
+ip-172-31-10-223.ap-southeast-1.compute.internal
+ip-172-31-9-225.ap-southeast-1.compute.internal
+ip-172-31-12-47.ap-southeast-1.compute.internal
+ip-172-31-14-116.ap-southeast-1.compute.internal
+ip-172-31-14-78.ap-southeast-1.compute.internal
+ip-172-31-13-82.ap-southeast-1.compute.internal'
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/run_launcher ip-172-31-12-236.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-12-236.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-12-236.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-12-236.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-12-236.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-12-236.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/run_launcher ip-172-31-1-222.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-1-222.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-1-222.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-1-222.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-1-222.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-1-222.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/run_launcher ip-172-31-10-223.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-10-223.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-10-223.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-10-223.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-10-223.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-10-223.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/run_launcher ip-172-31-9-225.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-9-225.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-9-225.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-9-225.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-9-225.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-9-225.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/run_launcher ip-172-31-12-47.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-12-47.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-12-47.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-12-47.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-12-47.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-12-47.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/run_launcher ip-172-31-14-116.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-14-116.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-14-116.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-14-116.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-14-116.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-14-116.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/run_launcher ip-172-31-14-78.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-14-78.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-14-78.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-14-78.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-14-78.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-14-78.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/run_launcher ip-172-31-13-82.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-13-82.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-13-82.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-13-82.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-13-82.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-13-82.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --machine-label=storage_node
++ ALL_STORAGE_HOSTS=
++ ssh -q ip-172-31-9-91.ap-southeast-1.compute.internal -- TABLE_PREFIX=8CieIT7x- NUM_KEYS=100 docker stack deploy -c /home/ubuntu/docker-compose-generated.yml -c /home/ubuntu/docker-compose.yml boki
+Ignoring unsupported options: restart
+
+Creating network boki_default
+Creating service boki_boki-engine
+Creating service boki_boki-gateway
+Creating service boki_nop-service
+Creating service boki_singleop-service
+Creating service boki_zookeeper
+Creating service boki_zookeeper-setup
++ sleep 60
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --service boki-engine --machine-host ip-172-31-12-236.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=5e486c6237d645c3b1f1a3d30a12c427ea3c382ae31a23d131af7af3a3122f16
++ ssh -q ip-172-31-12-236.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/5e486c6237d645c3b1f1a3d30a12c427ea3c382ae31a23d131af7af3a3122f16/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --service boki-engine --machine-host ip-172-31-1-222.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=0c97b12e257ac7653392807b491602180776f009a2857ed758a24515a0c93100
++ ssh -q ip-172-31-1-222.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/0c97b12e257ac7653392807b491602180776f009a2857ed758a24515a0c93100/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --service boki-engine --machine-host ip-172-31-10-223.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=a0dcda715d57e9aba21345b10b95883253fd5a8071f920756d2694d8769e3335
++ ssh -q ip-172-31-10-223.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/a0dcda715d57e9aba21345b10b95883253fd5a8071f920756d2694d8769e3335/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --service boki-engine --machine-host ip-172-31-9-225.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=16fc7bea4bb4b9370092c0b8e40d5ed44147c7438d6dddd169db0bfbeb6953b7
++ ssh -q ip-172-31-9-225.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/16fc7bea4bb4b9370092c0b8e40d5ed44147c7438d6dddd169db0bfbeb6953b7/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --service boki-engine --machine-host ip-172-31-12-47.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=8e077d3fee55a7808de89ba228357155945e315b357f3ccc6d161afe998e0104
++ ssh -q ip-172-31-12-47.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/8e077d3fee55a7808de89ba228357155945e315b357f3ccc6d161afe998e0104/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --service boki-engine --machine-host ip-172-31-14-116.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=27003a83f5874268a6279cf1956632cf62c8a19533bf672b8b8b9c747940b637
++ echo 4096
++ ssh -q ip-172-31-14-116.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/27003a83f5874268a6279cf1956632cf62c8a19533bf672b8b8b9c747940b637/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --service boki-engine --machine-host ip-172-31-14-78.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=c1e4a69756db5b164c99d42ffa5f4830447fb7b091b81a077aaf1274bd448b7d
++ echo 4096
++ ssh -q ip-172-31-14-78.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/c1e4a69756db5b164c99d42ffa5f4830447fb7b091b81a077aaf1274bd448b7d/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/beldi --service boki-engine --machine-host ip-172-31-13-82.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=07821cf0be3fd2ca47717dd719c974628c724135980ff3d48fefd25963b59ecb
++ echo 4096
++ ssh -q ip-172-31-13-82.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/07821cf0be3fd2ca47717dd719c974628c724135980ff3d48fefd25963b59ecb/cpu.shares
+4096
++ sleep 10
++ rm -rf /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/results/QPS20
++ mkdir -p /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/results/QPS20
++ ssh -q ip-172-31-9-91.ap-southeast-1.compute.internal -- cat /proc/cmdline
++ ssh -q ip-172-31-9-91.ap-southeast-1.compute.internal -- uname -a
++ scp -q /home/ubuntu/boki-benchmarks/workloads/workflow/beldi/benchmark/singleop/workload.lua ip-172-31-5-202.ap-southeast-1.compute.internal:/tmp
++ ssh -q ip-172-31-5-202.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 120 -L -U -s /tmp/workload.lua http://ip-172-31-9-91.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ ssh -q ip-172-31-5-202.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 600 -L -U -s /tmp/workload.lua http://ip-172-31-9-91.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ scp -q ip-172-31-9-91.ap-southeast-1.compute.internal:/mnt/inmem/store/async_results /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/results/QPS20
++ /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/../singleop_latency.py --async-result-file /home/ubuntu/boki-benchmarks/experiments/singleop/beldi/results/QPS20/async_results
++ ssh -q ip-172-31-5-202.ap-southeast-1.compute.internal -- TABLE_PREFIX=8CieIT7x- AWS_REGION=ap-southeast-1 NUM_KEYS=100 /tmp/singleop/init clean
+finished QPS20
+Finish setup in 74.086 seconds
++++ dirname /home/ubuntu/boki-benchmarks/experiments/singleop/boki/run_once.sh
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/boki
++ BASE_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/boki
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/boki/../../..
++ ROOT_DIR=/home/ubuntu/boki-benchmarks
++ BENCH_IMAGE=shengqipku/boki-beldibench:workflow
++ STACK=boki
++ AWS_REGION=ap-southeast-1
++ NUM_KEYS=100
++ EXP_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/boki/results/QPS20
++ QPS=20
++ HELPER_SCRIPT=/home/ubuntu/boki-benchmarks/scripts/exp_helper
++ WRK_DIR=/usr/local/bin
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-docker-manager-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki
++ MANAGER_HOST=ip-172-31-1-248.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-client-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki
++ CLIENT_HOST=ip-172-31-0-98.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-service-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --service=boki-gateway
++ ENTRY_HOST=ip-172-31-1-248.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-all-server-hosts --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki
++ ALL_HOSTS='ip-172-31-11-16.ap-southeast-1.compute.internal
+ip-172-31-6-86.ap-southeast-1.compute.internal
+ip-172-31-15-136.ap-southeast-1.compute.internal
+ip-172-31-8-171.ap-southeast-1.compute.internal
+ip-172-31-15-36.ap-southeast-1.compute.internal
+ip-172-31-2-28.ap-southeast-1.compute.internal
+ip-172-31-6-216.ap-southeast-1.compute.internal
+ip-172-31-0-162.ap-southeast-1.compute.internal
+ip-172-31-1-248.ap-southeast-1.compute.internal
+ip-172-31-13-148.ap-southeast-1.compute.internal
+ip-172-31-0-255.ap-southeast-1.compute.internal
+ip-172-31-9-240.ap-southeast-1.compute.internal
+ip-172-31-11-79.ap-southeast-1.compute.internal
+ip-172-31-8-62.ap-southeast-1.compute.internal
+ip-172-31-8-242.ap-southeast-1.compute.internal'
++ /home/ubuntu/boki-benchmarks/scripts/exp_helper generate-docker-compose --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/docker-compose.yml 'ip-172-31-1-248.ap-southeast-1.compute.internal:~'
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/docker-compose-generated.yml 'ip-172-31-1-248.ap-southeast-1.compute.internal:~'
++ ssh -q ip-172-31-1-248.ap-southeast-1.compute.internal -- docker stack rm boki
+Nothing found in stack: boki
++ sleep 40
+++ head -c 64 /dev/urandom
+++ head -n 1
+++ tr -dc a-zA-Z0-9
+++ fold -w 8
++ TABLE_PREFIX=3vsfr4KT
++ TABLE_PREFIX=3vsfr4KT-
++ ssh -q ip-172-31-0-98.ap-southeast-1.compute.internal -- docker pull shengqipku/boki-beldibench:workflow
+workflow: Pulling from shengqipku/boki-beldibench
+fb0b3276a519: Pulling fs layer
+04650d0140a3: Pulling fs layer
+2bde0ecdcf0b: Pulling fs layer
+631d66a347c9: Pulling fs layer
+e3176dba68e3: Pulling fs layer
+2c4530d68e03: Pulling fs layer
+2c4530d68e03: Waiting
+631d66a347c9: Waiting
+e3176dba68e3: Waiting
+fb0b3276a519: Verifying Checksum
+fb0b3276a519: Download complete
+2bde0ecdcf0b: Verifying Checksum
+2bde0ecdcf0b: Download complete
+04650d0140a3: Verifying Checksum
+04650d0140a3: Download complete
+fb0b3276a519: Pull complete
+2c4530d68e03: Verifying Checksum
+2c4530d68e03: Download complete
+631d66a347c9: Verifying Checksum
+631d66a347c9: Download complete
+e3176dba68e3: Verifying Checksum
+e3176dba68e3: Download complete
+04650d0140a3: Pull complete
+2bde0ecdcf0b: Pull complete
+631d66a347c9: Pull complete
+e3176dba68e3: Pull complete
+2c4530d68e03: Pull complete
+Digest: sha256:c57fde79b16d5aa3df3eca51642445e387b80e34a3d65a43ecc93e851e968264
+Status: Downloaded newer image for shengqipku/boki-beldibench:workflow
+docker.io/shengqipku/boki-beldibench:workflow
++ ssh -q ip-172-31-0-98.ap-southeast-1.compute.internal -- docker run -v /tmp:/tmp shengqipku/boki-beldibench:workflow cp -r /bokiflow-bin/singleop /tmp/
++ ssh -q ip-172-31-0-98.ap-southeast-1.compute.internal -- TABLE_PREFIX=3vsfr4KT- AWS_REGION=ap-southeast-1 NUM_KEYS=100 /tmp/singleop/init create
+singleop status: CREATING
+singleop status: CREATING
++ ssh -q ip-172-31-0-98.ap-southeast-1.compute.internal -- TABLE_PREFIX=3vsfr4KT- AWS_REGION=ap-southeast-1 NUM_KEYS=100 /tmp/singleop/init populate
++ scp -q /home/ubuntu/boki-benchmarks/scripts/zk_setup.sh ip-172-31-1-248.ap-southeast-1.compute.internal:/tmp/zk_setup.sh
++ ssh -q ip-172-31-1-248.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/store
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-11-16.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-6-86.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-15-136.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-8-171.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-15-36.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-2-28.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-6-216.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-0-162.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-1-248.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-13-148.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-0-255.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-9-240.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-11-79.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-8-62.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/nightcore_config.json ip-172-31-8-242.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --machine-label=engine_node
++ ALL_ENGINE_HOSTS='ip-172-31-11-16.ap-southeast-1.compute.internal
+ip-172-31-6-86.ap-southeast-1.compute.internal
+ip-172-31-15-136.ap-southeast-1.compute.internal
+ip-172-31-8-171.ap-southeast-1.compute.internal
+ip-172-31-15-36.ap-southeast-1.compute.internal
+ip-172-31-2-28.ap-southeast-1.compute.internal
+ip-172-31-6-216.ap-southeast-1.compute.internal
+ip-172-31-0-162.ap-southeast-1.compute.internal'
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/run_launcher ip-172-31-11-16.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-11-16.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-11-16.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-11-16.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-11-16.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-11-16.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/run_launcher ip-172-31-6-86.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-6-86.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-6-86.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-6-86.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-6-86.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-6-86.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/run_launcher ip-172-31-15-136.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-15-136.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-15-136.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-15-136.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-15-136.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-15-136.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/run_launcher ip-172-31-8-171.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-8-171.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-8-171.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-8-171.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-8-171.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-8-171.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/run_launcher ip-172-31-15-36.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-15-36.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-15-36.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-15-36.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-15-36.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-15-36.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/run_launcher ip-172-31-2-28.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-2-28.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-2-28.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-2-28.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-2-28.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-2-28.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/run_launcher ip-172-31-6-216.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-6-216.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-6-216.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-6-216.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-6-216.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-6-216.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/boki/run_launcher ip-172-31-0-162.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-0-162.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-0-162.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-0-162.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-0-162.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-0-162.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --machine-label=storage_node
++ ALL_STORAGE_HOSTS='ip-172-31-11-79.ap-southeast-1.compute.internal
+ip-172-31-8-62.ap-southeast-1.compute.internal
+ip-172-31-8-242.ap-southeast-1.compute.internal'
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-11-79.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-11-79.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-8-62.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-8-62.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-8-242.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-8-242.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ ssh -q ip-172-31-1-248.ap-southeast-1.compute.internal -- TABLE_PREFIX=3vsfr4KT- NUM_KEYS=100 docker stack deploy -c /home/ubuntu/docker-compose-generated.yml -c /home/ubuntu/docker-compose.yml boki
+Ignoring unsupported options: restart
+
+Creating network boki_default
+Creating service boki_boki-gateway
+Creating service boki_boki-sequencer
+Creating service boki_nop-service
+Creating service boki_singleop-service
+Creating service boki_zookeeper-setup
+Creating service boki_boki-controller
+Creating service boki_boki-engine
+Creating service boki_boki-storage
+Creating service boki_zookeeper
++ sleep 80
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --service boki-engine --machine-host ip-172-31-11-16.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=123b193afb1f76417028067ad569f8ac0626d42e2aca934b44ce1b5a1004010f
++ echo 4096
++ ssh -q ip-172-31-11-16.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/123b193afb1f76417028067ad569f8ac0626d42e2aca934b44ce1b5a1004010f/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --service boki-engine --machine-host ip-172-31-6-86.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=930749212ed67579113770de8ad0675bb099f859195c713e2fc5c6529e9bd7a6
++ echo 4096
++ ssh -q ip-172-31-6-86.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/930749212ed67579113770de8ad0675bb099f859195c713e2fc5c6529e9bd7a6/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --service boki-engine --machine-host ip-172-31-15-136.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=60ba83fb6d1396e52a5c9647dd73d4a112a7c6728e598747dd30a1be2e011547
++ echo 4096
++ ssh -q ip-172-31-15-136.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/60ba83fb6d1396e52a5c9647dd73d4a112a7c6728e598747dd30a1be2e011547/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --service boki-engine --machine-host ip-172-31-8-171.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=fb438a588167866fd2273c74032d2be85f137bdc494b7315940913415cbdc3b3
++ ssh -q ip-172-31-8-171.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/fb438a588167866fd2273c74032d2be85f137bdc494b7315940913415cbdc3b3/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --service boki-engine --machine-host ip-172-31-15-36.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=50d8349be8c849796d936a6d8cdcf6fb6090c5d424d5e2cfa58c12d85b2e594e
++ echo 4096
++ ssh -q ip-172-31-15-36.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/50d8349be8c849796d936a6d8cdcf6fb6090c5d424d5e2cfa58c12d85b2e594e/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --service boki-engine --machine-host ip-172-31-2-28.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=f65612747eaf8daddb7718e658205c00fd8bd105f36dfe7db1d74cdaef946526
++ echo 4096
++ ssh -q ip-172-31-2-28.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/f65612747eaf8daddb7718e658205c00fd8bd105f36dfe7db1d74cdaef946526/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --service boki-engine --machine-host ip-172-31-6-216.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=52bc5f928a175252c62daf4f67b9877eebd7c704f73d4b1c5e8511145c9eb485
++ echo 4096
++ ssh -q ip-172-31-6-216.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/52bc5f928a175252c62daf4f67b9877eebd7c704f73d4b1c5e8511145c9eb485/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --service boki-engine --machine-host ip-172-31-0-162.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=3be20e0975a246ee39eb42c3bc5d37a13b79f9b574a74eb9253d360a766074de
++ echo 4096
++ ssh -q ip-172-31-0-162.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/3be20e0975a246ee39eb42c3bc5d37a13b79f9b574a74eb9253d360a766074de/cpu.shares
+4096
++ sleep 10
++ rm -rf /home/ubuntu/boki-benchmarks/experiments/singleop/boki/results/QPS20
++ mkdir -p /home/ubuntu/boki-benchmarks/experiments/singleop/boki/results/QPS20
++ ssh -q ip-172-31-1-248.ap-southeast-1.compute.internal -- cat /proc/cmdline
++ ssh -q ip-172-31-1-248.ap-southeast-1.compute.internal -- uname -a
++ scp -q /home/ubuntu/boki-benchmarks/workloads/workflow/boki/benchmark/singleop/workload.lua ip-172-31-0-98.ap-southeast-1.compute.internal:/tmp
++ ssh -q ip-172-31-0-98.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 120 -L -U -s /tmp/workload.lua http://ip-172-31-1-248.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ ssh -q ip-172-31-0-98.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 600 -L -U -s /tmp/workload.lua http://ip-172-31-1-248.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ scp -q ip-172-31-1-248.ap-southeast-1.compute.internal:/mnt/inmem/store/async_results /home/ubuntu/boki-benchmarks/experiments/singleop/boki/results/QPS20
++ /home/ubuntu/boki-benchmarks/experiments/singleop/boki/../singleop_latency.py --async-result-file /home/ubuntu/boki-benchmarks/experiments/singleop/boki/results/QPS20/async_results
++ ssh -q ip-172-31-0-98.ap-southeast-1.compute.internal -- TABLE_PREFIX=3vsfr4KT- AWS_REGION=ap-southeast-1 NUM_KEYS=100 /tmp/singleop/init clean
++ /home/ubuntu/boki-benchmarks/scripts/exp_helper collect-container-logs --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/boki --log-path=/home/ubuntu/boki-benchmarks/experiments/singleop/boki/results/QPS20
+Collecting logs from bokiexp-engine-1
+Collecting logs from bokiexp-engine-2
+Collecting logs from bokiexp-engine-3
+Collecting logs from bokiexp-engine-4
+Collecting logs from bokiexp-engine-5
+Collecting logs from bokiexp-engine-6
+Collecting logs from bokiexp-engine-7
+Collecting logs from bokiexp-engine-8
+Collecting logs from bokiexp-gateway
+Collecting logs from bokiexp-sequencer-1
+Collecting logs from bokiexp-sequencer-2
+Collecting logs from bokiexp-sequencer-3
+Collecting logs from bokiexp-storage-1
+Collecting logs from bokiexp-storage-2
+Collecting logs from bokiexp-storage-3
+finished QPS20
+Finish setup in 79.328 seconds
++++ dirname /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_once.sh
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ BASE_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/../../..
++ ROOT_DIR=/home/ubuntu/boki-benchmarks
++ BENCH_IMAGE=shengqipku/boki-beldibench:workflow
++ STACK=boki
++ AWS_REGION=ap-southeast-1
++ NUM_KEYS=100
++ EXP_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_read
++ QPS=20
++ LOGMODE=read
++ HELPER_SCRIPT=/home/ubuntu/boki-benchmarks/scripts/exp_helper
++ WRK_DIR=/usr/local/bin
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-docker-manager-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ MANAGER_HOST=ip-172-31-11-61.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-client-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ CLIENT_HOST=ip-172-31-0-206.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-service-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service=boki-gateway
++ ENTRY_HOST=ip-172-31-11-61.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-all-server-hosts --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ ALL_HOSTS='ip-172-31-0-240.ap-southeast-1.compute.internal
+ip-172-31-6-1.ap-southeast-1.compute.internal
+ip-172-31-9-154.ap-southeast-1.compute.internal
+ip-172-31-4-58.ap-southeast-1.compute.internal
+ip-172-31-15-165.ap-southeast-1.compute.internal
+ip-172-31-9-25.ap-southeast-1.compute.internal
+ip-172-31-8-48.ap-southeast-1.compute.internal
+ip-172-31-1-190.ap-southeast-1.compute.internal
+ip-172-31-11-61.ap-southeast-1.compute.internal
+ip-172-31-11-226.ap-southeast-1.compute.internal
+ip-172-31-1-187.ap-southeast-1.compute.internal
+ip-172-31-13-108.ap-southeast-1.compute.internal
+ip-172-31-9-85.ap-southeast-1.compute.internal
+ip-172-31-5-31.ap-southeast-1.compute.internal
+ip-172-31-3-193.ap-southeast-1.compute.internal'
++ /home/ubuntu/boki-benchmarks/scripts/exp_helper generate-docker-compose --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/docker-compose.yml 'ip-172-31-11-61.ap-southeast-1.compute.internal:~'
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/docker-compose-generated.yml 'ip-172-31-11-61.ap-southeast-1.compute.internal:~'
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- docker stack rm boki
+Nothing found in stack: boki
++ sleep 40
+++ head -n 1
+++ tr -dc a-zA-Z0-9
+++ fold -w 8
+++ head -c 64 /dev/urandom
++ TABLE_PREFIX=e2OM7hnf
++ TABLE_PREFIX=e2OM7hnf-
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- docker pull shengqipku/boki-beldibench:workflow
+workflow: Pulling from shengqipku/boki-beldibench
+fb0b3276a519: Pulling fs layer
+04650d0140a3: Pulling fs layer
+2bde0ecdcf0b: Pulling fs layer
+631d66a347c9: Pulling fs layer
+e3176dba68e3: Pulling fs layer
+2c4530d68e03: Pulling fs layer
+631d66a347c9: Waiting
+e3176dba68e3: Waiting
+2c4530d68e03: Waiting
+fb0b3276a519: Download complete
+2bde0ecdcf0b: Verifying Checksum
+2bde0ecdcf0b: Download complete
+04650d0140a3: Verifying Checksum
+04650d0140a3: Download complete
+fb0b3276a519: Pull complete
+2c4530d68e03: Verifying Checksum
+2c4530d68e03: Download complete
+631d66a347c9: Verifying Checksum
+631d66a347c9: Download complete
+e3176dba68e3: Verifying Checksum
+e3176dba68e3: Download complete
+04650d0140a3: Pull complete
+2bde0ecdcf0b: Pull complete
+631d66a347c9: Pull complete
+e3176dba68e3: Pull complete
+2c4530d68e03: Pull complete
+Digest: sha256:c57fde79b16d5aa3df3eca51642445e387b80e34a3d65a43ecc93e851e968264
+Status: Downloaded newer image for shengqipku/boki-beldibench:workflow
+docker.io/shengqipku/boki-beldibench:workflow
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- docker run -v /tmp:/tmp shengqipku/boki-beldibench:workflow cp -r /optimal-bin/singleop /tmp/
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- TABLE_PREFIX=e2OM7hnf- AWS_REGION=ap-southeast-1 LoggingMode=read NUM_KEYS=100 /tmp/singleop/init create
+2023/04/05 15:20:28 [INFO] log mode: READLOG
+singleop status: CREATING
+singleop status: CREATING
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- TABLE_PREFIX=e2OM7hnf- AWS_REGION=ap-southeast-1 LoggingMode=read NUM_KEYS=100 /tmp/singleop/init populate
+2023/04/05 15:20:34 [INFO] log mode: READLOG
++ scp -q /home/ubuntu/boki-benchmarks/scripts/zk_setup.sh ip-172-31-11-61.ap-southeast-1.compute.internal:/tmp/zk_setup.sh
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/store
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-0-240.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-6-1.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-9-154.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-4-58.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-15-165.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-9-25.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-8-48.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-1-190.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-11-61.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-11-226.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-1-187.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-13-108.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-9-85.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-5-31.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-3-193.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --machine-label=engine_node
++ ALL_ENGINE_HOSTS='ip-172-31-0-240.ap-southeast-1.compute.internal
+ip-172-31-6-1.ap-southeast-1.compute.internal
+ip-172-31-9-154.ap-southeast-1.compute.internal
+ip-172-31-4-58.ap-southeast-1.compute.internal
+ip-172-31-15-165.ap-southeast-1.compute.internal
+ip-172-31-9-25.ap-southeast-1.compute.internal
+ip-172-31-8-48.ap-southeast-1.compute.internal
+ip-172-31-1-190.ap-southeast-1.compute.internal'
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-0-240.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-6-1.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-9-154.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-4-58.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-15-165.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-9-25.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-8-48.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-1-190.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --machine-label=storage_node
++ ALL_STORAGE_HOSTS='ip-172-31-9-85.ap-southeast-1.compute.internal
+ip-172-31-5-31.ap-southeast-1.compute.internal
+ip-172-31-3-193.ap-southeast-1.compute.internal'
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-9-85.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-9-85.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-5-31.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-5-31.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-3-193.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-3-193.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- TABLE_PREFIX=e2OM7hnf- NUM_KEYS=100 LoggingMode=read docker stack deploy -c /home/ubuntu/docker-compose-generated.yml -c /home/ubuntu/docker-compose.yml boki
+Ignoring unsupported options: restart
+
+Creating network boki_default
+Creating service boki_boki-gateway
+Creating service boki_boki-sequencer
+Creating service boki_nop-service
+Creating service boki_prewarm-service
+Creating service boki_boki-controller
+Creating service boki_boki-engine
+Creating service boki_boki-storage
+Creating service boki_singleop-service
+Creating service boki_zookeeper
+Creating service boki_zookeeper-setup
++ sleep 80
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-0-240.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=83d2e7ff0623ba6a335c414a9059880255b22cdfc1dfea58d812deaa2a46d62a
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/83d2e7ff0623ba6a335c414a9059880255b22cdfc1dfea58d812deaa2a46d62a/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-6-1.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=2ff37a9d1cb4240fc5803954b50e8dbe0f7022db0fd555eaada34083f9021c05
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/2ff37a9d1cb4240fc5803954b50e8dbe0f7022db0fd555eaada34083f9021c05/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-9-154.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=691fc7ace39d4c1c9587c25650caa1edeca5b0210f3f45826a49c2aaa172e859
++ echo 4096
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/691fc7ace39d4c1c9587c25650caa1edeca5b0210f3f45826a49c2aaa172e859/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-4-58.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=027cef7b189ea93e6033e79f5c434969def0d8050040a90833811192d2a9cb32
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/027cef7b189ea93e6033e79f5c434969def0d8050040a90833811192d2a9cb32/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-15-165.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=10e8bac741de0675bfd08edca98b5c0895ed72f2a394e5cad0257c9665766845
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/10e8bac741de0675bfd08edca98b5c0895ed72f2a394e5cad0257c9665766845/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-9-25.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=09b5dc678eb78d2da9212a4e72c78980781d3c3481923d0104813e2d4b199abb
++ echo 4096
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/09b5dc678eb78d2da9212a4e72c78980781d3c3481923d0104813e2d4b199abb/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-8-48.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=50b228419756b49fc7ab51bbfa534199e4b182d96068d44e31a834515871e4bd
++ echo 4096
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/50b228419756b49fc7ab51bbfa534199e4b182d96068d44e31a834515871e4bd/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-1-190.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=fb1902ac21e0094c53b95f0d7107ba6396a4afd466449c17d70a2cef6c8cb2b0
++ echo 4096
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/fb1902ac21e0094c53b95f0d7107ba6396a4afd466449c17d70a2cef6c8cb2b0/cpu.shares
+4096
++ sleep 10
++ rm -rf /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_read
++ mkdir -p /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_read
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- cat /proc/cmdline
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- uname -a
++ scp -q /home/ubuntu/boki-benchmarks/workloads/workflow/optimal/benchmark/singleop/workload.lua ip-172-31-0-206.ap-southeast-1.compute.internal:/tmp
++ scp -q /home/ubuntu/boki-benchmarks/workloads/workflow/optimal/benchmark/singleop/prewarm.lua ip-172-31-0-206.ap-southeast-1.compute.internal:/tmp
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 10 -L -U -s /tmp/prewarm.lua http://ip-172-31-11-61.ap-southeast-1.compute.internal:8080 -R 1
+Size of request info buffer is not large enough!!
+remaining_time=18446744073709549065, ri_buffer_limit=5
++ sleep 10
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 120 -L -U -s /tmp/workload.lua http://ip-172-31-11-61.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 600 -L -U -s /tmp/workload.lua http://ip-172-31-11-61.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ scp -q ip-172-31-11-61.ap-southeast-1.compute.internal:/mnt/inmem/store/async_results /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_read
++ /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/../singleop_latency.py --async-result-file /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_read/async_results
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- TABLE_PREFIX=e2OM7hnf- AWS_REGION=ap-southeast-1 LoggingMode=read NUM_KEYS=100 /tmp/singleop/init clean
+2023/04/05 15:36:05 [INFO] log mode: READLOG
+finished QPS20_read
++++ dirname /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_once.sh
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ BASE_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/../../..
++ ROOT_DIR=/home/ubuntu/boki-benchmarks
++ BENCH_IMAGE=shengqipku/boki-beldibench:workflow
++ STACK=boki
++ AWS_REGION=ap-southeast-1
++ NUM_KEYS=100
++ EXP_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_write
++ QPS=20
++ LOGMODE=write
++ HELPER_SCRIPT=/home/ubuntu/boki-benchmarks/scripts/exp_helper
++ WRK_DIR=/usr/local/bin
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-docker-manager-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ MANAGER_HOST=ip-172-31-11-61.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-client-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ CLIENT_HOST=ip-172-31-0-206.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-service-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service=boki-gateway
++ ENTRY_HOST=ip-172-31-11-61.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-all-server-hosts --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ ALL_HOSTS='ip-172-31-0-240.ap-southeast-1.compute.internal
+ip-172-31-6-1.ap-southeast-1.compute.internal
+ip-172-31-9-154.ap-southeast-1.compute.internal
+ip-172-31-4-58.ap-southeast-1.compute.internal
+ip-172-31-15-165.ap-southeast-1.compute.internal
+ip-172-31-9-25.ap-southeast-1.compute.internal
+ip-172-31-8-48.ap-southeast-1.compute.internal
+ip-172-31-1-190.ap-southeast-1.compute.internal
+ip-172-31-11-61.ap-southeast-1.compute.internal
+ip-172-31-11-226.ap-southeast-1.compute.internal
+ip-172-31-1-187.ap-southeast-1.compute.internal
+ip-172-31-13-108.ap-southeast-1.compute.internal
+ip-172-31-9-85.ap-southeast-1.compute.internal
+ip-172-31-5-31.ap-southeast-1.compute.internal
+ip-172-31-3-193.ap-southeast-1.compute.internal'
++ /home/ubuntu/boki-benchmarks/scripts/exp_helper generate-docker-compose --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/docker-compose.yml 'ip-172-31-11-61.ap-southeast-1.compute.internal:~'
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/docker-compose-generated.yml 'ip-172-31-11-61.ap-southeast-1.compute.internal:~'
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- docker stack rm boki
+Removing service boki_boki-controller
+Removing service boki_boki-engine
+Removing service boki_boki-gateway
+Removing service boki_boki-sequencer
+Removing service boki_boki-storage
+Removing service boki_nop-service
+Removing service boki_prewarm-service
+Removing service boki_singleop-service
+Removing service boki_zookeeper
+Removing service boki_zookeeper-setup
+Removing network boki_default
++ sleep 40
+++ fold -w 8
+++ head -n 1
+++ head -c 64 /dev/urandom
+++ tr -dc a-zA-Z0-9
++ TABLE_PREFIX=JgSGinsW
++ TABLE_PREFIX=JgSGinsW-
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- docker pull shengqipku/boki-beldibench:workflow
+workflow: Pulling from shengqipku/boki-beldibench
+Digest: sha256:c57fde79b16d5aa3df3eca51642445e387b80e34a3d65a43ecc93e851e968264
+Status: Image is up to date for shengqipku/boki-beldibench:workflow
+docker.io/shengqipku/boki-beldibench:workflow
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- docker run -v /tmp:/tmp shengqipku/boki-beldibench:workflow cp -r /optimal-bin/singleop /tmp/
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- TABLE_PREFIX=JgSGinsW- AWS_REGION=ap-southeast-1 LoggingMode=write NUM_KEYS=100 /tmp/singleop/init create
+2023/04/05 15:36:54 [INFO] log mode: WRITELOG
+singleop status: CREATING
+singleop status: CREATING
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- TABLE_PREFIX=JgSGinsW- AWS_REGION=ap-southeast-1 LoggingMode=write NUM_KEYS=100 /tmp/singleop/init populate
+2023/04/05 15:37:01 [INFO] log mode: WRITELOG
++ scp -q /home/ubuntu/boki-benchmarks/scripts/zk_setup.sh ip-172-31-11-61.ap-southeast-1.compute.internal:/tmp/zk_setup.sh
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/store
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-0-240.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-6-1.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-9-154.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-4-58.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-15-165.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-9-25.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-8-48.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-1-190.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-11-61.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-11-226.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-1-187.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-13-108.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-9-85.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-5-31.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-3-193.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --machine-label=engine_node
++ ALL_ENGINE_HOSTS='ip-172-31-0-240.ap-southeast-1.compute.internal
+ip-172-31-6-1.ap-southeast-1.compute.internal
+ip-172-31-9-154.ap-southeast-1.compute.internal
+ip-172-31-4-58.ap-southeast-1.compute.internal
+ip-172-31-15-165.ap-southeast-1.compute.internal
+ip-172-31-9-25.ap-southeast-1.compute.internal
+ip-172-31-8-48.ap-southeast-1.compute.internal
+ip-172-31-1-190.ap-southeast-1.compute.internal'
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-0-240.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-6-1.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-9-154.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-4-58.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-15-165.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-9-25.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-8-48.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-1-190.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --machine-label=storage_node
++ ALL_STORAGE_HOSTS='ip-172-31-9-85.ap-southeast-1.compute.internal
+ip-172-31-5-31.ap-southeast-1.compute.internal
+ip-172-31-3-193.ap-southeast-1.compute.internal'
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-9-85.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-9-85.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-5-31.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-5-31.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-3-193.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-3-193.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- TABLE_PREFIX=JgSGinsW- NUM_KEYS=100 LoggingMode=write docker stack deploy -c /home/ubuntu/docker-compose-generated.yml -c /home/ubuntu/docker-compose.yml boki
+Ignoring unsupported options: restart
+
+Creating network boki_default
+Creating service boki_boki-controller
+Creating service boki_boki-engine
+Creating service boki_boki-gateway
+Creating service boki_boki-storage
+Creating service boki_nop-service
+Creating service boki_prewarm-service
+Creating service boki_singleop-service
+Creating service boki_zookeeper-setup
+Creating service boki_boki-sequencer
+Creating service boki_zookeeper
++ sleep 80
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-0-240.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=0cbbe1edfc623d8481747305c22d8dfc9ce7c61ae7f17c4fa46047b4298bc7c5
++ echo 4096
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/0cbbe1edfc623d8481747305c22d8dfc9ce7c61ae7f17c4fa46047b4298bc7c5/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-6-1.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=9e15a9f1e47ee643288a43c2e9e6f810fa8354ee3c7efac40a5c93cbad8b4407
++ echo 4096
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/9e15a9f1e47ee643288a43c2e9e6f810fa8354ee3c7efac40a5c93cbad8b4407/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-9-154.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=49207cfd8b4a1f4efff6f7cc90bc83d6410e7e1fee08d3d1510131442d4c59fb
++ echo 4096
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/49207cfd8b4a1f4efff6f7cc90bc83d6410e7e1fee08d3d1510131442d4c59fb/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-4-58.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=03559b2d508fee59bd6d73922a64aa67a116053054fcd477b8d827a75e42c207
++ echo 4096
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/03559b2d508fee59bd6d73922a64aa67a116053054fcd477b8d827a75e42c207/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-15-165.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=76fabbbe4fee44250e8ad829a511b96330f68671d3d1712134a347eb40ce082f
++ echo 4096
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/76fabbbe4fee44250e8ad829a511b96330f68671d3d1712134a347eb40ce082f/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-9-25.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=9edb2dab96631fb6ab90202aa9a1d5c250d6bcfa9d567eeeb0ec05b055eeb788
++ echo 4096
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/9edb2dab96631fb6ab90202aa9a1d5c250d6bcfa9d567eeeb0ec05b055eeb788/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-8-48.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=050509c6661be1233ff6c2588a5783350e5180f822e7007ea3c1c8423622241f
++ echo 4096
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/050509c6661be1233ff6c2588a5783350e5180f822e7007ea3c1c8423622241f/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-1-190.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=214dee6ac78b678b57fc395c7f8eae35f808f33978bb24310a14bcb1803e09f0
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/214dee6ac78b678b57fc395c7f8eae35f808f33978bb24310a14bcb1803e09f0/cpu.shares
++ echo 4096
+4096
++ sleep 10
++ rm -rf /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_write
++ mkdir -p /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_write
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- cat /proc/cmdline
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- uname -a
++ scp -q /home/ubuntu/boki-benchmarks/workloads/workflow/optimal/benchmark/singleop/workload.lua ip-172-31-0-206.ap-southeast-1.compute.internal:/tmp
++ scp -q /home/ubuntu/boki-benchmarks/workloads/workflow/optimal/benchmark/singleop/prewarm.lua ip-172-31-0-206.ap-southeast-1.compute.internal:/tmp
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 10 -L -U -s /tmp/prewarm.lua http://ip-172-31-11-61.ap-southeast-1.compute.internal:8080 -R 1
++ sleep 10
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 120 -L -U -s /tmp/workload.lua http://ip-172-31-11-61.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 600 -L -U -s /tmp/workload.lua http://ip-172-31-11-61.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ scp -q ip-172-31-11-61.ap-southeast-1.compute.internal:/mnt/inmem/store/async_results /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_write
++ /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/../singleop_latency.py --async-result-file /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_write/async_results
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- TABLE_PREFIX=JgSGinsW- AWS_REGION=ap-southeast-1 LoggingMode=write NUM_KEYS=100 /tmp/singleop/init clean
+2023/04/05 15:52:32 [INFO] log mode: WRITELOG
+finished QPS20_write
++++ dirname /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_once.sh
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ BASE_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/../../..
++ ROOT_DIR=/home/ubuntu/boki-benchmarks
++ BENCH_IMAGE=shengqipku/boki-beldibench:workflow
++ STACK=boki
++ AWS_REGION=ap-southeast-1
++ NUM_KEYS=100
++ EXP_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_none
++ QPS=20
++ LOGMODE=none
++ HELPER_SCRIPT=/home/ubuntu/boki-benchmarks/scripts/exp_helper
++ WRK_DIR=/usr/local/bin
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-docker-manager-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ MANAGER_HOST=ip-172-31-11-61.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-client-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ CLIENT_HOST=ip-172-31-0-206.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-service-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service=boki-gateway
++ ENTRY_HOST=ip-172-31-11-61.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-all-server-hosts --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ ALL_HOSTS='ip-172-31-0-240.ap-southeast-1.compute.internal
+ip-172-31-6-1.ap-southeast-1.compute.internal
+ip-172-31-9-154.ap-southeast-1.compute.internal
+ip-172-31-4-58.ap-southeast-1.compute.internal
+ip-172-31-15-165.ap-southeast-1.compute.internal
+ip-172-31-9-25.ap-southeast-1.compute.internal
+ip-172-31-8-48.ap-southeast-1.compute.internal
+ip-172-31-1-190.ap-southeast-1.compute.internal
+ip-172-31-11-61.ap-southeast-1.compute.internal
+ip-172-31-11-226.ap-southeast-1.compute.internal
+ip-172-31-1-187.ap-southeast-1.compute.internal
+ip-172-31-13-108.ap-southeast-1.compute.internal
+ip-172-31-9-85.ap-southeast-1.compute.internal
+ip-172-31-5-31.ap-southeast-1.compute.internal
+ip-172-31-3-193.ap-southeast-1.compute.internal'
++ /home/ubuntu/boki-benchmarks/scripts/exp_helper generate-docker-compose --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/docker-compose.yml 'ip-172-31-11-61.ap-southeast-1.compute.internal:~'
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/docker-compose-generated.yml 'ip-172-31-11-61.ap-southeast-1.compute.internal:~'
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- docker stack rm boki
+Removing service boki_boki-controller
+Removing service boki_boki-engine
+Removing service boki_boki-gateway
+Removing service boki_boki-sequencer
+Removing service boki_boki-storage
+Removing service boki_nop-service
+Removing service boki_prewarm-service
+Removing service boki_singleop-service
+Removing service boki_zookeeper
+Removing service boki_zookeeper-setup
+Removing network boki_default
++ sleep 40
+++ head -c 64 /dev/urandom
+++ head -n 1
+++ tr -dc a-zA-Z0-9
+++ fold -w 8
++ TABLE_PREFIX=PEaIMtPH
++ TABLE_PREFIX=PEaIMtPH-
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- docker pull shengqipku/boki-beldibench:workflow
+workflow: Pulling from shengqipku/boki-beldibench
+Digest: sha256:c57fde79b16d5aa3df3eca51642445e387b80e34a3d65a43ecc93e851e968264
+Status: Image is up to date for shengqipku/boki-beldibench:workflow
+docker.io/shengqipku/boki-beldibench:workflow
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- docker run -v /tmp:/tmp shengqipku/boki-beldibench:workflow cp -r /optimal-bin/singleop /tmp/
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- TABLE_PREFIX=PEaIMtPH- AWS_REGION=ap-southeast-1 LoggingMode=none NUM_KEYS=100 /tmp/singleop/init create
+2023/04/05 15:53:21 [INFO] log mode: NONE
+singleop status: CREATING
+singleop status: CREATING
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- TABLE_PREFIX=PEaIMtPH- AWS_REGION=ap-southeast-1 LoggingMode=none NUM_KEYS=100 /tmp/singleop/init populate
+2023/04/05 15:53:28 [INFO] log mode: NONE
++ scp -q /home/ubuntu/boki-benchmarks/scripts/zk_setup.sh ip-172-31-11-61.ap-southeast-1.compute.internal:/tmp/zk_setup.sh
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/store
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-0-240.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-6-1.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-9-154.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-4-58.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-15-165.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-9-25.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-8-48.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-1-190.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-11-61.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-11-226.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-1-187.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-13-108.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-9-85.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-5-31.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/nightcore_config.json ip-172-31-3-193.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --machine-label=engine_node
++ ALL_ENGINE_HOSTS='ip-172-31-0-240.ap-southeast-1.compute.internal
+ip-172-31-6-1.ap-southeast-1.compute.internal
+ip-172-31-9-154.ap-southeast-1.compute.internal
+ip-172-31-4-58.ap-southeast-1.compute.internal
+ip-172-31-15-165.ap-southeast-1.compute.internal
+ip-172-31-9-25.ap-southeast-1.compute.internal
+ip-172-31-8-48.ap-southeast-1.compute.internal
+ip-172-31-1-190.ap-southeast-1.compute.internal'
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-0-240.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-6-1.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-9-154.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-4-58.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-15-165.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-9-25.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-8-48.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/run_launcher ip-172-31-1-190.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --machine-label=storage_node
++ ALL_STORAGE_HOSTS='ip-172-31-9-85.ap-southeast-1.compute.internal
+ip-172-31-5-31.ap-southeast-1.compute.internal
+ip-172-31-3-193.ap-southeast-1.compute.internal'
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-9-85.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-9-85.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-5-31.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-5-31.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ for HOST in $ALL_STORAGE_HOSTS
++ ssh -q ip-172-31-3-193.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/storage/logdata
++ ssh -q ip-172-31-3-193.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/storage/logdata
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- TABLE_PREFIX=PEaIMtPH- NUM_KEYS=100 LoggingMode=none docker stack deploy -c /home/ubuntu/docker-compose-generated.yml -c /home/ubuntu/docker-compose.yml boki
+Ignoring unsupported options: restart
+
+Creating network boki_default
+Creating service boki_zookeeper-setup
+Creating service boki_boki-controller
+Creating service boki_boki-engine
+Creating service boki_boki-gateway
+Creating service boki_boki-storage
+Creating service boki_prewarm-service
+Creating service boki_zookeeper
+Creating service boki_boki-sequencer
+Creating service boki_nop-service
+Creating service boki_singleop-service
++ sleep 80
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-0-240.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=f909178e3681686389ea722b29d2b5e2b187c5a03d6b68cb11dbd4ff0c6318ff
++ echo 4096
++ ssh -q ip-172-31-0-240.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/f909178e3681686389ea722b29d2b5e2b187c5a03d6b68cb11dbd4ff0c6318ff/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-6-1.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=e59a82a4cb3db5c43d116997efcced14cf927c297ed570c76cf8e19537d0884d
++ echo 4096
++ ssh -q ip-172-31-6-1.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/e59a82a4cb3db5c43d116997efcced14cf927c297ed570c76cf8e19537d0884d/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-9-154.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=610d3936a45d5b9c272fd4c656debe5d6f60f12224e7fc9322998d1e0ca04e47
++ ssh -q ip-172-31-9-154.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/610d3936a45d5b9c272fd4c656debe5d6f60f12224e7fc9322998d1e0ca04e47/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-4-58.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=f53c64e4bc469aa809195e06afa2d3e2ef3cef295c6609f5542e2224c11cf83d
++ ssh -q ip-172-31-4-58.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/f53c64e4bc469aa809195e06afa2d3e2ef3cef295c6609f5542e2224c11cf83d/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-15-165.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=639b646c3a2e8b510b329ee40bde35847947fbb64d2ed02c8148764c589fe5ed
++ ssh -q ip-172-31-15-165.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/639b646c3a2e8b510b329ee40bde35847947fbb64d2ed02c8148764c589fe5ed/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-9-25.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=028d151e65f8f3f38f2c545ace9ad46c6532e8c91bbd9b2607ba964771d4ea3f
++ echo 4096
++ ssh -q ip-172-31-9-25.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/028d151e65f8f3f38f2c545ace9ad46c6532e8c91bbd9b2607ba964771d4ea3f/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-8-48.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=97863346d6fdd5fee77d80b8d3297d91c48035594707c33c6d8fdf43309f5189
++ echo 4096
++ ssh -q ip-172-31-8-48.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/97863346d6fdd5fee77d80b8d3297d91c48035594707c33c6d8fdf43309f5189/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal --service boki-engine --machine-host ip-172-31-1-190.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=59a43396073929f602285a5199b33dc61f3f0d85f37f422e54bfb34a0073449a
++ ssh -q ip-172-31-1-190.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/59a43396073929f602285a5199b33dc61f3f0d85f37f422e54bfb34a0073449a/cpu.shares
++ echo 4096
+4096
++ sleep 10
++ rm -rf /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_none
++ mkdir -p /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_none
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- cat /proc/cmdline
++ ssh -q ip-172-31-11-61.ap-southeast-1.compute.internal -- uname -a
++ scp -q /home/ubuntu/boki-benchmarks/workloads/workflow/optimal/benchmark/singleop/workload.lua ip-172-31-0-206.ap-southeast-1.compute.internal:/tmp
++ scp -q /home/ubuntu/boki-benchmarks/workloads/workflow/optimal/benchmark/singleop/prewarm.lua ip-172-31-0-206.ap-southeast-1.compute.internal:/tmp
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 10 -L -U -s /tmp/prewarm.lua http://ip-172-31-11-61.ap-southeast-1.compute.internal:8080 -R 1
+Size of request info buffer is not large enough!!
+remaining_time=18446744073709549041, ri_buffer_limit=5
++ sleep 10
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 120 -L -U -s /tmp/workload.lua http://ip-172-31-11-61.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 600 -L -U -s /tmp/workload.lua http://ip-172-31-11-61.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ scp -q ip-172-31-11-61.ap-southeast-1.compute.internal:/mnt/inmem/store/async_results /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_none
++ /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/../singleop_latency.py --async-result-file /home/ubuntu/boki-benchmarks/experiments/singleop/optimal/results/QPS20_none/async_results
++ ssh -q ip-172-31-0-206.ap-southeast-1.compute.internal -- TABLE_PREFIX=PEaIMtPH- AWS_REGION=ap-southeast-1 LoggingMode=none NUM_KEYS=100 /tmp/singleop/init clean
+2023/04/05 16:08:59 [INFO] log mode: NONE
+finished QPS20_none
+Finish setup in 43.462 seconds
++++ dirname /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_once.sh
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
++ BASE_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/../../..
++ ROOT_DIR=/home/ubuntu/boki-benchmarks
++ BENCH_IMAGE=shengqipku/boki-beldibench:workflow
++ STACK=boki
++ AWS_REGION=ap-southeast-1
++ NUM_KEYS=100
++ EXP_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/results/QPS20_read
++ QPS=20
++ LOGMODE=read
++ rm -rf /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/results/QPS20_read
++ mkdir -p /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/results/QPS20_read
++ HELPER_SCRIPT=/home/ubuntu/boki-benchmarks/scripts/exp_helper
++ WRK_DIR=/usr/local/bin
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-docker-manager-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
++ MANAGER_HOST=ip-172-31-14-209.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-client-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
++ CLIENT_HOST=ip-172-31-0-229.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-service-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service=boki-gateway
++ ENTRY_HOST=ip-172-31-14-209.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-all-server-hosts --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
++ ALL_HOSTS='ip-172-31-0-235.ap-southeast-1.compute.internal
+ip-172-31-8-224.ap-southeast-1.compute.internal
+ip-172-31-8-45.ap-southeast-1.compute.internal
+ip-172-31-10-238.ap-southeast-1.compute.internal
+ip-172-31-4-236.ap-southeast-1.compute.internal
+ip-172-31-15-46.ap-southeast-1.compute.internal
+ip-172-31-6-214.ap-southeast-1.compute.internal
+ip-172-31-8-233.ap-southeast-1.compute.internal
+ip-172-31-14-209.ap-southeast-1.compute.internal'
++ /home/ubuntu/boki-benchmarks/scripts/exp_helper generate-docker-compose --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/docker-compose.yml 'ip-172-31-14-209.ap-southeast-1.compute.internal:~'
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/docker-compose-generated.yml 'ip-172-31-14-209.ap-southeast-1.compute.internal:~'
++ ssh -q ip-172-31-14-209.ap-southeast-1.compute.internal -- docker stack rm boki
+Nothing found in stack: boki
++ sleep 40
+++ tr -dc a-zA-Z0-9
+++ fold -w 8
+++ head -c 64 /dev/urandom
+++ head -n 1
++ TABLE_PREFIX=MkxXAKYi
++ TABLE_PREFIX=MkxXAKYi-
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- docker pull shengqipku/boki-beldibench:workflow
+workflow: Pulling from shengqipku/boki-beldibench
+fb0b3276a519: Pulling fs layer
+04650d0140a3: Pulling fs layer
+2bde0ecdcf0b: Pulling fs layer
+631d66a347c9: Pulling fs layer
+e3176dba68e3: Pulling fs layer
+2c4530d68e03: Pulling fs layer
+e3176dba68e3: Waiting
+2c4530d68e03: Waiting
+631d66a347c9: Waiting
+fb0b3276a519: Verifying Checksum
+fb0b3276a519: Download complete
+2bde0ecdcf0b: Verifying Checksum
+2bde0ecdcf0b: Download complete
+04650d0140a3: Verifying Checksum
+04650d0140a3: Download complete
+fb0b3276a519: Pull complete
+2c4530d68e03: Verifying Checksum
+2c4530d68e03: Download complete
+631d66a347c9: Verifying Checksum
+631d66a347c9: Download complete
+e3176dba68e3: Verifying Checksum
+e3176dba68e3: Download complete
+04650d0140a3: Pull complete
+2bde0ecdcf0b: Pull complete
+631d66a347c9: Pull complete
+e3176dba68e3: Pull complete
+2c4530d68e03: Pull complete
+Digest: sha256:c57fde79b16d5aa3df3eca51642445e387b80e34a3d65a43ecc93e851e968264
+Status: Downloaded newer image for shengqipku/boki-beldibench:workflow
+docker.io/shengqipku/boki-beldibench:workflow
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- docker run -v /tmp:/tmp shengqipku/boki-beldibench:workflow cp -r /optbeldi-bin/singleop /tmp/
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- TABLE_PREFIX=MkxXAKYi- AWS_REGION=ap-southeast-1 NUM_KEYS=100 LoggingMode=read /tmp/singleop/init create
+2023/04/05 16:13:30 [INFO] log mode: READLOG
+singleop status: ACTIVE
+singleop-log status: ACTIVE
+singleop-collector status: CREATING
+singleop-collector status: CREATING
+singleop-collector status: ACTIVE
+counter status: CREATING
+counter status: ACTIVE
+Enabling stream for singleop
+singleop status: UPDATING
+singleop status: ACTIVE
+Stream arn: arn:aws:dynamodb:ap-southeast-1:325476609965:table/MkxXAKYi-singleop/stream/2023-04-05T21:13:52.977
+singleop status: ENABLED
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- TABLE_PREFIX=MkxXAKYi- AWS_REGION=ap-southeast-1 NUM_KEYS=100 LoggingMode=read /tmp/singleop/init populate
+2023/04/05 16:13:56 [INFO] log mode: READLOG
++ scp -q /home/ubuntu/boki-benchmarks/scripts/zk_setup.sh ip-172-31-14-209.ap-southeast-1.compute.internal:/tmp/zk_setup.sh
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- TABLE_PREFIX=MkxXAKYi- AWS_REGION=ap-southeast-1 LoggingMode=read /tmp/singleop/stream
++ ssh -q ip-172-31-14-209.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/store
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-0-235.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-8-224.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-8-45.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-10-238.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-4-236.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-15-46.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-6-214.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-8-233.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-14-209.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --machine-label=engine_node
++ ALL_ENGINE_HOSTS='ip-172-31-0-235.ap-southeast-1.compute.internal
+ip-172-31-8-224.ap-southeast-1.compute.internal
+ip-172-31-8-45.ap-southeast-1.compute.internal
+ip-172-31-10-238.ap-southeast-1.compute.internal
+ip-172-31-4-236.ap-southeast-1.compute.internal
+ip-172-31-15-46.ap-southeast-1.compute.internal
+ip-172-31-6-214.ap-southeast-1.compute.internal
+ip-172-31-8-233.ap-southeast-1.compute.internal'
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-0-235.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-8-224.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-8-45.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-10-238.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-4-236.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-15-46.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-6-214.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-8-233.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --machine-label=storage_node
++ ALL_STORAGE_HOSTS=
++ ssh -q ip-172-31-14-209.ap-southeast-1.compute.internal -- TABLE_PREFIX=MkxXAKYi- NUM_KEYS=100 LoggingMode=read docker stack deploy -c /home/ubuntu/docker-compose-generated.yml -c /home/ubuntu/docker-compose.yml boki
+Ignoring unsupported options: restart
+
+Creating network boki_default
+Creating service boki_boki-gateway
+Creating service boki_nop-service
+Creating service boki_singleop-service
+Creating service boki_zookeeper
+Creating service boki_zookeeper-setup
+Creating service boki_boki-engine
++ sleep 60
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-0-235.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=f60b4722d88992aeb500803240ee88bf6de75dc65aa30e28be449b02c9640d28
++ echo 4096
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/f60b4722d88992aeb500803240ee88bf6de75dc65aa30e28be449b02c9640d28/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-8-224.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=d7212af4db084717df6cd244f4ec90851add863dd95aa38b10ecde63b16830b2
++ echo 4096
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/d7212af4db084717df6cd244f4ec90851add863dd95aa38b10ecde63b16830b2/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-8-45.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=660b7db513c6849f1208bbaad4215dbc04816f443cc31fa21edba072db10a24f
++ echo 4096
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/660b7db513c6849f1208bbaad4215dbc04816f443cc31fa21edba072db10a24f/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-10-238.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=cef2f99ca95fefd07f6514a15fd7d71b9b21bddfa9f3349129171b2536740295
++ echo 4096
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/cef2f99ca95fefd07f6514a15fd7d71b9b21bddfa9f3349129171b2536740295/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-4-236.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=d48f089080926b8ae4c4b4978e555469736cb9208cc15114cde96980472aba4d
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/d48f089080926b8ae4c4b4978e555469736cb9208cc15114cde96980472aba4d/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-15-46.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=5213c0309709f0cc560fa11671ce65847fd7a29b902dbf5f67503701426efbb6
++ echo 4096
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/5213c0309709f0cc560fa11671ce65847fd7a29b902dbf5f67503701426efbb6/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-6-214.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=9e78364c767a403a99ce0c5a2c917c0581d2bbfb06cd0dac24d65467e1a811c1
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/9e78364c767a403a99ce0c5a2c917c0581d2bbfb06cd0dac24d65467e1a811c1/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-8-233.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=6137e3555dfd16c13568e226bccfcac2622b73aec50edc131a89a284477778a7
++ echo 4096
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/6137e3555dfd16c13568e226bccfcac2622b73aec50edc131a89a284477778a7/cpu.shares
+4096
++ sleep 10
++ ssh -q ip-172-31-14-209.ap-southeast-1.compute.internal -- cat /proc/cmdline
++ ssh -q ip-172-31-14-209.ap-southeast-1.compute.internal -- uname -a
++ scp -q /home/ubuntu/boki-benchmarks/workloads/workflow/beldi/benchmark/singleop/workload.lua ip-172-31-0-229.ap-southeast-1.compute.internal:/tmp
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 120 -L -U -s /tmp/workload.lua http://ip-172-31-14-209.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 600 -L -U -s /tmp/workload.lua http://ip-172-31-14-209.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ scp -q ip-172-31-14-209.ap-southeast-1.compute.internal:/mnt/inmem/store/async_results /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/results/QPS20_read
++ /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/../singleop_latency.py --async-result-file /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/results/QPS20_read/async_results
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- TABLE_PREFIX=MkxXAKYi- AWS_REGION=ap-southeast-1 NUM_KEYS=100 LoggingMode=read /tmp/singleop/init clean
+2023/04/05 16:28:28 [INFO] log mode: READLOG
+finished QPS20_read
++++ dirname /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_once.sh
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
++ BASE_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
+++ realpath /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/../../..
++ ROOT_DIR=/home/ubuntu/boki-benchmarks
++ BENCH_IMAGE=shengqipku/boki-beldibench:workflow
++ STACK=boki
++ AWS_REGION=ap-southeast-1
++ NUM_KEYS=100
++ EXP_DIR=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/results/QPS20_write
++ QPS=20
++ LOGMODE=write
++ rm -rf /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/results/QPS20_write
++ mkdir -p /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/results/QPS20_write
++ HELPER_SCRIPT=/home/ubuntu/boki-benchmarks/scripts/exp_helper
++ WRK_DIR=/usr/local/bin
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-docker-manager-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
++ MANAGER_HOST=ip-172-31-14-209.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-client-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
++ CLIENT_HOST=ip-172-31-0-229.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-service-host --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service=boki-gateway
++ ENTRY_HOST=ip-172-31-14-209.ap-southeast-1.compute.internal
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-all-server-hosts --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
++ ALL_HOSTS='ip-172-31-0-235.ap-southeast-1.compute.internal
+ip-172-31-8-224.ap-southeast-1.compute.internal
+ip-172-31-8-45.ap-southeast-1.compute.internal
+ip-172-31-10-238.ap-southeast-1.compute.internal
+ip-172-31-4-236.ap-southeast-1.compute.internal
+ip-172-31-15-46.ap-southeast-1.compute.internal
+ip-172-31-6-214.ap-southeast-1.compute.internal
+ip-172-31-8-233.ap-southeast-1.compute.internal
+ip-172-31-14-209.ap-southeast-1.compute.internal'
++ /home/ubuntu/boki-benchmarks/scripts/exp_helper generate-docker-compose --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/docker-compose.yml 'ip-172-31-14-209.ap-southeast-1.compute.internal:~'
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/docker-compose-generated.yml 'ip-172-31-14-209.ap-southeast-1.compute.internal:~'
++ ssh -q ip-172-31-14-209.ap-southeast-1.compute.internal -- docker stack rm boki
+Removing service boki_boki-engine
+Removing service boki_boki-gateway
+Removing service boki_nop-service
+Removing service boki_singleop-service
+Removing service boki_zookeeper
+Removing service boki_zookeeper-setup
+Removing network boki_default
++ sleep 40
+++ head -c 64 /dev/urandom
+++ head -n 1
+++ fold -w 8
+++ tr -dc a-zA-Z0-9
++ TABLE_PREFIX=dC1BtwS6
++ TABLE_PREFIX=dC1BtwS6-
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- docker pull shengqipku/boki-beldibench:workflow
+workflow: Pulling from shengqipku/boki-beldibench
+Digest: sha256:c57fde79b16d5aa3df3eca51642445e387b80e34a3d65a43ecc93e851e968264
+Status: Image is up to date for shengqipku/boki-beldibench:workflow
+docker.io/shengqipku/boki-beldibench:workflow
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- docker run -v /tmp:/tmp shengqipku/boki-beldibench:workflow cp -r /optbeldi-bin/singleop /tmp/
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- TABLE_PREFIX=dC1BtwS6- AWS_REGION=ap-southeast-1 NUM_KEYS=100 LoggingMode=write /tmp/singleop/init create
+2023/04/05 16:29:42 [INFO] log mode: WRITELOG
+singleop status: CREATING
+singleop status: CREATING
+singleop status: ACTIVE
+singleop-log status: ACTIVE
+singleop-collector status: ACTIVE
+counter status: CREATING
+counter status: CREATING
+counter status: ACTIVE
+Enabling stream for singleop
+singleop status: UPDATING
+singleop status: ACTIVE
+Stream arn: arn:aws:dynamodb:ap-southeast-1:325476609965:table/dC1BtwS6-singleop/stream/2023-04-05T21:30:07.393
+singleop status: ENABLED
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- TABLE_PREFIX=dC1BtwS6- AWS_REGION=ap-southeast-1 NUM_KEYS=100 LoggingMode=write /tmp/singleop/init populate
+2023/04/05 16:30:10 [INFO] log mode: WRITELOG
++ scp -q /home/ubuntu/boki-benchmarks/scripts/zk_setup.sh ip-172-31-14-209.ap-southeast-1.compute.internal:/tmp/zk_setup.sh
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- TABLE_PREFIX=dC1BtwS6- AWS_REGION=ap-southeast-1 LoggingMode=write /tmp/singleop/stream
++ ssh -q ip-172-31-14-209.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/store
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-0-235.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-8-224.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-8-45.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-10-238.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-4-236.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-15-46.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-6-214.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-8-233.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
++ for host in $ALL_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/nightcore_config.json ip-172-31-14-209.ap-southeast-1.compute.internal:/tmp/nightcore_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --machine-label=engine_node
++ ALL_ENGINE_HOSTS='ip-172-31-0-235.ap-southeast-1.compute.internal
+ip-172-31-8-224.ap-southeast-1.compute.internal
+ip-172-31-8-45.ap-southeast-1.compute.internal
+ip-172-31-10-238.ap-southeast-1.compute.internal
+ip-172-31-4-236.ap-southeast-1.compute.internal
+ip-172-31-15-46.ap-southeast-1.compute.internal
+ip-172-31-6-214.ap-southeast-1.compute.internal
+ip-172-31-8-233.ap-southeast-1.compute.internal'
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-0-235.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-8-224.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-8-45.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-10-238.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-4-236.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-15-46.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-6-214.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
++ for HOST in $ALL_ENGINE_HOSTS
++ scp -q /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/run_launcher ip-172-31-8-233.ap-southeast-1.compute.internal:/tmp/run_launcher
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo rm -rf /mnt/inmem/boki
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo mkdir -p /mnt/inmem/boki/output /mnt/inmem/boki/ipc
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo cp /tmp/run_launcher /mnt/inmem/boki/run_launcher
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo cp /tmp/nightcore_config.json /mnt/inmem/boki/func_config.json
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-machine-with-label --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --machine-label=storage_node
++ ALL_STORAGE_HOSTS=
++ ssh -q ip-172-31-14-209.ap-southeast-1.compute.internal -- TABLE_PREFIX=dC1BtwS6- NUM_KEYS=100 LoggingMode=write docker stack deploy -c /home/ubuntu/docker-compose-generated.yml -c /home/ubuntu/docker-compose.yml boki
+Ignoring unsupported options: restart
+
+Creating network boki_default
+Creating service boki_boki-gateway
+Creating service boki_nop-service
+Creating service boki_singleop-service
+Creating service boki_zookeeper
+Creating service boki_zookeeper-setup
+Creating service boki_boki-engine
++ sleep 60
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-0-235.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=9bd49b2c0ba4b553ad892c7cfb2f2f5f6f73e9e8d503e8326b74a04cd2ed123c
++ echo 4096
++ ssh -q ip-172-31-0-235.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/9bd49b2c0ba4b553ad892c7cfb2f2f5f6f73e9e8d503e8326b74a04cd2ed123c/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-8-224.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=08896cb7fd7fb59e81db5d2a10d1069e24586b05b377762d551125840a6e1446
++ ssh -q ip-172-31-8-224.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/08896cb7fd7fb59e81db5d2a10d1069e24586b05b377762d551125840a6e1446/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-8-45.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=55631324071bff4fd5e45c3cff3a34eaecafe59b8bd9729aa30aa845c9d920d4
++ ssh -q ip-172-31-8-45.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/55631324071bff4fd5e45c3cff3a34eaecafe59b8bd9729aa30aa845c9d920d4/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-10-238.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=3e1ebfb0d3ec21fb17bc6bfba16f9c9676f7f786c6302e0a06d292f881eca73b
++ echo 4096
++ ssh -q ip-172-31-10-238.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/3e1ebfb0d3ec21fb17bc6bfba16f9c9676f7f786c6302e0a06d292f881eca73b/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-4-236.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=5fed5d3b12fd5d5e9d674c31ecbc67c11883a4a8405bc29a30ae1614f9d5fdc5
++ echo 4096
++ ssh -q ip-172-31-4-236.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/5fed5d3b12fd5d5e9d674c31ecbc67c11883a4a8405bc29a30ae1614f9d5fdc5/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-15-46.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=d81d31d7b8c4293c4ff544e150590f8c6d6efa2e7f9870d8451816b5527a28b6
++ ssh -q ip-172-31-15-46.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/d81d31d7b8c4293c4ff544e150590f8c6d6efa2e7f9870d8451816b5527a28b6/cpu.shares
++ echo 4096
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-6-214.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=52c6d7b5a2a851ac957350ec74975476cbbf67118df60d34bb8ad0e2d26c574d
++ echo 4096
++ ssh -q ip-172-31-6-214.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/52c6d7b5a2a851ac957350ec74975476cbbf67118df60d34bb8ad0e2d26c574d/cpu.shares
+4096
++ for HOST in $ALL_ENGINE_HOSTS
+++ /home/ubuntu/boki-benchmarks/scripts/exp_helper get-container-id --base-dir=/home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi --service boki-engine --machine-host ip-172-31-8-233.ap-southeast-1.compute.internal
++ ENGINE_CONTAINER_ID=df5748d5c1b92c936c0a29256d7726e6e7596ff398c6cfce452d5224dc9b1e75
++ ssh -q ip-172-31-8-233.ap-southeast-1.compute.internal -- sudo tee /sys/fs/cgroup/cpu,cpuacct/docker/df5748d5c1b92c936c0a29256d7726e6e7596ff398c6cfce452d5224dc9b1e75/cpu.shares
++ echo 4096
+4096
++ sleep 10
++ ssh -q ip-172-31-14-209.ap-southeast-1.compute.internal -- cat /proc/cmdline
++ ssh -q ip-172-31-14-209.ap-southeast-1.compute.internal -- uname -a
++ scp -q /home/ubuntu/boki-benchmarks/workloads/workflow/beldi/benchmark/singleop/workload.lua ip-172-31-0-229.ap-southeast-1.compute.internal:/tmp
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 120 -L -U -s /tmp/workload.lua http://ip-172-31-14-209.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- /usr/local/bin/wrk -t 2 -c 2 -d 600 -L -U -s /tmp/workload.lua http://ip-172-31-14-209.ap-southeast-1.compute.internal:8080 -R 20
++ sleep 10
++ scp -q ip-172-31-14-209.ap-southeast-1.compute.internal:/mnt/inmem/store/async_results /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/results/QPS20_write
++ /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/../singleop_latency.py --async-result-file /home/ubuntu/boki-benchmarks/experiments/singleop/optimal-beldi/results/QPS20_write/async_results
++ ssh -q ip-172-31-0-229.ap-southeast-1.compute.internal -- TABLE_PREFIX=dC1BtwS6- AWS_REGION=ap-southeast-1 NUM_KEYS=100 LoggingMode=write /tmp/singleop/init clean
+2023/04/05 16:44:42 [INFO] log mode: WRITELOG
+finished QPS20_write

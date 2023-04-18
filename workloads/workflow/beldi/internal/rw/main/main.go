@@ -57,16 +57,19 @@ func init() {
 }
 
 func Handler(env *beldilib.Env) interface{} {
-	if beldilib.TYPE != "BASELINE" {
-		log.Fatalf("TYPE should be BASELINE, but got %s", beldilib.TYPE)
+	// if beldilib.TYPE != "BASELINE" {
+	// 	log.Fatalf("TYPE should be BASELINE, but got %s", beldilib.TYPE)
+	// }
+	tablename := table
+	if beldilib.TYPE == "BASELINE" {
+		tablename = fmt.Sprintf("b%s", table)
 	}
-	// nReads := int(nOps * readRatio)
 	for i := 0; i < nReads; i++ {
-		beldilib.Read(env, fmt.Sprintf("b%s", table), strconv.Itoa(rand.Intn(nKeys)))
+		beldilib.Read(env, tablename, strconv.Itoa(rand.Intn(nKeys)))
 		time.Sleep(sleepDuration)
 	}
 	for i := 0; i < int(nOps)-nReads; i++ {
-		beldilib.Write(env, fmt.Sprintf("b%s", table), strconv.Itoa(rand.Intn(nKeys)), map[expression.NameBuilder]expression.OperandBuilder{
+		beldilib.Write(env, tablename, strconv.Itoa(rand.Intn(nKeys)), map[expression.NameBuilder]expression.OperandBuilder{
 			expression.Name("V"): expression.Value(value),
 		})
 		time.Sleep(sleepDuration)

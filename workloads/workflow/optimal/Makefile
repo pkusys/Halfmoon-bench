@@ -55,5 +55,9 @@ switching:
 	env GOOS=linux go build -o bin/switching/prewarm internal/switching/prewarm/prewarm.go
 	env GOOS=linux go build -o bin/switching/benchmark benchmark/switching/main.go benchmark/switching/client.go
 
+recovery:
+	env GOOS=linux go build -o bin/recovery/init internal/recovery/init/init.go
+	env GOOS=linux go build -o bin/recovery/recovery internal/recovery/main/main.go
+
 clean:
 	rm -rf ./bin

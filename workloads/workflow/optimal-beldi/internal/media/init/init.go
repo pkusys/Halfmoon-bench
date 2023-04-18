@@ -5,59 +5,43 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/eniac/Beldi/internal/media/core"
-	"github.com/eniac/Beldi/pkg/beldilib"
-	"github.com/lithammer/shortuuid"
 	"io/ioutil"
 	"os"
 	"time"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+	"github.com/eniac/Beldi/internal/media/core"
+	"github.com/eniac/Beldi/pkg/beldilib"
+	"github.com/lithammer/shortuuid"
 )
 
 var services = []string{"CastInfo", "ComposeReview", "Frontend", "MovieId", "MovieInfo", "MovieReview", "Page",
 	"Plot", "Rating", "ReviewStorage", "Text", "UniqueId", "User", "UserReview"}
 
 func tables(baseline bool) {
-	if baseline {
-		for ; ; {
-			tablenames := []string{}
-			for _, service := range services {
-				tablename := fmt.Sprintf("b%s", service)
-				beldilib.CreateBaselineTable(tablename)
-				time.Sleep(2 * time.Second)
-				tablenames = append(tablenames, tablename)
-			}
-			if beldilib.WaitUntilAllActive(tablenames) {
-				break
-			}
+	beldilib.CreateCounterTable()
+	beldilib.WaitUntilActive("counter")
+	for {
+		tablenames := []string{}
+		for _, service := range services {
+			beldilib.CreateLambdaTables(service)
+			time.Sleep(2 * time.Second)
+			tablenames = append(tablenames, service)
+			tablenames = append(tablenames, fmt.Sprintf("%s-collector", service))
+			tablenames = append(tablenames, fmt.Sprintf("%s-log", service))
 		}
-	} else {
-		for ; ; {
-			tablenames := []string{}
-			for _, service := range services {
-				beldilib.CreateLambdaTables(service)
-				time.Sleep(2 * time.Second)
-				tablenames = append(tablenames, service)
-				tablenames = append(tablenames, fmt.Sprintf("%s-collector", service))
-				tablenames = append(tablenames, fmt.Sprintf("%s-log", service))
-			}
-			if beldilib.WaitUntilAllActive(tablenames) {
-				break
-			}
+		if beldilib.WaitUntilAllActive(tablenames) {
+			break
 		}
 	}
 }
 
 func deleteTables(baseline bool) {
-	if baseline {
-		for _, service := range services {
-			beldilib.DeleteTable(fmt.Sprintf("b%s", service))
-		}
-	} else {
-		for _, service := range services {
-			beldilib.DeleteLambdaTables(service)
-		}
+	for _, service := range services {
+		beldilib.DeleteLambdaTables(service)
 	}
+	beldilib.DeleteTable("counter")
 }
 
 func user(baseline bool) {
@@ -95,6 +79,9 @@ func movie(baseline bool, file string) {
 }
 
 func populate(baseline bool, file string) {
+	beldilib.LibWrite("counter", aws.JSONValue{"K": "counter"}, map[expression.NameBuilder]expression.OperandBuilder{
+		expression.Name("V"): expression.Value(1),
+	})
 	user(baseline)
 	movie(baseline, file)
 }

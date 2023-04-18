@@ -29,30 +29,27 @@ func clean() {
 	beldilib.WaitUntilDeleted(fmt.Sprintf("%s", table))
 	beldilib.WaitUntilDeleted(fmt.Sprintf("%s-log", table))
 	beldilib.WaitUntilDeleted(fmt.Sprintf("%s-collector", table))
-	if beldilib.TYPE == "WRITELOG" {
-		beldilib.DeleteTable("counter")
-	}
+	// counter
+	beldilib.DeleteTable("counter")
 }
 
 func create() {
-	if beldilib.TYPE == "WRITELOG" {
-		beldilib.CreateCounterTable()
-		time.Sleep(3 * time.Second)
-		beldilib.WaitUntilActive("counter")
-	}
 	beldilib.CreateLambdaTables(fmt.Sprintf("%s", table))
 	time.Sleep(10 * time.Second)
 	beldilib.WaitUntilActive(fmt.Sprintf("%s", table))
 	beldilib.WaitUntilActive(fmt.Sprintf("%s-log", table))
 	beldilib.WaitUntilActive(fmt.Sprintf("%s-collector", table))
+	// counter
+	beldilib.CreateCounterTable()
+	time.Sleep(3 * time.Second)
+	beldilib.WaitUntilActive("counter")
+	beldilib.EnableStream(fmt.Sprintf("%s", table))
 }
 
 func populate() {
-	if beldilib.TYPE == "WRITELOG" {
-		beldilib.LibWrite("counter", aws.JSONValue{"K": "counter"}, map[expression.NameBuilder]expression.OperandBuilder{
-			expression.Name("V"): expression.Value(1),
-		})
-	}
+	beldilib.LibWrite("counter", aws.JSONValue{"K": "counter"}, map[expression.NameBuilder]expression.OperandBuilder{
+		expression.Name("V"): expression.Value(1),
+	})
 	for i := 0; i < nKeys; i++ {
 		beldilib.Populate(table, strconv.Itoa(i), value, false)
 	}

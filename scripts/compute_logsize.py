@@ -123,6 +123,7 @@ if __name__ == "__main__":
             / 1024
         )
     log_size = time_average_logsize(filtered_results, args.gc_interval) / 1024
+    # print(args)
     print(
         "time average: total=%.2fKB, log=%.2fKB, write=%.2fKB"
         % (log_size + write_size, log_size, write_size)

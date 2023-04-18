@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"os"
 	"strconv"
@@ -13,7 +12,7 @@ import (
 	"cs.utexas.edu/zjia/faas"
 )
 
-const table = "singleop"
+var table = "singleop"
 
 var nKeys = 10000
 var value = 1
@@ -24,6 +23,9 @@ func init() {
 	} else {
 		panic("invalid NUM_KEYS")
 	}
+	if beldilib.TYPE == "BASELINE" {
+		table = "b" + table
+	}
 	rand.Seed(time.Now().UnixNano())
 }
 
@@ -31,11 +33,11 @@ func Handler(env *beldilib.Env) interface{} {
 	results := map[string]int64{}
 
 	start := time.Now()
-	beldilib.Read(env, fmt.Sprintf("b%s", table), strconv.Itoa(rand.Intn(nKeys)))
+	beldilib.Read(env, table, strconv.Itoa(rand.Intn(nKeys)))
 	results["Read"] = time.Since(start).Microseconds()
 
 	start = time.Now()
-	beldilib.Write(env, fmt.Sprintf("b%s", table), strconv.Itoa(rand.Intn(nKeys)), map[expression.NameBuilder]expression.OperandBuilder{
+	beldilib.Write(env, table, strconv.Itoa(rand.Intn(nKeys)), map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V"): expression.Value(value),
 	})
 	results["Write"] = time.Since(start).Microseconds()

@@ -1,0 +1,16 @@
+[
+    { "funcName": "Frontend", "funcId": 1, "minWorkers": 16, "maxWorkers": 16 },
+    { "funcName": "bCastInfo", "funcId": 2, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bReviewStorage", "funcId": 3, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bUserReview", "funcId": 4, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bMovieReview", "funcId": 5, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bComposeReview", "funcId": 6, "minWorkers": 16, "maxWorkers": 16 },
+    { "funcName": "bText", "funcId": 7, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bUser", "funcId": 8, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bUniqueId", "funcId": 9, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bRating", "funcId": 10, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bMovieId", "funcId": 11, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bPlot", "funcId": 12, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bMovieInfo", "funcId": 13, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bPage", "funcId": 14, "minWorkers": 8, "maxWorkers": 8 }
+]

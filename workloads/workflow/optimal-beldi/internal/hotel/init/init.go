@@ -18,10 +18,9 @@ var services = []string{"user", "search", "geo", "frontend", "order",
 	"profile", "rate", "recommendation", "gateway"}
 
 func tables(baseline bool) {
-	if beldilib.TYPE == "WRITELOG" {
-		beldilib.CreateCounterTable()
-		beldilib.WaitUntilActive("counter")
-	}
+	// counter
+	beldilib.CreateCounterTable()
+	beldilib.WaitUntilActive("counter")
 	for {
 		tablenames := []string{}
 		ss := []string{"flight", "frontend", "hotel"}
@@ -59,9 +58,7 @@ func deleteTables(baseline bool) {
 	for _, service := range ss {
 		beldilib.DeleteTable(fmt.Sprintf("%s-local", service))
 	}
-	if beldilib.TYPE == "WRITELOG" {
-		beldilib.DeleteTable("counter")
-	}
+	beldilib.DeleteTable("counter")
 }
 
 func geo(baseline bool) {
@@ -396,11 +393,9 @@ func addFlights(baseline bool) {
 }
 
 func populate(baseline bool) {
-	if beldilib.TYPE == "WRITELOG" {
-		beldilib.LibWrite("counter", aws.JSONValue{"K": "counter"}, map[expression.NameBuilder]expression.OperandBuilder{
-			expression.Name("V"): expression.Value(1),
-		})
-	}
+	beldilib.LibWrite("counter", aws.JSONValue{"K": "counter"}, map[expression.NameBuilder]expression.OperandBuilder{
+		expression.Name("V"): expression.Value(1),
+	})
 	geo(baseline)
 	profile(baseline)
 	rate(baseline)

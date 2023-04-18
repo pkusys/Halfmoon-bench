@@ -1,0 +1,13 @@
+[
+    { "funcName": "bgeo", "funcId": 1, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bprofile", "funcId": 2, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "brate", "funcId": 3, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "brecommendation", "funcId": 4, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "buser", "funcId": 5, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bhotel", "funcId": 6, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bsearch", "funcId": 7, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bflight", "funcId": 8, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "border", "funcId": 9, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "bfrontend", "funcId": 10, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "gateway", "funcId": 11, "minWorkers": 8, "maxWorkers": 8 }
+]

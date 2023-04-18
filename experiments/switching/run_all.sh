@@ -7,11 +7,11 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
 RUN=$1
 
-CONCURRENCY=(16 64)
-NUM_OPS=(5)
+CONCURRENCY=(8)
+NUM_OPS=(10)
 READ_RATIOS=("0.2,0.8")
 
-# $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
+$HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
 
 for cc in ${CONCURRENCY[@]}; do
     for ops in ${NUM_OPS[@]}; do
@@ -21,18 +21,18 @@ for cc in ${CONCURRENCY[@]}; do
                 echo "finished $EXP_DIR"
                 continue
             fi
-            $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
-            $BASE_DIR/run_once.sh $EXP_DIR $cc $ops $rr 2>&1 | tee $BASE_DIR/run.log 
+            # $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
+            $BASE_DIR/run_once.sh $EXP_DIR $cc $ops $rr # 2>&1 | tee $BASE_DIR/run.log 
             cp $BASE_DIR/docker-compose.yml $BASE_DIR/results/$EXP_DIR
             cp $BASE_DIR/docker-compose-generated.yml $BASE_DIR/results/$EXP_DIR
             cp $BASE_DIR/config.json $BASE_DIR/results/$EXP_DIR
             cp $BASE_DIR/nightcore_config.json $BASE_DIR/results/$EXP_DIR
             mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
             echo "finished $EXP_DIR"
-            $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
+            # $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
             sleep 60
         done
     done
 done
 
-# $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
+$HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR

@@ -89,13 +89,13 @@ mkdir -p $EXP_DIR
 ssh -q $MANAGER_HOST -- cat /proc/cmdline >>$EXP_DIR/kernel_cmdline
 ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
 
-scp -q $ROOT_DIR/workloads/workflow/optimal/benchmark/switching/prewarm.lua $CLIENT_HOST:/tmp
+# scp -q $ROOT_DIR/workloads/workflow/optimal/benchmark/switching/prewarm.lua $CLIENT_HOST:/tmp
 
-ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 20 -L -U \
-    -s /tmp/prewarm.lua \
-    http://$ENTRY_HOST:8080 -R 1 >$EXP_DIR/wrk_prewarm.log
+# ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 20 -L -U \
+#     -s /tmp/prewarm.lua \
+#     http://$ENTRY_HOST:8080 -R 1 >$EXP_DIR/wrk_prewarm.log
 
-sleep 10
+# sleep 10
 
 ssh -q $CLIENT_HOST -- /tmp/switching/benchmark \
     --faas_gateway=$ENTRY_HOST:8080 --concurrency=16 --prewarm \
@@ -105,8 +105,8 @@ sleep 10
 
 ssh -q $CLIENT_HOST -- /tmp/switching/benchmark \
     --faas_gateway=$ENTRY_HOST:8080 --concurrency=$CONCURRENCY \
-    --duration=20 --cycle=5 --num_ops=$NUM_OPS --read_ratios=$READ_RATIOS \
-    2>/dev/null >$EXP_DIR/trace.txt
+    --duration=25 --cycle=5 --num_ops=$NUM_OPS --read_ratios=$READ_RATIOS \
+    >$EXP_DIR/trace.txt
 
 # $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
 # $ROOT_DIR/scripts/compute_logsize.py --async-result-file $EXP_DIR/async_results --num-keys $NUM_KEYS --value-size $VALUE_SIZE >$EXP_DIR/logsize.txt

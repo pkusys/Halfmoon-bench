@@ -17,6 +17,9 @@ EXP_DIR=$BASE_DIR/results/$1
 QPS=$2
 LOGMODE=$3
 
+rm -rf $EXP_DIR
+mkdir -p $EXP_DIR
+
 HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 WRK_DIR=/usr/local/bin
 
@@ -46,6 +49,8 @@ ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION NUM_KEY
     /tmp/singleop/init create
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION NUM_KEYS=$NUM_KEYS LoggingMode=$LOGMODE \
     /tmp/singleop/init populate
+ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION LoggingMode=$LOGMODE \
+    /tmp/singleop/stream > $EXP_DIR/stream.log 2>&1  &
 
 scp -q $ROOT_DIR/scripts/zk_setup.sh $MANAGER_HOST:/tmp/zk_setup.sh
 ssh -q $MANAGER_HOST -- sudo mkdir -p /mnt/inmem/store
@@ -81,25 +86,22 @@ for HOST in $ALL_ENGINE_HOSTS; do
 done
 sleep 10
 
-rm -rf $EXP_DIR
-mkdir -p $EXP_DIR
-
 ssh -q $MANAGER_HOST -- cat /proc/cmdline >>$EXP_DIR/kernel_cmdline
 ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
 
 scp -q $ROOT_DIR/workloads/workflow/beldi/benchmark/singleop/workload.lua $CLIENT_HOST:/tmp
 
-ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 20 -L -U \
+ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 120 -L -U \
     -s /tmp/workload.lua \
     http://$ENTRY_HOST:8080 -R $QPS >$EXP_DIR/wrk_warmup.log
 
 sleep 10
 
-# ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 600 -L -U \
-#     -s /tmp/workload.lua \
-#     http://$ENTRY_HOST:8080 -R $QPS 2>/dev/null >$EXP_DIR/wrk.log
+ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 600 -L -U \
+    -s /tmp/workload.lua \
+    http://$ENTRY_HOST:8080 -R $QPS 2>/dev/null >$EXP_DIR/wrk.log
 
-# sleep 10
+sleep 10
 
 scp -q $MANAGER_HOST:/mnt/inmem/store/async_results $EXP_DIR
 $BASE_DIR/../singleop_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
@@ -107,4 +109,4 @@ $BASE_DIR/../singleop_latency.py --async-result-file $EXP_DIR/async_results >$EX
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION NUM_KEYS=$NUM_KEYS LoggingMode=$LOGMODE \
     /tmp/singleop/init clean
 
-$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
+# $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR

@@ -10,6 +10,7 @@ singleop-baseline:
 	
 singleop:
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/singleop/init internal/singleop/init/init.go
+	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/singleop/stream internal/singleop/stream/stream.go
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI -X github.com/eniac/Beldi/pkg/beldilib.DLOGSIZE=1000" -o bin/singleop/singleop internal/singleop/main/main.go
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI -X github.com/eniac/Beldi/pkg/beldilib.DLOGSIZE=1000" -o bin/singleop/nop internal/singleop/nop/nop.go
 
@@ -40,7 +41,7 @@ hotel:
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/hotel/order internal/hotel/main/handlers/order/order.go
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/hotel/frontend internal/hotel/main/handlers/frontend/frontend.go
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/hotel/gateway internal/hotel/main/handlers/gateway/gateway.go
-	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/hotel/gc internal/hotel/main/gc/gc.go
+	# env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/hotel/gc internal/hotel/main/gc/gc.go
 	# env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/hotel/collector internal/hotel/main/collector/collector.go
 
 media-baseline:
@@ -76,12 +77,12 @@ media:
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/media/UniqueId internal/media/core/handlers/uniqueId/main.go
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/media/User internal/media/core/handlers/user/main.go
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/media/UserReview internal/media/core/handlers/userReview/main.go
-	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/media/gc internal/media/core/gc/gc.go
+	# env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/media/gc internal/media/core/gc/gc.go
 	# env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/media/collector internal/media/core/collector/collector.go
 
-rw-baseline:
-	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BASELINE" -o bin/brw/init internal/rw/init/init.go
-	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BASELINE" -o bin/brw/rw internal/rw/main/main.go
+rw:
+	env GOOS=linux go build -o bin/rw/init internal/rw/init/init.go
+	env GOOS=linux go build -o bin/rw/rw internal/rw/main/main.go
 
 clean:
 	rm -rf ./bin

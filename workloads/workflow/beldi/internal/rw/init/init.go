@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/eniac/Beldi/internal/rw/utils"
 	"github.com/eniac/Beldi/pkg/beldilib"
@@ -30,18 +31,34 @@ func init() {
 }
 
 func clean() {
-	beldilib.DeleteTable(fmt.Sprintf("b%s", table))
-	beldilib.WaitUntilDeleted(fmt.Sprintf("b%s", table))
+	if beldilib.TYPE == "BASELINE" {
+		beldilib.DeleteTable(fmt.Sprintf("b%s", table))
+		beldilib.WaitUntilDeleted(fmt.Sprintf("b%s", table))
+	} else {
+		beldilib.DeleteLambdaTables(fmt.Sprintf("%s", table))
+		beldilib.WaitUntilDeleted(fmt.Sprintf("%s", table))
+		beldilib.WaitUntilDeleted(fmt.Sprintf("%s-log", table))
+		beldilib.WaitUntilDeleted(fmt.Sprintf("%s-collector", table))
+	}
 }
 
 func create() {
-	beldilib.CreateBaselineTable(fmt.Sprintf("b%s", table))
-	beldilib.WaitUntilActive(fmt.Sprintf("b%s", table))
+	if beldilib.TYPE == "BASELINE" {
+		beldilib.CreateBaselineTable(fmt.Sprintf("b%s", table))
+		beldilib.WaitUntilActive(fmt.Sprintf("b%s", table))
+	} else {
+		beldilib.CreateLambdaTables(fmt.Sprintf("%s", table))
+		time.Sleep(10 * time.Second)
+		beldilib.WaitUntilActive(fmt.Sprintf("%s", table))
+		beldilib.WaitUntilActive(fmt.Sprintf("%s-log", table))
+		beldilib.WaitUntilActive(fmt.Sprintf("%s-collector", table))
+	}
 }
 
 func populate() {
+	baseline := beldilib.TYPE == "BASELINE"
 	for i := 0; i < nKeys; i++ {
-		beldilib.Populate(table, strconv.Itoa(i), value, true)
+		beldilib.Populate(table, strconv.Itoa(i), value, baseline)
 	}
 }
 

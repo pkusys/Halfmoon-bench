@@ -28,6 +28,12 @@ def compute_latency(async_result_file_path, warmup_ratio=1.0 / 6, outlier_ratio=
         latencies.append(finish_ts - dispatch_ts)
     threshold = np.median(latencies) * outlier_ratio
     filtered = list(filter(lambda x: x < threshold, latencies))
+    # for lat in filtered:
+    #     if lat > 100 * 1000:
+    #         header = "## "
+    #     else:
+    #         header = ""
+    #     print(header, lat / 1000.0)
     p50 = np.percentile(filtered, 50) / 1000.0
     p99 = np.percentile(filtered, 99) / 1000.0
     avg = np.mean(filtered) / 1000.0
@@ -38,7 +44,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--async-result-file", type=str, default=None)
     parser.add_argument("--warmup-ratio", type=float, default=1.0 / 6)
-    parser.add_argument("--outlier-factor", type=int, default=30)
+    parser.add_argument("--outlier-factor", type=int, default=20)
     args = parser.parse_args()
 
     p50, p99, avg = compute_latency(

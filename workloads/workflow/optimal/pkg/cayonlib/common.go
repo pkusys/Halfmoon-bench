@@ -24,6 +24,8 @@ func init() {
 		TYPE = "READLOG"
 	case "write":
 		TYPE = "WRITELOG"
+	case "none":
+		TYPE = "NONE"
 	case "":
 		TYPE = "WRITELOG"
 		log.Println("[INFO] LoggingMode not set, defaulting to WRITELOG")

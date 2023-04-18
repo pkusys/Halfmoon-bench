@@ -2,11 +2,12 @@ package beldilib
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
-	"time"
 )
 
 func CreateMainTable(lambdaId string) {
@@ -174,7 +175,7 @@ func DeleteLambdaTables(lambdaId string) {
 }
 
 func WaitUntilDeleted(tablename string) {
-	for ; ; {
+	for {
 		res, err := DBClient.DescribeTable(&dynamodb.DescribeTableInput{TableName: aws.String(kTablePrefix + tablename)})
 		if err != nil {
 			if aerr, ok := err.(awserr.Error); ok {
@@ -198,19 +199,21 @@ func WaitUntilAllDeleted(tablenames []string) {
 
 func WaitUntilActive(tablename string) bool {
 	counter := 0
-	for ; ; {
+	for {
 		res, err := DBClient.DescribeTable(&dynamodb.DescribeTableInput{TableName: aws.String(kTablePrefix + tablename)})
 		if err != nil {
 			counter += 1
 			fmt.Printf("%s DescribeTable error: %v\n", tablename, err)
 		} else {
 			if *res.Table.TableStatus == "ACTIVE" {
+				fmt.Printf("%s status: %s\n", tablename, *res.Table.TableStatus)
 				return true
 			}
 			fmt.Printf("%s status: %s\n", tablename, *res.Table.TableStatus)
-			if *res.Table.TableStatus != "CREATING" && counter > 6 {
-				return false
-			}
+			// if *res.Table.TableStatus != "CREATING" && counter > 6 {
+			// 	fmt.Printf("[error] %s status: %s\n", tablename, *res.Table.TableStatus)
+			// 	return false
+			// }
 		}
 		time.Sleep(3 * time.Second)
 	}

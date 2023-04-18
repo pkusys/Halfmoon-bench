@@ -56,7 +56,6 @@ func init() {
 }
 
 func Handler(env *cayonlib.Env) interface{} {
-	// nReads := int(nOps * readRatio)
 	for i := 0; i < nReads; i++ {
 		cayonlib.Read(env, table, strconv.Itoa(rand.Intn(nKeys)))
 		time.Sleep(sleepDuration)

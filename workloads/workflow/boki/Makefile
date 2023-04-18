@@ -47,5 +47,9 @@ rw:
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/cayonlib.TYPE=BELDI" -o bin/rw/init internal/rw/init/init.go
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/cayonlib.TYPE=BELDI" -o bin/rw/rw internal/rw/main/main.go
 
+recovery:
+	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/cayonlib.TYPE=BELDI" -o bin/recovery/init internal/recovery/init/init.go
+	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/cayonlib.TYPE=BELDI" -o bin/recovery/recovery internal/recovery/main/main.go
+
 clean:
 	rm -rf ./bin

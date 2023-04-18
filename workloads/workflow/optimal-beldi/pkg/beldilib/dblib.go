@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+	"github.com/aws/aws-sdk-go/service/dynamodbstreams"
 	"github.com/lithammer/shortuuid"
 )
 
@@ -713,20 +714,15 @@ func EOSCondWrite(env *Env, tablename string, key string,
 // }
 
 func Read(env *Env, tablename string, key string) interface{} {
-	var item aws.JSONValue
 	if TYPE == "WRITELOG" {
-		item = ReadWithoutLog(env, tablename, key)
-		// } else {
-		// 	item = EOSRead(env, tablename, key, []string{"V"})
-	}
-	if res, ok := item["V"]; ok {
-		return res
+		return ReadWithoutLog(env, tablename, key)
 	} else {
-		return nil
+		return ReadWithLog(env, tablename, key)
 	}
 }
 
-func ReadWithoutLog(env *Env, tablename string, key string) aws.JSONValue {
+func ReadWithoutLog(env *Env, tablename string, key string) interface{} {
+	env.StepNumber += 1
 	keyCondBuilder := expression.Key("KEY").Equal(expression.Value(key)).And(
 		expression.Key("VERSION").LessThanEqual(expression.Value(env.CounterTS)))
 	projectionBuilder := BuildProjection([]string{"V"})
@@ -749,20 +745,46 @@ func ReadWithoutLog(env *Env, tablename string, key string) aws.JSONValue {
 	}
 	err = dynamodbattribute.UnmarshalMap(res.Items[0], &item)
 	CHECK(err)
-	return item
+	if res, ok := item["V"]; ok {
+		return res
+	} else {
+		return nil
+	}
 }
 
-// func LogRead(env *Env, tablename string, key string, projection []string) aws.JSONValue {
-// 	env.StepNumber += 1
-// 	return LibRead(tablename, aws.JSONValue{"K": key}, projection)
-// }
-
-// func LogWrite(env *Env, tablename string, key string,
-// 	update map[expression.NameBuilder]expression.OperandBuilder) {
-// 	// omit condition check
-// 	LibWrite(tablename, aws.JSONValue{"K": key}, update)
-// 	env.StepNumber += 1
-// }
+func ReadWithLog(env *Env, tablename string, key string) interface{} {
+	// var wg sync.WaitGroup
+	// wg.Add(2)
+	// var item aws.JSONValue
+	// go func() {
+	// 	item = LibRead(tablename, aws.JSONValue{"K": key}, []string{"V"})
+	// 	wg.Done()
+	// }()
+	// go func() {
+	// 	env.CounterTS = FetchAddCounterTS()
+	// 	wg.Done()
+	// }()
+	// wg.Wait()
+	item := LibRead(tablename, aws.JSONValue{"K": key}, []string{"V", "VERSION"})
+	var result interface{}
+	if value, ok := item["V"]; ok {
+		result = value
+		if int64(item["VERSION"].(float64)) > env.CounterTS {
+			env.CounterTS = int64(item["VERSION"].(float64))
+		}
+	} else {
+		result = nil
+	}
+	ok := LibPut(env.LogTable, aws.JSONValue{"InstanceStep": fmt.Sprintf("%s_%d", env.InstanceId, env.StepNumber)},
+		aws.JSONValue{"RES": result, "VERSION": env.CounterTS})
+	if !ok {
+		readLog := LibRead(env.LogTable, aws.JSONValue{"InstanceStep": fmt.Sprintf("%s_%d", env.InstanceId, env.StepNumber)}, []string{"VERSION", "RES"})
+		env.CounterTS = int64(readLog["VERSION"].(float64))
+		result = readLog["RES"]
+	}
+	env.StepNumber += 1
+	return result
+}
 
 // func Write(env *Env, tablename string, key string,
 // 	update map[expression.NameBuilder]expression.OperandBuilder) {
@@ -777,63 +799,105 @@ func Write(env *Env, tablename string, key string,
 	update map[expression.NameBuilder]expression.OperandBuilder) {
 	if TYPE == "WRITELOG" {
 		WriteWithLog(env, tablename, key, update)
-		// } else {
-		// 	WriteWithoutLog(env, tablename, key, update)
+	} else {
+		WriteWithoutLog(env, tablename, key, update)
 	}
 }
 
 func WriteWithLog(env *Env, tablename string, key string,
 	update map[expression.NameBuilder]expression.OperandBuilder) {
-	// Counter
-	Counter, err := dynamodbattribute.MarshalMap(aws.JSONValue{"K": "counter"})
-	CHECK(err)
-	updateBuilder := expression.Add(expression.Name("V"), expression.Value(1))
-	condBuilder := expression.Name("V").Equal(expression.Value(env.CounterTS))
-	counterExpr, err := expression.NewBuilder().WithCondition(condBuilder).WithUpdate(updateBuilder).Build()
-	CHECK(err)
+	// // Counter
+	// Counter, err := dynamodbattribute.MarshalMap(aws.JSONValue{"K": "counter"})
+	// CHECK(err)
+	// updateBuilder := expression.Add(expression.Name("V"), expression.Value(1))
+	// condBuilder := expression.Name("V").Equal(expression.Value(env.CounterTS))
+	// counterExpr, err := expression.NewBuilder().WithCondition(condBuilder).WithUpdate(updateBuilder).Build()
+	// CHECK(err)
 	// key
 	Key, err := dynamodbattribute.MarshalMap(aws.JSONValue{"K": fmt.Sprintf("%s_%d", env.InstanceId, env.StepNumber)})
 	CHECK(err)
-	updateBuilder = expression.UpdateBuilder{}
+	updateBuilder := expression.UpdateBuilder{}
 	for k, v := range update {
 		updateBuilder = updateBuilder.Set(k, v)
 	}
 	updateBuilder = updateBuilder.Set(expression.Name("KEY"), expression.Value(key))
+	// updateBuilder = updateBuilder.Set(expression.Name("VERSION"), expression.Value(env.CounterTS+1))
 	updateBuilder = updateBuilder.Set(expression.Name("VERSION"), expression.Value(env.CounterTS+1))
-	condBuilder = expression.AttributeNotExists(expression.Name("K"))
+	condBuilder := expression.AttributeNotExists(expression.Name("K"))
 	keyExpr, err := expression.NewBuilder().WithCondition(condBuilder).WithUpdate(updateBuilder).Build()
 	CHECK(err)
-	// Define the transaction input
-	_, err = DBClient.TransactWriteItems(&dynamodb.TransactWriteItemsInput{
-		TransactItems: []*dynamodb.TransactWriteItem{
-			{
-				Update: &dynamodb.Update{
-					TableName:                 aws.String(kTablePrefix + "counter"),
-					Key:                       Counter,
-					ConditionExpression:       counterExpr.Condition(),
-					UpdateExpression:          counterExpr.Update(),
-					ExpressionAttributeNames:  counterExpr.Names(),
-					ExpressionAttributeValues: counterExpr.Values(),
-				},
-			},
-			{
-				Update: &dynamodb.Update{
-					TableName:                 aws.String(kTablePrefix + tablename),
-					Key:                       Key,
-					ConditionExpression:       keyExpr.Condition(),
-					UpdateExpression:          keyExpr.Update(),
-					ExpressionAttributeNames:  keyExpr.Names(),
-					ExpressionAttributeValues: keyExpr.Values(),
-				},
-			},
-		},
+	_, err = DBClient.UpdateItem(&dynamodb.UpdateItemInput{
+		TableName:                 aws.String(kTablePrefix + tablename),
+		Key:                       Key,
+		ConditionExpression:       keyExpr.Condition(),
+		UpdateExpression:          keyExpr.Update(),
+		ExpressionAttributeNames:  keyExpr.Names(),
+		ExpressionAttributeValues: keyExpr.Values(),
 	})
 	if err != nil {
-		AssertConflictFailure(err)
-	} else {
-		env.CounterTS += 1
+		AssertConditionFailure(err)
 	}
 	env.StepNumber += 1
+}
+
+func WriteWithoutLog(env *Env, tablename string, key string,
+	update map[expression.NameBuilder]expression.OperandBuilder) {
+	Key, err := dynamodbattribute.MarshalMap(aws.JSONValue{"K": key})
+	CHECK(err)
+	condBuilder := expression.Or(
+		expression.AttributeNotExists(expression.Name("VERSION")),
+		expression.Name("VERSION").LessThan(expression.Value(env.CounterTS)))
+	updateBuilder := expression.UpdateBuilder{}
+	for k, v := range update {
+		updateBuilder = updateBuilder.Set(k, v)
+	}
+	updateBuilder = updateBuilder.
+		Set(expression.Name("VERSION"), expression.Value(env.CounterTS))
+	expr, err := expression.NewBuilder().WithCondition(condBuilder).WithUpdate(updateBuilder).Build()
+	CHECK(err)
+
+	_, err = DBClient.UpdateItem(&dynamodb.UpdateItemInput{
+		TableName:                 aws.String(kTablePrefix + tablename),
+		Key:                       Key,
+		ConditionExpression:       expr.Condition(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		UpdateExpression:          expr.Update(),
+	})
+	if err != nil {
+		AssertConditionFailure(err)
+		// log.Printf("[ERROR] Write to table %v key %v failed: %v", tablename, key, err.Error())
+	}
+	env.StepNumber += 1
+}
+
+func AssignEventTS(tablename string, record *dynamodbstreams.Record, counter int64) {
+	pk := record.Dynamodb.Keys
+	updateBuilder := expression.Set(expression.Name("VERSION"), expression.Value(counter))
+	expr, err := expression.NewBuilder().WithUpdate(updateBuilder).Build()
+	CHECK(err)
+	DBClient.UpdateItem(&dynamodb.UpdateItemInput{
+		TableName:                 aws.String(kTablePrefix + tablename),
+		Key:                       pk,
+		UpdateExpression:          expr.Update(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+	})
+}
+
+func AdvanceCounterTS(counter int64) {
+	Counter, err := dynamodbattribute.MarshalMap(aws.JSONValue{"K": "counter"})
+	CHECK(err)
+	updateBuilder := expression.Set(expression.Name("V"), expression.Value(counter))
+	expr, err := expression.NewBuilder().WithUpdate(updateBuilder).Build()
+	CHECK(err)
+	DBClient.UpdateItem(&dynamodb.UpdateItemInput{
+		TableName:                 aws.String(kTablePrefix + "counter"),
+		Key:                       Counter,
+		UpdateExpression:          expr.Update(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+	})
 }
 
 func CondWrite(env *Env, tablename string, key string,
@@ -847,7 +911,7 @@ func CondWrite(env *Env, tablename string, key string,
 
 func Scan(env *Env, tablename string) interface{} {
 	var res []interface{}
-	items := LibScan(env, tablename, []string{"V"}, expression.ConditionBuilder{})
+	items := LibScan(env, tablename, []string{"V"}, expression.Value(true).Equal(expression.Value(true)))
 	for _, item := range items {
 		res = append(res, item["V"])
 	}
@@ -1146,14 +1210,32 @@ func PrintExp(exp expression.Expression) {
 	}
 }
 
-func AssertConflictFailure(err error) {
+// func AssertConflictFailure(err error) {
+// 	if aerr, ok := err.(awserr.Error); ok {
+// 		switch aerr.Code() {
+// 		case dynamodb.ErrCodeConditionalCheckFailedException:
+// 			return
+// 		case dynamodb.ErrCodeTransactionCanceledException:
+// 			return
+// 		case dynamodb.ErrCodeTransactionConflictException:
+// 			return
+// 		case dynamodb.ErrCodeResourceNotFoundException:
+// 			log.Printf("ERROR: DyanombDB ResourceNotFound")
+// 			return
+// 		default:
+// 			log.Printf("ERROR: %s", aerr)
+// 			panic("ERROR detected")
+// 		}
+// 	} else {
+// 		log.Printf("ERROR: %s", err)
+// 		panic("ERROR detected")
+// 	}
+// }
+
+func AssertConditionFailure(err error) {
 	if aerr, ok := err.(awserr.Error); ok {
 		switch aerr.Code() {
 		case dynamodb.ErrCodeConditionalCheckFailedException:
-			return
-		case dynamodb.ErrCodeTransactionCanceledException:
-			return
-		case dynamodb.ErrCodeTransactionConflictException:
 			return
 		case dynamodb.ErrCodeResourceNotFoundException:
 			log.Printf("ERROR: DyanombDB ResourceNotFound")
@@ -1168,13 +1250,10 @@ func AssertConflictFailure(err error) {
 	}
 }
 
-func AssertConditionFailure(err error) {
+func AssertResourceNotFound(err error) {
 	if aerr, ok := err.(awserr.Error); ok {
 		switch aerr.Code() {
-		case dynamodb.ErrCodeConditionalCheckFailedException:
-			return
 		case dynamodb.ErrCodeResourceNotFoundException:
-			log.Printf("ERROR: DyanombDB ResourceNotFound")
 			return
 		default:
 			log.Printf("ERROR: %s", aerr)

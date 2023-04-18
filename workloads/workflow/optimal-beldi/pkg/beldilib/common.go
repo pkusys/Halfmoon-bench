@@ -8,6 +8,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodbstreams"
 )
 
 var sess = session.Must(session.NewSessionWithOptions(session.Options{
@@ -15,6 +16,8 @@ var sess = session.Must(session.NewSessionWithOptions(session.Options{
 }))
 
 var DBClient = dynamodb.New(sess)
+
+var DBStreamClient = dynamodbstreams.New(sess)
 
 var DLOGSIZE = "1000"
 

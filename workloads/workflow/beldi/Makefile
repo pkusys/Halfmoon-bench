@@ -83,6 +83,10 @@ rw-baseline:
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BASELINE" -o bin/brw/init internal/rw/init/init.go
 	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BASELINE" -o bin/brw/rw internal/rw/main/main.go
 
+rw:
+	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/rw/init internal/rw/init/init.go
+	env GOOS=linux go build -ldflags="-s -w -X github.com/eniac/Beldi/pkg/beldilib.TYPE=BELDI" -o bin/rw/rw internal/rw/main/main.go
+
 clean:
 	rm -rf ./bin
 

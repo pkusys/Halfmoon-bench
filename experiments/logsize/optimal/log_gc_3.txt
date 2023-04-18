@@ -1,0 +1,48 @@
+QPS100_read_v256_10000_3
+time average: total=2789.15KB, log=289.15KB, write=2500.00KB
+time average: total=3140.98KB, log=640.98KB, write=2500.00KB
+time average: total=3492.27KB, log=992.27KB, write=2500.00KB
+time average: total=3844.43KB, log=1344.43KB, write=2500.00KB
+time average: total=4193.99KB, log=1693.99KB, write=2500.00KB
+QPS100_read_v256_60000_3
+time average: total=4209.20KB, log=1709.20KB, write=2500.00KB
+time average: total=6288.98KB, log=3788.98KB, write=2500.00KB
+time average: total=8367.83KB, log=5867.83KB, write=2500.00KB
+time average: total=10448.04KB, log=7948.04KB, write=2500.00KB
+time average: total=12524.62KB, log=10024.62KB, write=2500.00KB
+QPS100_read_v512_10000_3
+time average: total=5415.10KB, log=415.10KB, write=5000.00KB
+time average: total=6017.37KB, log=1017.37KB, write=5000.00KB
+time average: total=6617.04KB, log=1617.04KB, write=5000.00KB
+time average: total=7217.52KB, log=2217.52KB, write=5000.00KB
+time average: total=7815.80KB, log=2815.80KB, write=5000.00KB
+QPS100_read_v512_60000_3
+time average: total=7449.80KB, log=2449.80KB, write=5000.00KB
+time average: total=11009.45KB, log=6009.45KB, write=5000.00KB
+time average: total=14563.83KB, log=9563.83KB, write=5000.00KB
+time average: total=18119.81KB, log=13119.81KB, write=5000.00KB
+time average: total=21674.91KB, log=16674.91KB, write=5000.00KB
+QPS100_write_v256_10000_3
+time average: total=4694.62KB, log=1026.50KB, write=3668.12KB
+time average: total=4238.35KB, log=822.12KB, write=3416.23KB
+time average: total=3780.12KB, log=616.52KB, write=3163.60KB
+time average: total=3329.25KB, log=415.18KB, write=2914.08KB
+time average: total=2870.31KB, log=213.63KB, write=2656.67KB
+QPS100_write_v256_60000_3
+time average: total=15412.86KB, log=6052.61KB, write=9360.25KB
+time average: total=12729.31KB, log=4849.85KB, write=7879.46KB
+time average: total=10044.29KB, log=3646.06KB, write=6398.23KB
+time average: total=7374.89KB, log=2454.28KB, write=4920.60KB
+time average: total=4698.75KB, log=1264.42KB, write=3434.33KB
+QPS100_write_v512_10000_3
+time average: total=8358.34KB, log=1025.14KB, write=7333.21KB
+time average: total=7655.24KB, log=822.12KB, write=6833.12KB
+time average: total=6946.16KB, log=617.21KB, write=6328.95KB
+time average: total=6243.53KB, log=414.99KB, write=5828.54KB
+time average: total=5527.02KB, log=213.47KB, write=5313.55KB
+QPS100_write_v512_60000_3
+time average: total=24770.79KB, log=6051.72KB, write=18719.07KB
+time average: total=20610.32KB, log=4850.12KB, write=15760.20KB
+time average: total=16445.11KB, log=3646.89KB, write=12798.22KB
+time average: total=12296.23KB, log=2454.24KB, write=9841.99KB
+time average: total=8133.13KB, log=1264.26KB, write=6868.87KB

@@ -83,9 +83,10 @@ func WriteWithMode(env *Env, mode string, tablename string, key string, update m
 func WriteInTransition(env *Env, tablename string, key string, update map[expression.NameBuilder]expression.OperandBuilder) {
 	newLog, preWriteLog := ProposeNextStep(
 		env,
-		[]uint64{DatabaseKeyTag(tablename, key)},
+		// []uint64{DatabaseKeyTag(tablename, key)},
+		nil,
 		aws.JSONValue{
-			"type":  "PreWrite",
+			"type": "PreWrite",
 			"key":   key,
 			"table": tablename,
 		})
@@ -111,5 +112,14 @@ func WriteInTransition(env *Env, tablename string, key string, update map[expres
 		LibWriteMultiVersion(tablename, key, env.SeqNum, update)
 		wg.Done()
 	}()
+	ProposeNextStep(
+		env,
+		[]uint64{DatabaseKeyTag(tablename, key)},
+		aws.JSONValue{
+			"type": "PostWrite",
+			"key":     key,
+			"table":   tablename,
+			"version": env.SeqNum,
+		})
 	wg.Wait()
 }

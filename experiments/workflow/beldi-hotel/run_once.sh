@@ -37,12 +37,12 @@ ssh -q $CLIENT_HOST -- docker pull $BENCH_IMAGE
 
 ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
     $BENCH_IMAGE \
-    cp -r /beldi-bin/bhotel /tmp/
+    cp -r /beldi-bin/hotel /tmp/
 
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION \
-    /tmp/bhotel/init create baseline
+    /tmp/hotel/init create beldi
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION \
-    /tmp/bhotel/init populate baseline
+    /tmp/hotel/init populate beldi
 
 scp -q $ROOT_DIR/scripts/zk_setup.sh $MANAGER_HOST:/tmp/zk_setup.sh
 ssh -q $MANAGER_HOST -- sudo mkdir -p /mnt/inmem/store
@@ -101,6 +101,6 @@ scp -q $MANAGER_HOST:/mnt/inmem/store/async_results $EXP_DIR
 $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
 
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION \
-    /tmp/bhotel/init clean baseline
+    /tmp/hotel/init clean beldi
 
-$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
+# $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR

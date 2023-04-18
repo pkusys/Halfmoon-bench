@@ -78,7 +78,7 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
 				// ConsistentRead:            aws.Bool(true),
-				ExclusiveStartKey:         last,
+				ExclusiveStartKey: last,
 			})
 		} else {
 			expr, err := expression.NewBuilder().WithProjection(BuildProjection(projection)).Build()
@@ -90,7 +90,7 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 				FilterExpression:          expr.Filter(),
 				ProjectionExpression:      expr.Projection(),
 				// ConsistentRead:            aws.Bool(true),
-				ExclusiveStartKey:         last,
+				ExclusiveStartKey: last,
 			})
 		}
 	}
@@ -175,9 +175,10 @@ func Write(env *Env, tablename string, key string, update map[expression.NameBui
 func WriteWithLog(env *Env, tablename string, key string, update map[expression.NameBuilder]expression.OperandBuilder) {
 	newLog, preWriteLog := ProposeNextStep(
 		env,
-		[]uint64{DatabaseKeyTag(tablename, key)},
+		// []uint64{DatabaseKeyTag(tablename, key)},
+		nil,
 		aws.JSONValue{
-			"type":  "PreWrite",
+			"type": "PreWrite",
 			"key":   key,
 			"table": tablename,
 		})
@@ -194,6 +195,15 @@ func WriteWithLog(env *Env, tablename string, key string, update map[expression.
 		log.Printf("[INFO] Seen PreWrite log for step %d", preWriteLog.StepNumber)
 	}
 	LibWriteMultiVersion(tablename, key, env.SeqNum, update)
+	ProposeNextStep(
+		env,
+		[]uint64{DatabaseKeyTag(tablename, key)},
+		aws.JSONValue{
+			"type": "PostWrite",
+			"key":     key,
+			"table":   tablename,
+			"version": env.SeqNum,
+		})
 }
 
 func WriteWithoutLog(env *Env, tablename string, key string, update map[expression.NameBuilder]expression.OperandBuilder) {
@@ -225,27 +235,18 @@ func getVersionFromLog(env *Env, tablename string, key string) (uint64, error) {
 	var intentLog IntentLogEntry
 	err = json.Unmarshal(decoded, &intentLog)
 	CHECK(err)
-	if intentLog.Data["type"] == "PreWrite" {
-		return logEntry.SeqNum, nil
-	} else if intentLog.Data["type"] == "PostRead" {
+	if intentLog.Data["type"] == "PostWrite" || intentLog.Data["type"] == "PostRead" {
 		return uint64(intentLog.Data["version"].(float64)), nil
 	}
 	panic(fmt.Sprintf("Unknown version log type %s", intentLog.Data["type"]))
 }
 
 func ReadWithoutLog(env *Env, tablename string, key string) interface{} {
-	intentLog := env.Fsm.GetStepLog(env.StepNumber)
-	if intentLog != nil && checkPostReadLog(intentLog, tablename, key) {
-		log.Printf("[INFO] Seen Read log instance %s step %d", env.InstanceId, env.StepNumber)
-		env.StepNumber += 1
-		env.SeqNum = intentLog.SeqNum
-		return intentLog.Data["result"]
-	}
 	// if version log is empty then version is 0 and err is set
-	version, err := getVersionFromLog(env, tablename, key)
-	if err != nil {
-		log.Printf("[INFO] Read version not found instance %s step %d: table=%s key=%s", env.InstanceId, env.StepNumber, tablename, key)
-	}
+	version, _ := getVersionFromLog(env, tablename, key)
+	// if err != nil {
+	// 	log.Printf("[INFO] Read version not found instance %s step %d: table=%s key=%s, using the default version(0)", env.InstanceId, env.StepNumber, tablename, key)
+	// }
 	item := LibReadMultiVersion(tablename, key, version)
 	var result interface{}
 	if value, ok := item["V"]; ok {
@@ -253,32 +254,55 @@ func ReadWithoutLog(env *Env, tablename string, key string) interface{} {
 	} else {
 		result = nil
 	}
-	// the returned version is the requested one, can go log-free
-	if err == nil && result != nil {
-		return result
-	}
-	// the returned version is not the requested one, must append readlog for determinism
-	// now if the intentlog is not nil and is not a readlog, then this is a conflict
-	if intentLog != nil {
-		log.Fatalf("[FATAL] Inconsistent read instance %s step %d: table=%s key=%s", env.InstanceId, env.StepNumber, tablename, key)
-	}
-	streamTags := []uint64{}
-	if err != nil && result != nil {
-		streamTags = append(streamTags, DatabaseKeyTag(tablename, key))
-	}
-	newLog, _ := ProposeNextStep(env, streamTags, aws.JSONValue{
-		"type":    "PostRead",
-		"key":     key,
-		"table":   tablename,
-		"result":  result,
-		"version": version,
-	})
-	// a concurrent step log, may or may not be a post read log
-	if !newLog {
-		return nil
-	}
 	return result
 }
+
+// func ReadWithoutLog(env *Env, tablename string, key string) interface{} {
+// 	intentLog := env.Fsm.GetStepLog(env.StepNumber)
+// 	if intentLog != nil && checkPostReadLog(intentLog, tablename, key) {
+// 		log.Printf("[INFO] Seen Read log instance %s step %d", env.InstanceId, env.StepNumber)
+// 		env.StepNumber += 1
+// 		env.SeqNum = intentLog.SeqNum
+// 		return intentLog.Data["result"]
+// 	}
+// 	// if version log is empty then version is 0 and err is set
+// 	version, err := getVersionFromLog(env, tablename, key)
+// 	if err != nil {
+// 		log.Printf("[INFO] Read version not found instance %s step %d: table=%s key=%s", env.InstanceId, env.StepNumber, tablename, key)
+// 	}
+// 	item := LibReadMultiVersion(tablename, key, version)
+// 	var result interface{}
+// 	if value, ok := item["V"]; ok {
+// 		result = value
+// 	} else {
+// 		result = nil
+// 	}
+// 	// the returned version is the requested one, can go log-free
+// 	if err == nil && result != nil {
+// 		return result
+// 	}
+// 	// the returned version is not the requested one, must append readlog for determinism
+// 	// now if the intentlog is not nil and is not a readlog, then this is a conflict
+// 	if intentLog != nil {
+// 		log.Fatalf("[FATAL] Inconsistent read instance %s step %d: table=%s key=%s", env.InstanceId, env.StepNumber, tablename, key)
+// 	}
+// 	streamTags := []uint64{}
+// 	if err != nil && result != nil {
+// 		streamTags = append(streamTags, DatabaseKeyTag(tablename, key))
+// 	}
+// 	newLog, _ := ProposeNextStep(env, streamTags, aws.JSONValue{
+// 		"type":    "PostRead",
+// 		"key":     key,
+// 		"table":   tablename,
+// 		"result":  result,
+// 		"version": version,
+// 	})
+// 	// a concurrent step log, may or may not be a post read log
+// 	if !newLog {
+// 		return nil
+// 	}
+// 	return result
+// }
 
 func ReadWithLog(env *Env, tablename string, key string) interface{} {
 	postReadLog := env.Fsm.GetStepLog(env.StepNumber)
@@ -300,8 +324,8 @@ func ReadWithLog(env *Env, tablename string, key string) interface{} {
 	}
 	newLog, _ := ProposeNextStep(env, nil, aws.JSONValue{
 		"type":   "PostRead",
-		"key":    key,
-		"table":  tablename,
+		// "key":    key,
+		// "table":  tablename,
 		"result": result,
 	})
 	// a concurrent step log, must be a post read log but not necessarily the same version

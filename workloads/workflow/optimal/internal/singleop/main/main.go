@@ -30,17 +30,31 @@ func Handler(env *cayonlib.Env) interface{} {
 	results := map[string]int64{}
 
 	start := time.Now()
-	cayonlib.Read(env, table, strconv.Itoa(rand.Intn(nKeys)))
+	if cayonlib.TYPE == "NONE" {
+		cayonlib.LibReadSingleVersion(table, strconv.Itoa(rand.Intn(nKeys)))
+	} else {
+		cayonlib.Read(env, table, strconv.Itoa(rand.Intn(nKeys)))
+	}
 	results["Read"] = time.Since(start).Microseconds()
 
 	start = time.Now()
-	cayonlib.Write(env, table, strconv.Itoa(rand.Intn(nKeys)), map[expression.NameBuilder]expression.OperandBuilder{
-		expression.Name("V"): expression.Value(value),
-	})
+	if cayonlib.TYPE == "NONE" {
+		cayonlib.LibWriteMultiVersion(table, strconv.Itoa(rand.Intn(nKeys)), 0, map[expression.NameBuilder]expression.OperandBuilder{
+			expression.Name("V"): expression.Value(value),
+		})
+	} else {
+		cayonlib.Write(env, table, strconv.Itoa(rand.Intn(nKeys)), map[expression.NameBuilder]expression.OperandBuilder{
+			expression.Name("V"): expression.Value(value),
+		})
+	}
 	results["Write"] = time.Since(start).Microseconds()
 
 	start = time.Now()
-	cayonlib.SyncInvoke(env, "nop", "")
+	if cayonlib.TYPE == "NONE" {
+		env.FaasEnv.InvokeFunc(env.FaasCtx, "nop", []byte{})
+	} else {
+		cayonlib.SyncInvoke(env, "nop", "")
+	}
 	results["Invoke"] = time.Since(start).Microseconds()
 
 	return results

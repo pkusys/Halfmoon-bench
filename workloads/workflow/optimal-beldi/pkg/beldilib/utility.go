@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+	"github.com/aws/aws-sdk-go/service/dynamodbstreams"
 )
 
 func CreateMainTable(lambdaId string) {
@@ -223,6 +224,43 @@ func CreateCounterTable() {
 	CHECK(err)
 }
 
+func GetStreamArn(lambdaId string) string {
+	table, err := DBClient.DescribeTable(&dynamodb.DescribeTableInput{
+		TableName: aws.String(kTablePrefix + lambdaId),
+	})
+	CHECK(err)
+	return aws.StringValue(table.Table.LatestStreamArn)
+}
+
+func EnableStream(lambdaId string) bool {
+	fmt.Printf("Enabling stream for %s\n", lambdaId)
+	_, err := DBClient.UpdateTable(&dynamodb.UpdateTableInput{
+		TableName: aws.String(kTablePrefix + lambdaId),
+		StreamSpecification: &dynamodb.StreamSpecification{
+			StreamEnabled:  aws.Bool(true),
+			StreamViewType: aws.String("KEYS_ONLY"),
+		},
+	})
+	CHECK(err)
+	WaitUntilActive(lambdaId)
+	arn := GetStreamArn(lambdaId)
+	fmt.Printf("Stream arn: %s\n", arn)
+	for {
+		res, err := DBStreamClient.DescribeStream(&dynamodbstreams.DescribeStreamInput{
+			StreamArn: aws.String(arn),
+		})
+		if err != nil {
+			fmt.Printf("%s DescribeStream error: %v\n", lambdaId, err)
+		} else {
+			fmt.Printf("%s status: %s\n", lambdaId, *res.StreamDescription.StreamStatus)
+			if *res.StreamDescription.StreamStatus == "ENABLED" {
+				return true
+			}
+		}
+		time.Sleep(3 * time.Second)
+	}
+}
+
 func CreateBaselineTable(lambdaId string) {
 	_, _ = DBClient.CreateTable(&dynamodb.CreateTableInput{
 		BillingMode: aws.String("PAY_PER_REQUEST"),
@@ -323,11 +361,12 @@ func Populate(tablename string, key string, value interface{}, baseline bool) {
 	if TYPE == "WRITELOG" {
 		LibWrite(tablename, aws.JSONValue{"K": key}, map[expression.NameBuilder]expression.OperandBuilder{
 			expression.Name("KEY"):     expression.Value(key),
-			expression.Name("VERSION"): expression.Value(0),
+			expression.Name("VERSION"): expression.Value(1),
 			expression.Name("V"):       expression.Value(value),
 		})
 	} else {
 		LibWrite(tablename, aws.JSONValue{"K": key}, map[expression.NameBuilder]expression.OperandBuilder{
+			expression.Name("VERSION"): expression.Value(1),
 			expression.Name("V"): expression.Value(value),
 		})
 	}

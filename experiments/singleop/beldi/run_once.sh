@@ -39,12 +39,12 @@ ssh -q $CLIENT_HOST -- docker pull $BENCH_IMAGE
 
 ssh -q $CLIENT_HOST -- docker run -v /tmp:/tmp \
     $BENCH_IMAGE \
-    cp -r /beldi-bin/bsingleop /tmp/
+    cp -r /beldi-bin/singleop /tmp/
 
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION NUM_KEYS=$NUM_KEYS \
-    /tmp/bsingleop/init create
+    /tmp/singleop/init create
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION NUM_KEYS=$NUM_KEYS \
-    /tmp/bsingleop/init populate
+    /tmp/singleop/init populate
 
 scp -q $ROOT_DIR/scripts/zk_setup.sh $MANAGER_HOST:/tmp/zk_setup.sh
 ssh -q $MANAGER_HOST -- sudo mkdir -p /mnt/inmem/store
@@ -104,6 +104,6 @@ scp -q $MANAGER_HOST:/mnt/inmem/store/async_results $EXP_DIR
 $BASE_DIR/../singleop_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
 
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION NUM_KEYS=$NUM_KEYS \
-    /tmp/bsingleop/init clean
+    /tmp/singleop/init clean
 
 # $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR

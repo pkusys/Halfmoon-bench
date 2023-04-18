@@ -67,11 +67,12 @@ services:
 
   nop-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bsingleop/nop", "1"]
+    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/singleop/nop", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:
       - FAAS_GO_MAX_PROC_FACTOR=8
+      - TABLE_PREFIX=${TABLE_PREFIX:?}
       - GOGC=1000
     depends_on:
       - boki-engine
@@ -79,7 +80,7 @@ services:
 
   singleop-service:
     image: shengqipku/boki-beldibench:workflow
-    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bsingleop/singleop", "2"]
+    entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/singleop/singleop", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
     environment:

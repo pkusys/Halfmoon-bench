@@ -11,8 +11,8 @@ STACK=boki
 
 AWS_REGION=ap-southeast-1
 
-NUM_KEYS=1000
-VALUE_SIZE=256
+NUM_KEYS=10000
+VALUE_SIZE=$6 # 256
 
 EXP_DIR=$BASE_DIR/results/$1
 QPS=$2
@@ -92,11 +92,11 @@ ssh -q $MANAGER_HOST -- cat /proc/cmdline >>$EXP_DIR/kernel_cmdline
 ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
 
 scp -q $ROOT_DIR/workloads/workflow/optimal/benchmark/rw/workload.lua $CLIENT_HOST:/tmp
-scp -q $ROOT_DIR/workloads/workflow/optimal/benchmark/rw/prewarm.lua $CLIENT_HOST:/tmp
+# scp -q $ROOT_DIR/workloads/workflow/optimal/benchmark/rw/prewarm.lua $CLIENT_HOST:/tmp
 
-ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 40 -L -U \
-    -s /tmp/prewarm.lua \
-    http://$ENTRY_HOST:8080 -R 1 >$EXP_DIR/wrk_prewarm.log
+# ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 10 -L -U \
+#     -s /tmp/prewarm.lua \
+#     http://$ENTRY_HOST:8080 -R 1 >$EXP_DIR/wrk_prewarm.log
 
 ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 120 -L -U \
     -s /tmp/workload.lua \

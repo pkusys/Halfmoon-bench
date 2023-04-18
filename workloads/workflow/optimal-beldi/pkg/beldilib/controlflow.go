@@ -183,7 +183,7 @@ func AssignedSyncInvoke(env *Env, callee string, input interface{}, stepNumber i
 		Instruction: env.Instruction,
 	}
 	// pk := aws.JSONValue{"InstanceId": env.InstanceId, "StepNumber": stepNumber}
-	pk := aws.JSONValue{"InstanceStep": fmt.Sprintf("%s_%d", env.InstanceId, env.StepNumber)}
+	pk := aws.JSONValue{"InstanceStep": fmt.Sprintf("%s_%d", env.InstanceId, stepNumber)}
 	ok := LibPut(env.LogTable, pk, aws.JSONValue{"Callee": iw.InstanceId})
 	if !ok {
 		item := LibRead(env.LogTable, pk, []string{"Callee", "RET"})
@@ -328,30 +328,23 @@ func TPLAbort(env *Env) {
 	}
 }
 
+func Init(env *Env, iw *InputWrapper) {
+	if iw.CallerName != "" {
+		return
+	}
+	counter := LibRead("counter", aws.JSONValue{"K": "counter"}, nil)
+	env.CounterTS = int64(counter["V"].(float64))
+	ok := LibPut(env.IntentTable, aws.JSONValue{"InstanceId": env.InstanceId},
+		aws.JSONValue{"DONE": false, "ASYNC": iw.Async, "INPUT": iw.Input, "ST": time.Now().Unix(), "COUNTER": env.CounterTS})
+	if !ok {
+		res := LibRead(env.IntentTable, aws.JSONValue{"InstanceId": env.InstanceId}, []string{"COUNTER"})
+		env.CounterTS = int64(res["COUNTER"].(float64))
+	}
+}
+
 func wrapperInternal(f func(*Env) interface{}, iw *InputWrapper, env *Env) (OutputWrapper, error) {
 	if TYPE != "BASELINE" {
-		if iw.CallerName == "" {
-			counterItem := LibRead("counter", aws.JSONValue{"K": "counter"}, nil)
-			env.CounterTS = int64(counterItem["V"].(float64))
-			ok := LibPut(env.IntentTable, aws.JSONValue{"InstanceId": env.InstanceId},
-				aws.JSONValue{"DONE": false, "ASYNC": iw.Async, "INPUT": iw.Input, "ST": time.Now().Unix(), "COUNTER": env.CounterTS})
-			if !ok {
-				res := LibRead(env.IntentTable, aws.JSONValue{"InstanceId": env.InstanceId}, []string{"TS"})
-				env.CounterTS = int64(res["COUNTER"].(float64))
-			}
-		}
-		//ok := LibPut(env.IntentTable, aws.JSONValue{"InstanceId": env.InstanceId},
-		//	aws.JSONValue{"DONE": false, "ASYNC": iw.Async})
-		//if !ok {
-		//	res := LibRead(env.IntentTable, aws.JSONValue{"InstanceId": env.InstanceId}, []string{"RET"})
-		//	output, exist := res["RET"]
-		//	if exist {
-		//		return OutputWrapper{
-		//			Status: "Success",
-		//			Output: output,
-		//		}, nil
-		//	}
-		//}
+		Init(env, iw)
 	}
 
 	var output interface{}
