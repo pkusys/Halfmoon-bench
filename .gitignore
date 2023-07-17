@@ -1,7 +1,5 @@
 /tmp
 
-/workloads/queue/bin
-/workloads/retwis/bin
 /workloads/**/bin
 
 /experiments/**/docker-compose-generated.yml
