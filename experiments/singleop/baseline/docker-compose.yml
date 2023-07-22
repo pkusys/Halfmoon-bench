@@ -17,7 +17,7 @@ services:
     restart: always
 
   boki-engine:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: faas-engine-{{.Task.Slot}}
     entrypoint:
       - /boki/engine
@@ -41,7 +41,7 @@ services:
     restart: always
 
   boki-gateway:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: faas-gateway
     ports:
       - 8080:8080
@@ -66,7 +66,7 @@ services:
     restart: always
 
   nop-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bsingleop/nop", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -79,7 +79,7 @@ services:
     restart: always
 
   singleop-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bsingleop/singleop", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
