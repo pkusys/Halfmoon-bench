@@ -8,7 +8,7 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 RUN=$1
 
 # QPS=(50 100 150 200 250 300 350 400 450)
-QPS=(100 200 300 400)
+QPS=(100 200 300)
 
 $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
 

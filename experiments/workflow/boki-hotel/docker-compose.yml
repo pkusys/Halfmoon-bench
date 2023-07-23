@@ -17,7 +17,7 @@ services:
     restart: always
 
   boki-engine:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: boki-engine-{{.Task.Slot}}
     entrypoint:
       - /boki/engine
@@ -46,7 +46,7 @@ services:
     restart: always
 
   boki-controller:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     entrypoint:
       - /boki/controller
       - --zookeeper_host=zookeeper:2181
@@ -59,7 +59,7 @@ services:
     restart: always
 
   boki-gateway:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: faas-gateway
     ports:
       - 8080:8080
@@ -84,7 +84,7 @@ services:
     restart: always
 
   boki-storage:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: faas-storage-{{.Task.Slot}}
     entrypoint:
       - /boki/storage
@@ -109,7 +109,7 @@ services:
     restart: always
 
   boki-sequencer:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: faas-sequencer-{{.Task.Slot}}
     entrypoint:
       - /boki/sequencer
@@ -127,7 +127,7 @@ services:
     restart: always
 
   geo-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/geo", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -140,7 +140,7 @@ services:
     restart: always
 
   profile-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/profile", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -153,7 +153,7 @@ services:
     restart: always
 
   rate-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/rate", "3"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -166,7 +166,7 @@ services:
     restart: always
 
   recommendation-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/recommendation", "4"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -179,7 +179,7 @@ services:
     restart: always
 
   user-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/user", "5"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -192,7 +192,7 @@ services:
     restart: always
 
   hotel-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/hotel", "6"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -205,7 +205,7 @@ services:
     restart: always
 
   search-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/search", "7"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -218,7 +218,7 @@ services:
     restart: always
 
   flight-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/flight", "8"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -231,7 +231,7 @@ services:
     restart: always
 
   order-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/order", "9"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -244,7 +244,7 @@ services:
     restart: always
 
   frontend-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/frontend", "10"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -257,7 +257,7 @@ services:
     restart: always
 
   gateway-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/bokiflow-bin/hotel/gateway", "11"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
