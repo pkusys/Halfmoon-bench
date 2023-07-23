@@ -5,9 +5,9 @@ set -xu
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-BENCH_IMAGE=shengqipku/boki-beldibench:workflow
+BENCH_IMAGE=shengqipku/halfmoon-bench:sosp-ae
 
-STACK=boki
+STACK=halfmoon
 
 AWS_REGION=ap-southeast-1
 
