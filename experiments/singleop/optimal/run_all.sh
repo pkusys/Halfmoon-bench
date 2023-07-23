@@ -8,7 +8,7 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 RUN=$1
 
 QPS=(20)
-LOGMODE=("read" "write" "none")
+LOGMODE=("read" "write")
 
 $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
 
