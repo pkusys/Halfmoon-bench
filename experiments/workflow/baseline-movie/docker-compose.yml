@@ -17,7 +17,7 @@ services:
     restart: always
 
   boki-engine:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: faas-engine-{{.Task.Slot}}
     entrypoint:
       - /boki/engine
@@ -41,7 +41,7 @@ services:
     restart: always
 
   boki-gateway:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: faas-gateway
     ports:
       - 8080:8080
@@ -66,7 +66,7 @@ services:
     restart: always
 
   frontend:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/Frontend", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -79,7 +79,7 @@ services:
     restart: always
 
   cast-info-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/CastInfo", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -92,7 +92,7 @@ services:
     restart: always
 
   review-storage-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/ReviewStorage", "3"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -105,7 +105,7 @@ services:
     restart: always
 
   user-review-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/UserReview", "4"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -118,7 +118,7 @@ services:
     restart: always
 
   movie-review-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/MovieReview", "5"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -131,7 +131,7 @@ services:
     restart: always
 
   compose-review-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/ComposeReview", "6"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -144,7 +144,7 @@ services:
     restart: always
 
   text-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/Text", "7"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -157,7 +157,7 @@ services:
     restart: always
 
   user-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/User", "8"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -170,7 +170,7 @@ services:
     restart: always
 
   unique-id-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/UniqueId", "9"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -183,7 +183,7 @@ services:
     restart: always
 
   rating-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/Rating", "10"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -196,7 +196,7 @@ services:
     restart: always
 
   movie-id-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/MovieId", "11"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -209,7 +209,7 @@ services:
     restart: always
 
   plot-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/Plot", "12"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -222,7 +222,7 @@ services:
     restart: always
 
   movie-info-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/MovieInfo", "13"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -235,7 +235,7 @@ services:
     restart: always
 
   page-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bmedia/Page", "14"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
