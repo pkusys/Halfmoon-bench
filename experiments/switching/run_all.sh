@@ -7,7 +7,7 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
 RUN=$1
 
-CONCURRENCY=(8)
+CONCURRENCY=(16 48)
 NUM_OPS=(10)
 READ_RATIOS=("0.2,0.8")
 
@@ -17,7 +17,7 @@ for cc in ${CONCURRENCY[@]}; do
     for ops in ${NUM_OPS[@]}; do
         for rr in ${READ_RATIOS[@]}; do
             EXP_DIR=con${cc}_n${ops}_rr${rr}
-            if [ -d "$BASE_DIR/results/${EXP_DIR}_$run" ]; then
+            if [ -d "$BASE_DIR/results/${EXP_DIR}_$RUN" ]; then
                 echo "finished $EXP_DIR"
                 continue
             fi

@@ -5,9 +5,9 @@ set -xu
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../..`
 
-BENCH_IMAGE=shengqipku/boki-beldibench:workflow
+BENCH_IMAGE=shengqipku/halfmoon-bench:sosp-ae
 
-STACK=boki
+STACK=halfmoon
 
 AWS_REGION=ap-southeast-1
 
@@ -114,4 +114,4 @@ ssh -q $CLIENT_HOST -- /tmp/switching/benchmark \
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION NUM_KEYS=$NUM_KEYS VALUE_SIZE=$VALUE_SIZE \
     /tmp/switching/init clean
 
-$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
+# $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR

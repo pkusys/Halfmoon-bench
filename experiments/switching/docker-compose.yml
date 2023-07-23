@@ -17,7 +17,7 @@ services:
     restart: always
 
   boki-engine:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: boki-engine-{{.Task.Slot}}
     entrypoint:
       - /boki/engine
@@ -46,7 +46,7 @@ services:
     restart: always
 
   boki-controller:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     entrypoint:
       - /boki/controller
       - --zookeeper_host=zookeeper:2181
@@ -59,7 +59,7 @@ services:
     restart: always
 
   boki-gateway:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: faas-gateway
     ports:
       - 8080:8080
@@ -84,7 +84,7 @@ services:
     restart: always
 
   boki-storage:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: faas-storage-{{.Task.Slot}}
     entrypoint:
       - /boki/storage
@@ -109,7 +109,7 @@ services:
     restart: always
 
   boki-sequencer:
-    image: shengqipku/boki:workflow
+    image: shengqipku/halfmoon:sosp-ae
     hostname: faas-sequencer-{{.Task.Slot}}
     entrypoint:
       - /boki/sequencer
@@ -127,7 +127,7 @@ services:
     restart: always
 
   rw-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/switching/rw", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -142,7 +142,7 @@ services:
     restart: always
 
   prewarm-service:
-    image: shengqipku/boki-beldibench:workflow
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/switching/prewarm", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
