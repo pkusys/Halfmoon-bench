@@ -5,14 +5,14 @@ set -xu
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-BENCH_IMAGE=shengqipku/boki-beldibench:workflow
+BENCH_IMAGE=shengqipku/halfmoon-bench:sosp-ae
 
-STACK=boki
+STACK=halfmoon
 
 AWS_REGION=ap-southeast-1
 
 NUM_KEYS=10000
-VALUE_SIZE=$5 # 256
+VALUE_SIZE=$5
 
 EXP_DIR=$BASE_DIR/results/$1
 QPS=$2
