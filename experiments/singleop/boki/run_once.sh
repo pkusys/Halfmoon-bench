@@ -106,4 +106,4 @@ $BASE_DIR/../singleop_latency.py --async-result-file $EXP_DIR/async_results >$EX
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION NUM_KEYS=$NUM_KEYS \
     /tmp/singleop/init clean
 
-$HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
+# $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
