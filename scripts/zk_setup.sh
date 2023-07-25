@@ -18,7 +18,7 @@ if [[ $? != 0 ]]; then
     exit 1
 fi
 
-sleep 70
+sleep 80
 
 ./bin/zkCli.sh -server $SERVER create /faas/cmd/start
 

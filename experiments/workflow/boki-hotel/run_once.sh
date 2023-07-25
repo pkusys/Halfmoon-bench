@@ -69,7 +69,7 @@ done
 
 ssh -q $MANAGER_HOST -- TABLE_PREFIX=$TABLE_PREFIX docker stack deploy \
     -c ~/docker-compose-generated.yml -c ~/docker-compose.yml $STACK
-sleep 80
+sleep 100
 
 for HOST in $ALL_ENGINE_HOSTS; do
     ENGINE_CONTAINER_ID=`$HELPER_SCRIPT get-container-id --base-dir=$BASE_DIR --service boki-engine --machine-host $HOST`

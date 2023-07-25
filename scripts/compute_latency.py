@@ -14,8 +14,8 @@ def parse_async_results(file_path):
     return results
 
 
-def compute_latency(async_result_file_path, warmup_ratio=1.0 / 6, outlier_ratio=30):
-    queueing_delays = []
+def compute_latency(async_result_file_path, warmup_ratio=1.0 / 6, outlier_ratio=30, sleep_duration=0):
+    # queueing_delays = []
     latencies = []
     results = parse_async_results(async_result_file_path)
     skip = int(len(results) * warmup_ratio)
@@ -23,17 +23,11 @@ def compute_latency(async_result_file_path, warmup_ratio=1.0 / 6, outlier_ratio=
         recv_ts = entry["recvTs"]
         dispatch_ts = entry["dispatchTs"]
         finish_ts = entry["finishedTs"]
-        if dispatch_ts > recv_ts:
-            queueing_delays.append(dispatch_ts - recv_ts)
-        latencies.append(finish_ts - dispatch_ts)
+        # if dispatch_ts > recv_ts:
+        #     queueing_delays.append(dispatch_ts - recv_ts)
+        latencies.append(finish_ts - dispatch_ts - sleep_duration)
     threshold = np.median(latencies) * outlier_ratio
     filtered = list(filter(lambda x: x < threshold, latencies))
-    # for lat in filtered:
-    #     if lat > 100 * 1000:
-    #         header = "## "
-    #     else:
-    #         header = ""
-    #     print(header, lat / 1000.0)
     p50 = np.percentile(filtered, 50) / 1000.0
     p99 = np.percentile(filtered, 99) / 1000.0
     avg = np.mean(filtered) / 1000.0
@@ -45,12 +39,14 @@ if __name__ == "__main__":
     parser.add_argument("--async-result-file", type=str, default=None)
     parser.add_argument("--warmup-ratio", type=float, default=1.0 / 6)
     parser.add_argument("--outlier-factor", type=int, default=20)
+    parser.add_argument("--sleep-duration", type=int, default=0) # in ms
     args = parser.parse_args()
 
     p50, p99, avg = compute_latency(
         args.async_result_file,
         warmup_ratio=args.warmup_ratio,
         outlier_ratio=args.outlier_factor,
+        sleep_duration=args.sleep_duration,
     )
     print("p50 latency: %.2f ms" % p50)
     print("p99 latency: %.2f ms" % p99)
