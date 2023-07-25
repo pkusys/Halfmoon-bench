@@ -7,13 +7,14 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
 RUN=$1
 
-# NOTE: this experiment is time-consuming, we only run a subset of the full parameter combination
+# NOTE: this experiment is time-consuming (10min+ per run), we only run a subset of the full parameter combinations
+# the full combinations are listed in the comments
 NUM_KEYS=10000
 QPS=(100)
 NUM_OPS=(10)
 READ_RATIO=(0.1 0.5 0.9) # READ_RATIO=(0.1 0.3 0.5 0.9)
 LOGMODE=("read" "write")
-VALUE_SIZE=(256 1024)
+VALUE_SIZE=(256) # VALUE_SIZE=(256 1024)
 GC=(10000) # GC=(10000 60000) in ms, = (10s, 1min)
 
 $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM

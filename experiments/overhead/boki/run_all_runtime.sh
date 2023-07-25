@@ -7,9 +7,10 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
 RUN=$1
 
-# NOTE: this experiment is time-consuming, we only run a subset of the full parameter combination
+# NOTE: this experiment is time-consuming (10min+ per run), we only run a subset of the full parameter combinations
+# the full combinations are listed in the comments
 NUM_KEYS=10000
-QPS=(100 300) # QPS=(100 200 300 400)
+QPS=(100) # QPS=(100 200 300 400)
 NUM_OPS=(10)
 READ_RATIO=(0.1 0.5 0.9) # READ_RATIO=(0.1 0.3 0.5 0.9)
 VALUE_SIZE=(256)
@@ -24,7 +25,7 @@ for qps in ${QPS[@]}; do
                 if [ -d "$BASE_DIR/results/${EXP_DIR}_$RUN" ]; then
                     echo "finished ReadRatio${rr}_QPS${qps}_v${v}"
                     EXP_DIR=$BASE_DIR/results/${EXP_DIR}_$RUN
-                    $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
+                    $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results --sleep-duration $((ops * 5)) >$EXP_DIR/latency.txt
                     continue
                 fi
                 # $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
@@ -37,7 +38,7 @@ for qps in ${QPS[@]}; do
                 echo "finished ReadRatio${rr}_QPS${qps}_v${v}"
                 # $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
                 EXP_DIR=$BASE_DIR/results/${EXP_DIR}_$RUN
-                $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
+                $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results --sleep-duration $((ops * 5)) >$EXP_DIR/latency.txt
                 sleep 60
             done
         done
