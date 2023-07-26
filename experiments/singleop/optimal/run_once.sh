@@ -109,7 +109,7 @@ ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 600 -L -U \
 sleep 10
 
 scp -q $MANAGER_HOST:/mnt/inmem/store/async_results $EXP_DIR
-$BASE_DIR/../singleop_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
+$ROOT_DIR/scripts/singleop_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
 
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION LoggingMode=$LOGMODE NUM_KEYS=$NUM_KEYS \
     /tmp/singleop/init clean
