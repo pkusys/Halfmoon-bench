@@ -15,7 +15,7 @@ NUM_OPS=(10)
 READ_RATIO=(0.1 0.5 0.9) # READ_RATIO=(0.1 0.3 0.5 0.9)
 VALUE_SIZE=(256)
 
-$HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
+# $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
 
 for qps in ${QPS[@]}; do
     for ops in ${NUM_OPS[@]}; do
@@ -30,10 +30,6 @@ for qps in ${QPS[@]}; do
                 fi
                 # $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
                 $BASE_DIR/run_once.sh $EXP_DIR $qps $ops $rr $v $NUM_KEYS # 2>&1 | tee $BASE_DIR/run.log 
-                cp $BASE_DIR/docker-compose.yml $BASE_DIR/results/$EXP_DIR
-                cp $BASE_DIR/docker-compose-generated.yml $BASE_DIR/results/$EXP_DIR
-                cp $BASE_DIR/config.json $BASE_DIR/results/$EXP_DIR
-                cp $BASE_DIR/nightcore_config.json $BASE_DIR/results/$EXP_DIR
                 mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
                 echo "finished ReadRatio${rr}_QPS${qps}_v${v}"
                 # $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
@@ -45,4 +41,4 @@ for qps in ${QPS[@]}; do
     done
 done
 
-$HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
+# $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR

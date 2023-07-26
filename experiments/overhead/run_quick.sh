@@ -11,3 +11,6 @@ sleep 10
 ./optimal/run_all_runtime.sh $RUN
 sleep 10
 ./optimal/run_all_storage.sh $RUN
+
+./plot_runtime.py $RUN
+./plot_storage.py $RUN

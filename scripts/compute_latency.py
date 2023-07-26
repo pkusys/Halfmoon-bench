@@ -24,13 +24,13 @@ def compute_latency(async_result_file_path, warmup_ratio=1.0 / 6, outlier_ratio=
         dispatch_ts = entry["dispatchTs"]
         finish_ts = entry["finishedTs"]
         # if dispatch_ts > recv_ts:
-        #     queueing_delays.append(dispatch_ts - recv_ts)
-        latencies.append(finish_ts - dispatch_ts - sleep_duration)
+        #     queueing_delays.append((dispatch_ts - recv_ts) / 1000.0)
+        latencies.append((finish_ts - dispatch_ts) / 1000.0 - sleep_duration)
     threshold = np.median(latencies) * outlier_ratio
     filtered = list(filter(lambda x: x < threshold, latencies))
-    p50 = np.percentile(filtered, 50) / 1000.0
-    p99 = np.percentile(filtered, 99) / 1000.0
-    avg = np.mean(filtered) / 1000.0
+    p50 = np.percentile(filtered, 50)
+    p99 = np.percentile(filtered, 99)
+    avg = np.mean(filtered)
     return p50, p99, avg
 
 

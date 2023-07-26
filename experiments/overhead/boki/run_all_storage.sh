@@ -16,7 +16,7 @@ READ_RATIO=(0.1 0.5 0.9) # READ_RATIO=(0.1 0.3 0.5 0.9)
 VALUE_SIZE=(256) # VALUE_SIZE=(256 1024)
 GC=(10000) # GC=(10000 60000) in ms, = (10s, 1min)
 
-$HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
+# $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
 
 for qps in ${QPS[@]}; do
     for ops in ${NUM_OPS[@]}; do
@@ -27,21 +27,17 @@ for qps in ${QPS[@]}; do
                     if [ -d "$BASE_DIR/results/${EXP_DIR}_$RUN" ]; then
                         echo "finished ReadRatio${rr}_QPS${qps}_v${v}_gc${gc}"
                         EXP_DIR=$BASE_DIR/results/${EXP_DIR}_$RUN
-                        $ROOT_DIR/scripts/compute_logsize.py --async-result-file results/$EXP_DIR/async_results \
+                        $ROOT_DIR/scripts/compute_logsize.py --async-result-file $EXP_DIR/async_results \
                                 --num-keys $NUM_KEYS --value-size $v --gc-interval $gc >$EXP_DIR/storage_gc${gc}.txt
                         continue
                     fi
                     # $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
                     $BASE_DIR/run_once.sh $EXP_DIR $qps $ops $rr $v # 2>&1 | tee $BASE_DIR/run.log 
-                    cp $BASE_DIR/docker-compose.yml $BASE_DIR/results/$EXP_DIR
-                    cp $BASE_DIR/docker-compose-generated.yml $BASE_DIR/results/$EXP_DIR
-                    cp $BASE_DIR/config.json $BASE_DIR/results/$EXP_DIR
-                    cp $BASE_DIR/nightcore_config.json $BASE_DIR/results/$EXP_DIR
                     mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
                     echo "finished ReadRatio${rr}_QPS${qps}_v${v}"
                     # $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
                     EXP_DIR=$BASE_DIR/results/${EXP_DIR}_$RUN
-                    $ROOT_DIR/scripts/compute_logsize.py --async-result-file results/$EXP_DIR/async_results \
+                    $ROOT_DIR/scripts/compute_logsize.py --async-result-file $EXP_DIR/async_results \
                             --num-keys $NUM_KEYS --value-size $v --gc-interval $gc >$EXP_DIR/storage_gc${gc}.txt
                     sleep 60
                 done
@@ -50,4 +46,4 @@ for qps in ${QPS[@]}; do
     done
 done
 
-$HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
+# $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
