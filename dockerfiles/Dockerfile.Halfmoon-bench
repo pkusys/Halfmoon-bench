@@ -1,0 +1,28 @@
+FROM zjia/boki:sosp-ae as boki
+FROM golang:1.14-buster as builder
+
+COPY --from=boki /src/boki /boki
+COPY . /workflow/workloads
+
+RUN cd /workflow/workloads/beldi && \
+    make hotel-baseline && \
+    make media-baseline && \
+    make singleop-baseline
+RUN cd /workflow/workloads/boki && \
+    make hotel && \
+    make media && \
+    make singleop && \
+    make recovery
+RUN cd /workflow/workloads/optimal && \
+    make hotel && \
+    make media && \
+    make singleop && \
+    make switching && \
+    make recovery
+
+FROM ubuntu:focal
+
+COPY --from=builder  /workflow/workloads/beldi/bin  /beldi-bin
+COPY --from=builder  /workflow/workloads/boki/bin   /bokiflow-bin
+COPY --from=builder  /workflow/workloads/optimal/bin /optimal-bin
+COPY --from=boki     /boki/launcher       /boki/launcher
