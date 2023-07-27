@@ -13,3 +13,4 @@
 run*.log
 summary*.json
 *.ipynb
+**/figures/**
