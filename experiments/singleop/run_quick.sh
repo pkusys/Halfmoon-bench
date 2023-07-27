@@ -9,3 +9,5 @@ sleep 10
 ./boki/run_all.sh $RUN
 sleep 10
 ./optimal/run_all.sh $RUN
+
+./plot_singleop.py --qps 20 $RUN
