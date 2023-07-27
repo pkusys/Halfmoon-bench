@@ -14,15 +14,20 @@ $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role $BOKI_MAC
 
 for qps in ${QPS[@]}; do
     EXP_DIR=QPS${qps}
+    if [ -d "$BASE_DIR/results/${EXP_DIR}_$RUN" ]; then
+        echo "finished QPS${qps}"
+        continue
+    fi
     while true; do
+        sleep 60
         $BASE_DIR/run_once.sh $EXP_DIR $qps # 2>&1 | tee run.log 
-        if [ -s "$EXP_DIR/async_results" ]; then
+        if [ -s "$BASE_DIR/results/$EXP_DIR/async_results" ]; then
             mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
             echo "finished QPS${qps}"
             break
         else
             echo "retrying QPS${qps}"
-            rm -rf $EXP_DIR
+            rm -rf $BASE_DIR/results/$EXP_DIR
         fi
     done
 done
