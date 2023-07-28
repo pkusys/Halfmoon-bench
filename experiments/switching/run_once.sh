@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xu
+set -u
 
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../..`
