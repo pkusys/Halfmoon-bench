@@ -99,7 +99,10 @@ ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 150 -L -U \
 sleep 10
 
 scp -q $MANAGER_HOST:/mnt/inmem/store/async_results $EXP_DIR
-$ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
+
+if [ -s "$EXP_DIR/async_results" ]; then
+    $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
+fi
 
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION LoggingMode=$LOGMODE \
     /tmp/hotel/init clean cayon
