@@ -22,15 +22,15 @@ func init() {
 		panic("invalid NUM_KEYS")
 	}
 	if beldilib.TYPE == "BASELINE" {
-		table = "b" + table
+		// table = "b" + table
 		baseline = true
 	}
 }
 
 func clean() {
 	if baseline {
-		beldilib.DeleteTable(table)
-		beldilib.WaitUntilDeleted(table)
+		beldilib.DeleteTable("b" + table)
+		beldilib.WaitUntilDeleted("b" + table)
 	} else {
 		beldilib.DeleteLambdaTables(table)
 		beldilib.WaitUntilDeleted(table)
@@ -41,9 +41,9 @@ func clean() {
 
 func create() {
 	if baseline {
-		beldilib.CreateBaselineTable(table)
+		beldilib.CreateBaselineTable("b" + table)
 		time.Sleep(10 * time.Second)
-		beldilib.WaitUntilActive(table)
+		beldilib.WaitUntilActive("b" + table)
 	} else {
 		for _, lambda := range []string{table, "nop"} {
 			beldilib.CreateLambdaTables(lambda)
