@@ -12,7 +12,7 @@ export DOCKER_BUILDKIT=1
 function build_halfmoon {
     docker build -t shengqipku/halfmoon:$TAG \
         -f $ROOT_DIR/dockerfiles/Dockerfile.Halfmoon \
-        $ROOT_DIR/boki
+        $ROOT_DIR/halfmoon
 }
 
 function build_halfmoon_bench {
