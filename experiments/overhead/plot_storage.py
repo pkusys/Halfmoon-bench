@@ -93,23 +93,23 @@ def plot(boki, hm_read, hm_write, read_ratios, figname):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--read-ratios", nargs='+', type=float, default=[0.1, 0.5, 0.9])
-    parser.add_argument("--qps", nargs="+", type=int, default=[100])
-    parser.add_argument("--value-size", type=int, default=256)
+    parser.add_argument("--qps", type=int, default=100)
+    parser.add_argument("--value-size", nargs="+", type=int, default=[256])
     parser.add_argument("--gc-intervals", nargs="+", type=int, default=[10000])
     parser.add_argument("run", metavar="run", type=int, default=0)
     args = parser.parse_args()
     run = args.run
 
-    for qps, gc in product(args.qps,args.gc_intervals):
+    for v, gc in product(args.value_size, args.gc_intervals):
         boki = []
         hm_read = []
         hm_write = []
         for rr in args.read_ratios:
-            exp_name = f"ReadRatio{rr}_QPS{qps}_v{args.value_size}"
+            exp_name = f"ReadRatio{rr}_QPS{args.qps}_v{v}"
             storage = summary("boki", exp_name, gc, run)
             boki.append(storage)
             storage = summary("optimal", exp_name, gc, run, "write")
             hm_read.append(storage)
             storage = summary("optimal", exp_name, gc, run, "read")
             hm_write.append(storage)
-        plot(boki, hm_read, hm_write, args.read_ratios, f"{run}/storage_overhead_QPS{qps}_GC{gc}.png")
+        plot(boki, hm_read, hm_write, args.read_ratios, f"{run}/storage_overhead_V{v}_GC{gc}.png")
