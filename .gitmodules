@@ -1,3 +1,3 @@
-[submodule "boki"]
+[submodule "halfmoon"]
 	path = halfmoon
 	url = git@github.com:pkusys/Halfmoon.git
