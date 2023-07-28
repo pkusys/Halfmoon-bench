@@ -1,86 +1,111 @@
-Benchmark workloads of [Boki](https://github.com/ut-osa/boki)
+Benchmark workloads of Halfmoon
 ==================================
 
-This repository includes source code of evaluation workloads of Boki,
-and scripts for running experiments.
-It includes all materials for the artifact evaluation of our SOSP '21 paper.
+This repository includes the artifacts of our SOSP '23 paper.
 
 ### Structure of this repository ###
 
-* `dockerfiles`: Dockerfiles for building relevant Docker containers.
-* `workloads`: source code of workloads for evaluating BokiFlow, BokiStore, and BokiQueue.
-* `experiments`: setup scripts for running experiments of individual workloads.
-* `scripts`: helper scripts for building Docker containers, and provisioning EC2 instances for experiments.
+* `dockerfiles`: Dockerfiles for building relevant Docker images.
+* `workloads`: source code of Halfmoon client library and evalution workloads. 
+* `experiments`: scripts for running individual experiments.
+* `scripts`: helper scripts for setting up AWS EC2 environment, building Docker images, and summarizing experiment results.
+* `halfmoon`: git submodule containing our implementation of [Halfmoon](https://github.com/pkusys/Halfmoon)'s logging layer, which is based on SOSP '21 paper [Boki](https://github.com/ut-osa/boki)
 
 ### Hardware and software dependencies ###
 
-Our evaluation workloads run on AWS EC2 instances in `us-east-2` region.
+Our evaluation workloads run on AWS EC2 instances in `ap-southeast-1` region.
 
-EC2 VMs for running experiments use a public AMI (`ami-0c6de836734de3280`) built by us,
-which is based on Ubuntu 20.04 with necessary dependencies installed.
+EC2 VMs for running experiments use a public AMI (`ami-0cfb31bd9b06138c7`), which runs Ubuntu 20.04 with necessary dependencies installed.
 
 ### Environment setup ###
 
 #### Setting up the controller machine ####
 
-A controller machine in AWS `us-east-2` region is required for running scripts executing experiment workflows.
-The controller machine can use very small EC2 instance type, as it only provisions and controls experiment VMs,
-but does not affect experimental results.
-In our own setup, we use a `t3.micro` EC2 instance installed with Ubuntu 20.04 as the controller machine.
+A controller machine in AWS `ap-southeast-1` region is required for running evaluation scripts. This machine provisions EC2 spot instances that run the actual experiments and does not participate itself.
+Therefore the controller can use very small EC2 instance type.
+There are two ways to setup the controller machine:
 
-The controller machine needs `python3`, `rsync`, and AWS CLI version 1 installed.
-`python3` and `rsync` can be installed with `apt`,
-and this [documentation](https://docs.aws.amazon.com/cli/latest/userguide/install-linux.html)
-details the recommanded way for installing AWS CLI version 1.
-Once installed, AWS CLI has to be configured with region `us-east-2` and access key
-(see this [documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)).
+1. Using the EC2 instance (a `t2.micro`) provided by us. Please send us your public key and we will enable SSH login for you.
 
-Then on the controller machine, clone this repository with all git submodules
+2. Setting up your own controller using our public controller AMI (`ami-0e9f4c3294198a422`). This AMI has AWS CLI version 1 installed. To grant the controller access to AWS resources (IAM, EC2, etc.), you need to configure AWS CLI with your access key that has necessary permissions (see this [documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)).
+
+After setting up the controller, clone this repository with all git submodules
 ```
-git clone --recursive https://github.com/ut-osa/boki-benchmarks.git
+git clone --recursive https://github.com/pkusys/Halfmoon-bench.git
 ```
+
 Finally, execute `scripts/setup_sshkey.sh` to setup SSH keys that will be used to access experiment VMs.
 Please read the notice in `scripts/setup_sshkey.sh` before executing it to see if this script works for your setup.
 
 #### Setting up EC2 security group and placement group ####
 
-Our VM provisioning script creates EC2 instances with security group `boki` and placement group `boki-experiments`.
+Our evaluation workloads run on exactly the same environment as [Boki](https://github.com/ut-osa/boki-benchmarks). The experiment cluster needs to be provisioned with security group `boki` and placement group `boki-experiments`.
 The security group includes firewall rules for experiment VMs (including allowing the controller machine to SSH into them),
 while the placement group instructs AWS to place experiment VMs close together.
 
 Executing `scripts/aws_provision.sh` on the controller machine creates these groups with correct configurations.
 
-#### Building Docker images ####
-We also provide the script (`scripts/docker_images.sh`) for building Docker images relevant to experiments in this artifact.
-As we already pushed all compiled images to DockerHub, there is no need to run this script
-as long as you do not modify source code of Boki (in `boki` directory) and evaluation workloads (in `workloads` directory).
+**NOTE**: reviewers using our provided instance may skip this step.
+
+#### (Optional) Building Docker images ####
+We also provide the script (`scripts/build_images.sh`) for building relevant Docker images.
+The images required for artifact evaluation are already available on DockerHub.
+There is no need to rebuild Docker images unless you wish to modify source code of Halfmoon's logging layer (in `halfmoon` directory) or the client library and evaluation workloads (in `workloads` directory).
 
 ### Experiment workflow ###
 
-Each sub-directory within `experiments` corresponds to one experiment.
-Within each experiment directory, a `config.json` file describes machine configuration and placement assignment of
-individual Docker containers for this experiment.
+Each directory within `experiments` corresponds to a subsection in our paper's evalution section. 
 
-`run_once.sh` script is the entry point of one experiment run, which performs workload-specific setups,
-runs the benchmark with configured options, and stores results in  `results` directory.
+- **singleop**: microbenchmarks (section 6.1)
+- **workflow**: application workloads (section 6.2)
+- **overhead**: system overhead (section 6.3)
+- **switching**: switching delay (section 6.4)
 
-Before executing `run_once.sh` script, VM provisioning is done by `scripts/exp_helper`
-with sub-command `start-machines`.
-After EC2 instances are up, the script then sets up Docker engines on newly created
-VMs to form a Docker cluster in [swarm](https://docs.docker.com/engine/swarm/) mode.
+Each experiment's directory may be further divided into several subdirectories, each corresponding to an individual baseline. The structure of each baseline's directory is as follows:
+- `docker-compose.yml` describes configuration of the individual services that make up the evaluation workload.
+- `config.json` describes machine configuration and placement of services.
+- `nightcore_config.json` describes the worker configuration for each service.
+- `run_once.sh` runs the workload once with the configured options. Each run would create a folder in the `results` directory to store the results. The naming of that folder reflects the configuration of this run.
+- `run_all.sh` enumerates workload-specific options and executes `run_once.sh` multiple times. This is the entry point for running experiments.
 
-`experiments/run_quick.sh` is a push-button script for running all experiments with a small set
-of options. This script can be used to quickly test all setups, and learn the experiment workflow.
+Before executing `run_once.sh`, `run_all.sh` first does VM provisioning by calling `scripts/exp_helper` with sub-command `start-machines`.
+After EC2 instances are up, the `run_once.sh` script calls `docker stack deploy` to create the services specified in `docker-compose.yml` in Docker [swarm](https://docs.docker.com/engine/swarm/) mode. It then `ssh`s to a client machine specified in `config.json` to start generating workload requests.
 
-### Evaluation and expected result ###
+Each experiment's directory contains a `run_quick.sh` that executes all the `run_all.sh` scripts in its subdirectories (except for `experiments/switching` that contains only a single `run_all.sh`). This script covers all relevant experiments to reproduce a figure in the respective sections of the paper. The `run_quick.sh` script accepts a `RUN` parameter to number each execution of the workloads and passes this parameter to `run_all.sh` scripts. For example, `./run_quick.sh 1` would create folders in the `results` directories labeled with the suffix `_1`.
 
-Within individual result directory, a `results.log` or `latency.txt` file describes the metrics
-of this run. `scripts/summarize_results.py` is a simple script to print a result summary for full inspection.
+At the top level, `experiments/run.sh` is a push-button script for running all experiments. Reviewers can comment out specific lines and modifies each `RUN` parameter to select or re-run a subset of experiments.
 
-Within the directory of each workload experiment, we provide `exepcted_results` directory, including some examples of experiment results.
+### Estimated Duration ###
+
+- **singleop**: Each baseline runs for about 10 minutes. With four baselines, the total duration should be around 40 minutes.
+- **workflow**: Each data point on the figure takes around 5 minutes. Producing all points could be time-consuming. Therefore we only run a subset of the full parameter combination (see the respective `run_all.sh`). The two application workloads take around 2 hours in total.
+- **overhead**: Each data point takes around 10 minutes, and we also run a subset of the full parameter combination. The total duration is around 1.5 hours.
+- **switching**: Should completes in 5 minutes.
+
+
+### Visualization ###
+
+Each `run_quick.sh` (or `run_all.sh` in the `experiments/switching`) ends with a call to a python script that summarizes and visualizes the results. The produced figures are stored in `figures` in the respective experiment directory. Like `results`, the naming of folders within `figures` also reflects the `RUN` parameter passed to `run_quick.sh`.
+
+- **singleop**: `microbenchmarks.png` should match Figure 10.
+- **workflow**: `hotel.png` and `movie.png` should match Figure 11 and 12, respectively.
+- **overhead**: `runtime_overhead_*.png` and `storage_overhead_*.png` should match Figure 13 and 14, respectively. As this experiment is time consuming, we only reproduce the leftmost subfigure in each figure by default. The asterisk in the figure names indicates the selected parameter combination.
+- **switching**: `switching.png` should match Figure 15.
+
+### Troubleshooting ###
+
+The experiment workflow may fail due to EC2 or DynamoDB provisioning errors. These errors are transient and can be usually fixed by re-running the experiment. The following workarounds might also be useful.
+
+- The `scripts/exp_helper` may fail to start the EC2 instances with an error message saying "spot instance request not fulfilled after xxx seconds". Please wait a few minutes and retry. Also consider changing the AVAILABILITY_ZONE variable in `scripts/exp_helper` to another area (1a, 1b, or 1c). If there is an `machines.json` file in the directory (the one containing `config.json`), please run `scripts/exp_helper` with sub-command `stop-machines` to terminate the existing instances, and finally delete the `machines.json`. If there is no such file, please contact us to remove the orphaned instances.
+
+- After EC2 instances are up, the experiments may still fail because some instances becomes unreachable from the controller machine. Please follow the previous step to terminate the instances and retry.
+
+- Our experiments provision and populate DynamoDB tables. During this process, there could be an error message saying something like "resource not found". Please re-run the associated experiments.
+
+Please contact us if any of these errors persists or if there is an unidentified issue.
 
 ### License ###
 
-* [Boki](https://github.com/ut-osa/boki) is licensed under Apache License 2.0.
-* BokiFlow (`workloads/workflow`) derives from [Beldi codebase](https://github.com/eniac/Beldi). BokiFlow is licensed under MIT License, in accordance with Beldi.
+* The logging layer of [Halfmoon](https://github.com/pkusys/Halfmoon) is based on based on [Boki](https://github.com/ut-osa/boki). Halfmoon is licensed under Apache License 2.0, in accordance with Boki.
+* The Halfmoon client library and evaluation workloads (`workloads/workflow`) are based on [Beldi codebase](https://github.com/eniac/Beldi) and [BokiFlow](https://github.com/ut-osa/boki-benchmarks). Both are licensed under MIT License, and so is our source code.
 * All other source code in this repository is licensed under Apache License 2.0.
