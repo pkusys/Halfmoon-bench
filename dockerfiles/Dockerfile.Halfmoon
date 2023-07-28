@@ -5,20 +5,21 @@ RUN apt update && \
     apt upgrade -y && \
     apt install -y g++ clang make cmake pkg-config autoconf automake libtool curl unzip
 
-WORKDIR /boki
+WORKDIR /halfmoon
 COPY . .
 RUN CC=clang CXX=clang++ ./build_deps.sh
 RUN CXX=clang++ make -j $(nproc)
 
 FROM ubuntu:focal as release
 
-COPY . /src/boki
+COPY . /src/halfmoon
 
-COPY --from=builder /boki/bin/release/gateway    /boki/gateway
-COPY --from=builder /boki/bin/release/engine     /boki/engine
-COPY --from=builder /boki/bin/release/launcher   /boki/launcher
-COPY --from=builder /boki/bin/release/sequencer  /boki/sequencer
-COPY --from=builder /boki/bin/release/storage    /boki/storage
-COPY --from=builder /boki/bin/release/controller /boki/controller
+# The binaries are named after boki for legacy reasons.
+COPY --from=builder /halfmoon/bin/release/gateway    /boki/gateway
+COPY --from=builder /halfmoon/bin/release/engine     /boki/engine
+COPY --from=builder /halfmoon/bin/release/launcher   /boki/launcher
+COPY --from=builder /halfmoon/bin/release/sequencer  /boki/sequencer
+COPY --from=builder /halfmoon/bin/release/storage    /boki/storage
+COPY --from=builder /halfmoon/bin/release/controller /boki/controller
 
 WORKDIR /boki
