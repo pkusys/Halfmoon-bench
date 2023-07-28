@@ -10,4 +10,4 @@ sleep 10
 sleep 10
 ./optimal/run_all.sh $RUN
 
-./plot_singleop.py --qps 20 $RUN
+./plot_singleop.py --qps 15 $RUN

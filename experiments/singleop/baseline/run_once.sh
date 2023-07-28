@@ -88,13 +88,13 @@ ssh -q $MANAGER_HOST -- uname -a >>$EXP_DIR/kernel_version
 
 scp -q $ROOT_DIR/workloads/workflow/beldi/benchmark/singleop/workload.lua $CLIENT_HOST:/tmp
 
-ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 150 -L -U \
+ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 120 -L -U \
     -s /tmp/workload.lua \
     http://$ENTRY_HOST:8080 -R $QPS >$EXP_DIR/wrk_warmup.log
 
 sleep 10
 
-ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 750 -L -U \
+ssh -q $CLIENT_HOST -- $WRK_DIR/wrk -t 2 -c 2 -d 600 -L -U \
     -s /tmp/workload.lua \
     http://$ENTRY_HOST:8080 -R $QPS 2>/dev/null >$EXP_DIR/wrk.log
 

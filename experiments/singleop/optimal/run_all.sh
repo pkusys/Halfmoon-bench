@@ -7,7 +7,7 @@ HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 
 RUN=$1
 
-QPS=(10 20)
+QPS=(15)
 LOGMODE=("read" "write")
 
 $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
@@ -18,6 +18,7 @@ for qps in ${QPS[@]}; do
         $BASE_DIR/run_once.sh $EXP_DIR $qps $mode # 2>&1 | tee $BASE_DIR/run.log 
         mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
         echo "finished QPS${qps}_$mode"
+        sleep 30
     done
 done
 
