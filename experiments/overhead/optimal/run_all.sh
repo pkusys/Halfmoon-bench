@@ -9,7 +9,8 @@ RUN=$1
 
 $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
 
-if ! [ -f "machines.json" ]; then
+cd $BASE_DIR
+if ! [ -f "$BASE_DIR/machines.json" ]; then
     echo "[ERROR] machines not started, skipping $BASE_DIR"
     rm ":~"
     exit 1

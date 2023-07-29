@@ -13,7 +13,7 @@ rr="0.2,0.8" # READ_RATIO
 
 $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
 
-if ! [ -f "machines.json" ]; then
+if ! [ -f "$BASE_DIR/machines.json" ]; then
     echo "[ERROR] machines not started, skipping $BASE_DIR"
     rm ":~"
     exit 1
