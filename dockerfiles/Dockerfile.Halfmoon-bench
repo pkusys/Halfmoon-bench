@@ -11,11 +11,13 @@ RUN cd /workflow/workloads/beldi && \
 RUN cd /workflow/workloads/boki && \
     make hotel && \
     make media && \
+    make rw && \
     make singleop && \
     make recovery
 RUN cd /workflow/workloads/optimal && \
     make hotel && \
     make media && \
+    make rw && \
     make singleop && \
     make switching && \
     make recovery
