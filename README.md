@@ -96,11 +96,11 @@ Each `run_quick.sh` (or `run_all.sh` in the `experiments/switching`) ends with a
 
 The experiment workflow may fail due to EC2 or DynamoDB provisioning errors. These errors are transient and can be usually fixed by re-running the experiment. The following workarounds might also be useful.
 
-- The `scripts/exp_helper` may fail to start the EC2 instances with an error message saying "spot instance request not fulfilled after xxx seconds". Please wait a few minutes and retry. Also consider changing the AVAILABILITY_ZONE variable in `scripts/exp_helper` to another area (1a, 1b, or 1c). If there is an `machines.json` file in the directory (the one containing `config.json`), please run `scripts/exp_helper` with sub-command `stop-machines` to terminate the existing instances, and finally delete the `machines.json`. If there is no such file, please contact us to remove the orphaned instances.
+- The `scripts/exp_helper` may fail to start the EC2 instances with an error message saying "spot instance request not fulfilled after xxx seconds". Please wait a few minutes and retry. Also consider changing the AVAILABILITY_ZONE variable in `scripts/exp_helper` to another area (1a, 1b, or 1c). By default our scripts would skip the experiment if the error happens. Note that other instances may have successfully started. Please contact us to remove these orphaned instances.
 
-- After EC2 instances are up, the experiments may still fail because some instances becomes unreachable from the controller machine. Please follow the previous step to terminate the instances and retry.
+- After EC2 instances are up, the experiments may still fail because some instances becomes unreachable from the controller machine. If there is an `machines.json` file in the directory (the one containing `config.json`), please run `scripts/exp_helper` with sub-command `stop-machines` to terminate the existing instances. Before retrying, please manually delete the result of this run in `results`.
 
-- Our experiments provision and populate DynamoDB tables. During this process, there could be an error message saying something like "resource not found". Please re-run the associated experiments.
+- Our experiments provision and populate DynamoDB tables. During this process, there could be an error message saying something like "resource not found". This should only affect a single execution of `run_once.sh`. Please wait till the current script finishes and re-run the affected experiments. Like in the previous case, please manually delete the results of the affected experiments. Our scripts will skip an experiment if its corresponding foler exists in `results`.
 
 Please contact us if any of these errors persists or if there is an unidentified issue.
 
