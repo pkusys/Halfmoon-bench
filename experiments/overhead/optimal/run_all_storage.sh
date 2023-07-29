@@ -27,7 +27,7 @@ for qps in ${QPS[@]}; do
                     for gc in ${GC[@]}; do
                         EXP_DIR=ReadRatio${rr}_QPS${qps}_v${v}_${mode}
                         if [ -d "$BASE_DIR/results/${EXP_DIR}_$RUN" ]; then
-                            echo "finished ReadRatio${rr}_QPS${qps}_v${v}_${mode}_gc${gc}"
+                            echo "finished $BASE_DIR/${EXP_DIR}_gc${gc}"
                             EXP_DIR=$BASE_DIR/results/${EXP_DIR}_$RUN
                             $ROOT_DIR/scripts/compute_logsize.py --async-result-file $EXP_DIR/async_results \
                                     --num-keys $NUM_KEYS --value-size $v --gc-interval $gc >$EXP_DIR/storage_gc${gc}.txt
@@ -36,7 +36,7 @@ for qps in ${QPS[@]}; do
                         # $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
                         $BASE_DIR/run_once.sh $EXP_DIR $qps $ops $rr $mode $v $NUM_KEYS # 2>&1 | tee $BASE_DIR/run.log 
                         mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
-                        echo "finished ReadRatio${rr}_QPS${qps}_v${v}_${mode}"
+                        echo "finished $BASE_DIR/${EXP_DIR}_gc${gc}"
                         # $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
                         EXP_DIR=$BASE_DIR/results/${EXP_DIR}_$RUN
                         $ROOT_DIR/scripts/compute_logsize.py --async-result-file $EXP_DIR/async_results \

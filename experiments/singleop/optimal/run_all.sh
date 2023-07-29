@@ -12,12 +12,20 @@ LOGMODE=("read" "write")
 
 $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
 
+if ! [ -f "machines.json" ]; then
+    echo "[ERROR] machines not started, skipping $BASE_DIR"
+    rm ":~"
+    exit 1
+fi
+
 for qps in ${QPS[@]}; do
     for mode in ${LOGMODE[@]}; do
         EXP_DIR=QPS${qps}_$mode
-        $BASE_DIR/run_once.sh $EXP_DIR $qps $mode # 2>&1 | tee $BASE_DIR/run.log 
-        mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
-        echo "finished QPS${qps}_$mode"
+        if ! [ -d "$BASE_DIR/results/${EXP_DIR}_$RUN" ]; then
+            $BASE_DIR/run_once.sh $EXP_DIR $qps $mode # 2>&1 | tee $BASE_DIR/run.log 
+            mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
+        fi
+        echo "finished $BASE_DIR/$EXP_DIR"
         sleep 30
     done
 done

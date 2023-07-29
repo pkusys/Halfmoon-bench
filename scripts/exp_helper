@@ -17,7 +17,7 @@ AMI_ID = "ami-0cfb31bd9b06138c7"
 SECURITY_GROUP_NAME = "boki"
 PLACEMENT_GROUP = "boki-experiments"
 # AVAILABILITY_ZONE = 'us-east-2a'
-AVAILABILITY_ZONE = "ap-southeast-1c"
+AVAILABILITY_ZONE = "ap-southeast-1a"
 
 
 def random_string(length):
