@@ -59,5 +59,12 @@ recovery:
 	env GOOS=linux go build -o bin/recovery/init internal/recovery/init/init.go
 	env GOOS=linux go build -o bin/recovery/recovery internal/recovery/main/main.go
 
+retwis:
+	env GOOS=linux go build -o bin/retwis/init internal/retwis/init/init.go
+	env GOOS=linux go build -o bin/retwis/login internal/retwis/handlers/login/main.go
+	env GOOS=linux go build -o bin/retwis/profile internal/retwis/handlers/profile/main.go
+	env GOOS=linux go build -o bin/retwis/post internal/retwis/handlers/post/main.go
+	env GOOS=linux go build -o bin/retwis/timeline internal/retwis/handlers/timeline/main.go
+
 clean:
 	rm -rf ./bin
