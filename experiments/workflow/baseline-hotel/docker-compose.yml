@@ -66,7 +66,7 @@ services:
     restart: always
 
   geo-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/geo", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -80,7 +80,7 @@ services:
     restart: always
 
   profile-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/profile", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -93,7 +93,7 @@ services:
     restart: always
 
   rate-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/rate", "3"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -106,7 +106,7 @@ services:
     restart: always
 
   recommendation-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/recommendation", "4"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -119,7 +119,7 @@ services:
     restart: always
 
   user-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/user", "5"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -132,7 +132,7 @@ services:
     restart: always
 
   hotel-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/hotel", "6"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -145,7 +145,7 @@ services:
     restart: always
 
   search-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/search", "7"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -158,7 +158,7 @@ services:
     restart: always
 
   flight-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/flight", "8"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -171,7 +171,7 @@ services:
     restart: always
 
   order-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/order", "9"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -184,7 +184,7 @@ services:
     restart: always
 
   frontend-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/frontend", "10"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -197,7 +197,7 @@ services:
     restart: always
 
   gateway-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/beldi-bin/bhotel/gateway", "11"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki

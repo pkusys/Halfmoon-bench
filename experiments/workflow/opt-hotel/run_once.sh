@@ -5,7 +5,7 @@ set -u
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-BENCH_IMAGE=shengqipku/halfmoon-bench:sosp-ae-test
+BENCH_IMAGE=shengqipku/halfmoon-bench:sosp-ae
 
 STACK=halfmoon
 

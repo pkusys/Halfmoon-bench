@@ -127,7 +127,7 @@ services:
     restart: always
 
   login-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/retwis/login", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -141,7 +141,7 @@ services:
     restart: always
 
   profile-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/retwis/profile", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -155,7 +155,7 @@ services:
     restart: always
 
   timeline-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/retwis/timeline", "3"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -170,7 +170,7 @@ services:
     restart: always
 
   post-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/retwis/post", "4"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -184,7 +184,7 @@ services:
     restart: always
 
   publish-service:
-    image: shengqipku/halfmoon-bench:sosp-ae-test
+    image: shengqipku/halfmoon-bench:sosp-ae
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/retwis/publish", "5"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki

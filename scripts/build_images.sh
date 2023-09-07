@@ -3,7 +3,7 @@
 set -exu
 
 ROOT_DIR=`realpath $(dirname $0)/..`
-TAG=sosp-ae-test
+TAG=sosp-ae
 
 # Use BuildKit as docker builder
 export DOCKER_BUILDKIT=1
@@ -21,12 +21,12 @@ function build_halfmoon_bench {
 }
 
 function build {
-    # build_halfmoon
+    build_halfmoon
     build_halfmoon_bench
 }
 
 function push {
-    # docker push shengqipku/halfmoon:$TAG
+    docker push shengqipku/halfmoon:$TAG
     docker push shengqipku/halfmoon-bench:$TAG
 }
 
