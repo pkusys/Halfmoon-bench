@@ -25,12 +25,10 @@ for cc in ${CONCURRENCY[@]}; do
         echo "finished $BASE_DIR/$EXP_DIR"
         continue
     fi
-    # $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
+    sleep 60
     $BASE_DIR/run_once.sh $EXP_DIR $cc $ops $rr # 2>&1 | tee $BASE_DIR/run.log 
     mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
     echo "finished $BASE_DIR/$EXP_DIR"
-    # $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
-    sleep 60
 done
 
 $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR

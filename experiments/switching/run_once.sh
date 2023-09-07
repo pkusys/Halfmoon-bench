@@ -108,9 +108,6 @@ ssh -q $CLIENT_HOST -- /tmp/switching/benchmark \
     --duration=25 --cycle=5 --num_ops=$NUM_OPS --read_ratios=$READ_RATIOS \
     >$EXP_DIR/trace.txt
 
-# $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results >$EXP_DIR/latency.txt
-# $ROOT_DIR/scripts/compute_logsize.py --async-result-file $EXP_DIR/async_results --num-keys $NUM_KEYS --value-size $VALUE_SIZE >$EXP_DIR/logsize.txt
-
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION NUM_KEYS=$NUM_KEYS VALUE_SIZE=$VALUE_SIZE \
     /tmp/switching/init clean
 

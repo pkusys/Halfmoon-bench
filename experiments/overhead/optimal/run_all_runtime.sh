@@ -30,14 +30,12 @@ for qps in ${QPS[@]}; do
                         $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results --sleep-duration $((ops * 5)) >$EXP_DIR/latency.txt
                         continue
                     fi
-                    # $HELPER_SCRIPT start-machines --base-dir=$BASE_DIR --instance-iam-role=$BOKI_MACHINE_IAM
+                    sleep 60
                     $BASE_DIR/run_once.sh $EXP_DIR $qps $ops $rr $mode $v $NUM_KEYS # 2>&1 | tee $BASE_DIR/run.log 
                     mv $BASE_DIR/results/$EXP_DIR $BASE_DIR/results/${EXP_DIR}_$RUN
                     echo "finished $BASE_DIR/$EXP_DIR"
-                    # $HELPER_SCRIPT stop-machines --base-dir=$BASE_DIR
                     EXP_DIR=$BASE_DIR/results/${EXP_DIR}_$RUN
                     $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results --sleep-duration $((ops * 5)) >$EXP_DIR/latency.txt
-                    sleep 60
                 done
             done
         done

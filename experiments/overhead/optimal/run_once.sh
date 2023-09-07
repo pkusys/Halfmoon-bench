@@ -117,4 +117,7 @@ scp -q $MANAGER_HOST:/mnt/inmem/store/async_results $EXP_DIR
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION LoggingMode=$LOGMODE NUM_KEYS=$NUM_KEYS VALUE_SIZE=$VALUE_SIZE \
     /tmp/rw/init clean
 
+if [ ! -s "$EXP_DIR/async_results" ]; then
+    $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
+fi
 # $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
