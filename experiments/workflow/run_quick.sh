@@ -24,4 +24,4 @@ sleep 10
 
 ./plot_workflow.py --qps 100 300 500 700 -- hotel $RUN
 ./plot_workflow.py --qps 100 200 300 -- movie $RUN
-./plot_workflow.py --qps 100 200 300 -- retwis $RUN
+./plot_workflow.py --qps 100 300 500 700 -- retwis $RUN

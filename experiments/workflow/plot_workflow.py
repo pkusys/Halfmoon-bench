@@ -66,13 +66,8 @@ def plot(data, tputs, figname):
         col[i].set_xticks(xticks)
         if handles is None:
             handles = curves
-    # col[0].legend(handles=curves, handlelength=legend_length, ncol=len(baselines), loc='upper center', bbox_to_anchor=bbox_to_anchor, frameon=True, prop={'size':legend_size})
-    # col[0].set_ylim(0,23)
-    # col[1].set_ylim(0,35)
 
     ############################################ legend
-    # label_order = ["Boki",  "Halfmoon-read", "Unsafe"]
-    # handles = [global_curves[label] for label in label_order]
     legend_size = 20
     legend_length = 2
     bbox_to_anchor = (0.5, 1.0)
@@ -121,4 +116,4 @@ if __name__ == "__main__":
     for baseline in results:
         print(f"'{baseline}' : {results[baseline]}")
 
-    # plot(results, args.qps, f"{run}/{args.exp}.png")
+    plot(results, args.qps, f"{run}/{args.exp}.png")
