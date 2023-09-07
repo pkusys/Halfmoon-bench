@@ -1,6 +1,8 @@
 package core
 
 import (
+	"log"
+
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/eniac/Beldi/pkg/cayonlib"
 	"github.com/mitchellh/mapstructure"
@@ -9,7 +11,7 @@ import (
 func WriteMovieInfo(env *cayonlib.Env, info MovieInfo) {
 	cayonlib.Write(env, TMovieInfo(), info.MovieId, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V"): expression.Value(info),
-	})
+	}, false)
 }
 
 func ReadMovieInfo(env *cayonlib.Env, movieId string) MovieInfo {
@@ -26,6 +28,7 @@ func UpdateRating(env *cayonlib.Env, movieId string, sumUncommittedRating int32,
 	var movieInfo MovieInfo
 	item := cayonlib.Read(env, TMovieId(), movieId)
 	if item == nil {
+		log.Printf("[ERROR] movieId %s doesn't exist", movieId)
 		return
 	}
 	cayonlib.CHECK(mapstructure.Decode(item, &movieInfo))
@@ -33,5 +36,5 @@ func UpdateRating(env *cayonlib.Env, movieId string, sumUncommittedRating int32,
 	movieInfo.NumRating += numUncommittedRating
 	cayonlib.Write(env, TMovieId(), movieId, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V"): expression.Value(movieInfo),
-	})
+	}, false)
 }

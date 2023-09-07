@@ -5,7 +5,7 @@ set -u
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-BENCH_IMAGE=shengqipku/halfmoon-bench:sosp-ae
+BENCH_IMAGE=shengqipku/halfmoon-bench:sosp-ae-test
 
 STACK=halfmoon
 
@@ -13,7 +13,7 @@ AWS_REGION=ap-southeast-1
 
 EXP_DIR=$BASE_DIR/results/$1
 QPS=$2
-LOGMODE=write
+LOGMODE=$3
 
 HELPER_SCRIPT=$ROOT_DIR/scripts/exp_helper
 WRK_DIR=/usr/local/bin
@@ -68,7 +68,7 @@ for HOST in $ALL_STORAGE_HOSTS; do
     ssh -q $HOST -- sudo mkdir -p /mnt/storage/logdata
 done
 
-ssh -q $MANAGER_HOST -- TABLE_PREFIX=$TABLE_PREFIX docker stack deploy \
+ssh -q $MANAGER_HOST -- TABLE_PREFIX=$TABLE_PREFIX LoggingMode=$LOGMODE docker stack deploy \
     -c ~/docker-compose-generated.yml -c ~/docker-compose.yml $STACK
 sleep 100
 
@@ -107,4 +107,7 @@ fi
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION LoggingMode=$LOGMODE \
     /tmp/hotel/init clean cayon
 
+if [ ! -s "$EXP_DIR/async_results" ]; then
+    $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
+fi
 # $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR

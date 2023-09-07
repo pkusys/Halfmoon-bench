@@ -1,6 +1,8 @@
 package core
 
 import (
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/eniac/Beldi/pkg/cayonlib"
@@ -8,8 +10,11 @@ import (
 
 func UploadMovie(env *cayonlib.Env, reqId string, title string, rating int32) {
 	item := cayonlib.Read(env, TMovieId(), title)
+	if env.Instruction == "EXIT" {
+		return
+	}
 	if item == nil {
-		// panic(fmt.Sprintf("%s doesn't exist", title))
+		log.Printf("[ERROR] movie %s doesn't exist", title)
 		return
 	}
 	val := item.(map[string]interface{})
@@ -34,5 +39,5 @@ func UploadMovie(env *cayonlib.Env, reqId string, title string, rating int32) {
 func RegisterMovieId(env *cayonlib.Env, title string, movieId string) {
 	cayonlib.Write(env, TMovieId(), title, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V"): expression.Value(aws.JSONValue{"movieId": movieId, "title": title}),
-	})
+	}, false)
 }

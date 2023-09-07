@@ -5,7 +5,7 @@ set -u
 BASE_DIR=`realpath $(dirname $0)`
 ROOT_DIR=`realpath $BASE_DIR/../../..`
 
-BENCH_IMAGE=shengqipku/halfmoon-bench:sosp-ae
+BENCH_IMAGE=shengqipku/halfmoon-bench:sosp-ae-test
 
 STACK=halfmoon
 
@@ -103,4 +103,7 @@ $ROOT_DIR/scripts/compute_latency.py --async-result-file $EXP_DIR/async_results 
 ssh -q $CLIENT_HOST -- TABLE_PREFIX=$TABLE_PREFIX AWS_REGION=$AWS_REGION \
     /tmp/hotel/init clean cayon
 
+if [ ! -s "$EXP_DIR/async_results" ]; then
+    $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR
+fi
 # $HELPER_SCRIPT collect-container-logs --base-dir=$BASE_DIR --log-path=$EXP_DIR

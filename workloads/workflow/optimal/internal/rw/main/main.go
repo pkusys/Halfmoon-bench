@@ -65,7 +65,7 @@ func Handler(env *cayonlib.Env) interface{} {
 		writeKey := rand.Intn(nKeys)
 		cayonlib.Write(env, table, strconv.Itoa(writeKey), map[expression.NameBuilder]expression.OperandBuilder{
 			expression.Name("V"): expression.Value(value),
-		})
+		}, false)
 		writeSet = append(writeSet, writeKey)
 		time.Sleep(sleepDuration)
 	}

@@ -146,9 +146,11 @@ func Populate(tablename string, key string, value interface{}, baseline bool) {
 	// 			expression.Name("V"): expression.Value(value),
 	// 		})
 	// }
-	LibWriteSingleVersion(tablename, key, 0,
-		map[expression.NameBuilder]expression.OperandBuilder{
-			// expression.Name("VERSION"): expression.Value(0),
-			expression.Name("V"): expression.Value(value),
-		})
+	LibWrite(tablename, key, map[expression.NameBuilder]expression.OperandBuilder{
+		expression.Name("V"): expression.Value(value),
+	})
 }
+
+// func PopulateAttrs(tablename string, key string, updates map[expression.NameBuilder]expression.OperandBuilder, baseline bool) {
+// 	LibWriteSingleVersion(tablename, key, 0, updates)
+// }

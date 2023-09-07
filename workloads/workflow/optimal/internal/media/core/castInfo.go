@@ -9,7 +9,7 @@ import (
 func WriteCastInfo(env *cayonlib.Env, info CastInfo) {
 	cayonlib.Write(env, TCastInfo(), info.CastInfoId, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V"): expression.Value(info),
-	})
+	}, false)
 }
 
 func ReadCastInfo(env *cayonlib.Env, castIds []string) []CastInfo {
@@ -18,7 +18,7 @@ func ReadCastInfo(env *cayonlib.Env, castIds []string) []CastInfo {
 		var castInfo CastInfo
 		item := cayonlib.Read(env, TCastInfo(), id)
 		if item == nil {
-			return []CastInfo{}
+			continue
 		}
 		cayonlib.CHECK(mapstructure.Decode(item, &castInfo))
 		res = append(res, castInfo)

@@ -1,0 +1,7 @@
+[
+    { "funcName": "login", "funcId": 1, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "profile", "funcId": 2, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "timeline", "funcId": 3, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "post", "funcId": 4, "minWorkers": 8, "maxWorkers": 8 },
+    { "funcName": "publish", "funcId": 5, "minWorkers": 8, "maxWorkers": 8 }
+]

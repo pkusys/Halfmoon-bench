@@ -72,9 +72,9 @@ func ReadWithMode(env *Env, mode string, tablename string, key string) interface
 
 func WriteWithMode(env *Env, mode string, tablename string, key string, update map[expression.NameBuilder]expression.OperandBuilder) {
 	if mode == "WRITELOG" {
-		WriteWithLog(env, tablename, key, update)
+		WriteWithLog(env, tablename, key, update, false)
 	} else if mode == "READLOG" {
-		WriteWithoutLog(env, tablename, key, update)
+		WriteWithoutLog(env, tablename, key, update, false)
 	} else {
 		WriteInTransition(env, tablename, key, update)
 	}

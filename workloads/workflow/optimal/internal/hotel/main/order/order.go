@@ -19,5 +19,5 @@ func PlaceOrder(env *cayonlib.Env, userId string, flightId string, hotelId strin
 	cayonlib.Write(env, data.Torder(), orderId,
 		map[expression.NameBuilder]expression.OperandBuilder{expression.Name("V"): expression.Value(Order{
 			OrderId: orderId, FlightId: flightId, HotelId: hotelId, UserId: userId,
-		})})
+		})}, false)
 }

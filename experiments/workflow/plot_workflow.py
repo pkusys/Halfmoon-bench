@@ -21,28 +21,28 @@ def summary(baseline, exp_name, run):
         avg = parse.parse("avg latency: {:f} ms", line_avg)[0]
     return p50, p99, avg
 
+
 def plot(data, tputs, figname):
     font_size = 20
     markersize = 10
     linewidth = 3
-    plt.rc('font',**{'size': font_size})
-    metrics = ["p50", "p99"] # avg
+    plt.rc("font", **{"size": font_size})
+    metrics = ["p50", "p99"]  # avg
     ylabels = ["Median latency (ms)", "99% latency (ms)"]
     fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(10, 8))
     for ax in axs.flat:
-        ax.get_yaxis().set_tick_params(direction='in')
-        ax.get_xaxis().set_tick_params(direction='in', pad=8)
+        ax.get_yaxis().set_tick_params(direction="in")
+        ax.get_xaxis().set_tick_params(direction="in", pad=8)
         ax.grid(True)
     axs[1].set_xlabel("Throughput (requests/s)", labelpad=8)
-    for i,ax in enumerate(axs):
+    for i, ax in enumerate(axs):
         ax.set_ylabel(ylabels[i], labelpad=8, fontsize=font_size)
     plt.subplots_adjust(hspace=0.18)
 
     ######################################## hotel
-    baselines = ["boki", "opt", "baseline"]
-    labels = ["Boki", "Halfmoon", "Unsafe"]
-    markers = ["^", "o", "s"]
-    colors = ["red","lightsalmon","royalblue"]
+    labels = ["Boki", "HM-read", "HM-write", "Unsafe"]
+    markers = ["^", "o", "d", "s"]
+    colors = ["red", "lightsalmon", "lightcoral", "royalblue"]
     xticks = tputs
 
     # plot
@@ -50,9 +50,18 @@ def plot(data, tputs, figname):
     handles = None
     for i, metric in enumerate(metrics):
         curves = []
-        for j, baseline in enumerate(baselines):
-            curve, = col[i].plot(xticks, data[baseline][metric], label=labels[j], marker=markers[j], markersize=markersize, markeredgecolor='k',  
-                                            color=colors[j], linestyle='--', linewidth=linewidth)
+        for j, baseline in enumerate(labels):
+            (curve,) = col[i].plot(
+                xticks,
+                data[baseline][metric],
+                label=labels[j],
+                marker=markers[j],
+                markersize=markersize,
+                markeredgecolor="k",
+                color=colors[j],
+                linestyle="--",
+                linewidth=linewidth,
+            )
             curves.append(curve)
         col[i].set_xticks(xticks)
         if handles is None:
@@ -66,14 +75,21 @@ def plot(data, tputs, figname):
     # handles = [global_curves[label] for label in label_order]
     legend_size = 20
     legend_length = 2
-    bbox_to_anchor=(0.5, 1.0)
-    fig.legend(handles=handles, labels=labels, handlelength=legend_length, ncol=len(labels), loc='upper center', bbox_to_anchor=bbox_to_anchor, frameon=True, prop={'size':legend_size})
+    bbox_to_anchor = (0.5, 1.0)
+    fig.legend(
+        handles=handles,
+        labels=labels,
+        handlelength=legend_length,
+        ncol=len(labels),
+        loc="upper center",
+        bbox_to_anchor=bbox_to_anchor,
+        frameon=True,
+        prop={"size": legend_size},
+    )
     fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "figures")
     fig_path = os.path.join(fig_dir, figname)
     os.makedirs(os.path.dirname(fig_path), exist_ok=True)
-    plt.savefig(
-        os.path.join(fig_dir, figname), bbox_inches="tight", transparent=False
-    )
+    plt.savefig(os.path.join(fig_dir, figname), bbox_inches="tight", transparent=False)
 
 
 if __name__ == "__main__":
@@ -83,15 +99,26 @@ if __name__ == "__main__":
     parser.add_argument("run", metavar="run", type=int, default=0)
     args = parser.parse_args()
     run = args.run
-    
+
     results = {}
-    baselines = ["baseline", "boki", "opt"]
-    for baseline in baselines:
+    baselines = [
+        ("baseline", None, "Unsafe"),
+        ("boki", None, "Boki"),
+        ("opt", "write", "HM-read"),
+        ("opt", "read", "HM-write"),
+    ]
+    for baseline, logmode, name in baselines:
         result = {"p50": [], "p99": []}
         for qps in args.qps:
-            p50, p99, _ = summary(f"{baseline}-{args.exp}", f"QPS{qps}", run)
+            exp_name = f"QPS{qps}"
+            if logmode is not None:
+                exp_name += f"_{logmode}"
+            p50, p99, _ = summary(f"{baseline}-{args.exp}", exp_name, run)
             result["p50"].append(p50)
             result["p99"].append(p99)
-        results[baseline] = result
-    
-    plot(results, args.qps, f"{run}/{args.exp}.png")
+        results[name] = result
+
+    for baseline in results:
+        print(f"'{baseline}' : {results[baseline]}")
+
+    # plot(results, args.qps, f"{run}/{args.exp}.png")

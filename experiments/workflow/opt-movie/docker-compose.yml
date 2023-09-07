@@ -127,7 +127,7 @@ services:
     restart: always
 
   frontend:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/Frontend", "1"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -135,13 +135,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   cast-info-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/CastInfo", "2"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -149,13 +149,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   review-storage-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/ReviewStorage", "3"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -163,13 +163,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   user-review-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/UserReview", "4"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -177,13 +177,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   movie-review-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/MovieReview", "5"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -191,13 +191,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   compose-review-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/ComposeReview", "6"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -205,13 +205,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   text-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/Text", "7"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -219,13 +219,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   user-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/User", "8"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -233,13 +233,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   unique-id-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/UniqueId", "9"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -247,13 +247,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   rating-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/Rating", "10"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -261,13 +261,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   movie-id-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/MovieId", "11"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -275,13 +275,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   plot-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/Plot", "12"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -289,13 +289,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   movie-info-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/MovieInfo", "13"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -303,13 +303,13 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always
 
   page-service:
-    image: shengqipku/halfmoon-bench:sosp-ae
+    image: shengqipku/halfmoon-bench:sosp-ae-test
     entrypoint: ["/tmp/boki/run_launcher", "/optimal-bin/media/Page", "14"]
     volumes:
       - /mnt/inmem/boki:/tmp/boki
@@ -317,7 +317,7 @@ services:
       - FAAS_GO_MAX_PROC_FACTOR=4
       - GOGC=1000
       - TABLE_PREFIX=${TABLE_PREFIX:?}
-      - LoggingMode=read
+      - LoggingMode=${LoggingMode:?}
     depends_on:
       - boki-engine
     restart: always

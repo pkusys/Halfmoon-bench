@@ -219,43 +219,43 @@ func rate(baseline bool) {
 		},
 	}, baseline)
 	for i := 4; i < 80; i++ {
-		if i%3 == 0 {
-			hotelId := strconv.Itoa(i)
-			endDate := "2015-04-"
-			rate := 109.00
-			rateInc := 123.17
-			if i%2 == 0 {
-				endDate = endDate + "17"
-			} else {
-				endDate = endDate + "24"
-			}
-			if i%5 == 1 {
-				rate = 120.00
-				rateInc = 140.00
-			} else if i%5 == 2 {
-				rate = 124.00
-				rateInc = 144.00
-			} else if i%5 == 3 {
-				rate = 132.00
-				rateInc = 158.00
-			} else if i%5 == 4 {
-				rate = 232.00
-				rateInc = 258.00
-			}
-			cayonlib.Populate("rate", hotelId, data.RatePlan{
-				HotelId: hotelId,
-				Code:    "RACK",
-				Indate:  "2015-04-09",
-				Outdate: endDate,
-				RoomType: data.RoomType{
-					BookableRate:       rate,
-					Code:               "KNG",
-					RoomDescription:    "King sized bed",
-					TotalRate:          rate,
-					TotalRateInclusive: rateInc,
-				},
-			}, baseline)
+		// if i%3 == 0 {
+		hotelId := strconv.Itoa(i)
+		endDate := "2015-04-"
+		rate := 109.00
+		rateInc := 123.17
+		if i%2 == 0 {
+			endDate = endDate + "17"
+		} else {
+			endDate = endDate + "24"
 		}
+		if i%5 == 1 {
+			rate = 120.00
+			rateInc = 140.00
+		} else if i%5 == 2 {
+			rate = 124.00
+			rateInc = 144.00
+		} else if i%5 == 3 {
+			rate = 132.00
+			rateInc = 158.00
+		} else if i%5 == 4 {
+			rate = 232.00
+			rateInc = 258.00
+		}
+		cayonlib.Populate("rate", hotelId, data.RatePlan{
+			HotelId: hotelId,
+			Code:    "RACK",
+			Indate:  "2015-04-09",
+			Outdate: endDate,
+			RoomType: data.RoomType{
+				BookableRate:       rate,
+				Code:               "KNG",
+				RoomDescription:    "King sized bed",
+				TotalRate:          rate,
+				TotalRateInclusive: rateInc,
+			},
+		}, baseline)
+		// }
 	}
 }
 

@@ -1,7 +1,9 @@
 package rate
 
 import (
+	"log"
 	"sort"
+	"time"
 
 	"github.com/eniac/Beldi/internal/hotel/main/data"
 	"github.com/eniac/Beldi/pkg/cayonlib"
@@ -10,11 +12,12 @@ import (
 
 func GetRates(env *cayonlib.Env, req Request) Result {
 	var plans RatePlans
+	start := time.Now()
 	for _, i := range req.HotelIds {
 		plan := data.RatePlan{}
 		res := cayonlib.Read(env, data.Trate(), i)
 		if res == nil {
-			return Result{}
+			continue
 		}
 		err := mapstructure.Decode(res, &plan)
 		cayonlib.CHECK(err)
@@ -22,6 +25,8 @@ func GetRates(env *cayonlib.Env, req Request) Result {
 			plans = append(plans, plan)
 		}
 	}
+	elapsed := time.Since(start).Milliseconds()
+	log.Printf("rate reads %d hotels in %d ms", len(req.HotelIds), elapsed)
 	sort.Sort(plans)
 	return Result{RatePlans: plans}
 }

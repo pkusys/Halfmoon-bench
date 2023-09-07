@@ -4,7 +4,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/eniac/Beldi/internal/rw/utils"
+	"github.com/eniac/Beldi/internal/utils"
 	"github.com/eniac/Beldi/pkg/cayonlib"
 )
 
@@ -12,7 +12,7 @@ const table = "rw"
 
 var nKeys = 10000
 var valueSize = 256 // bytes
-var value []byte
+var value string
 
 func init() {
 	if nk, err := strconv.Atoi(os.Getenv("NUM_KEYS")); err == nil {

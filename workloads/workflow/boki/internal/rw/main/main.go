@@ -9,7 +9,7 @@ import (
 	"math/rand"
 
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
-	"github.com/eniac/Beldi/internal/rw/utils"
+	"github.com/eniac/Beldi/internal/utils"
 	"github.com/eniac/Beldi/pkg/cayonlib"
 
 	"cs.utexas.edu/zjia/faas"
@@ -19,7 +19,7 @@ const table = "rw"
 
 var nKeys = 10000
 var valueSize = 256 // bytes
-var value []byte
+var value string
 
 var nOps float64
 var readRatio float64

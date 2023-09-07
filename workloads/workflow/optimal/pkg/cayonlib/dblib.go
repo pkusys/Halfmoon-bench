@@ -16,7 +16,7 @@ import (
 func LibReadMultiVersion(tablename string, key string, version uint64) aws.JSONValue {
 	Key, err := dynamodbattribute.MarshalMap(aws.JSONValue{"K": key + fmt.Sprintf("_%v", version)})
 	CHECK(err)
-	projectionBuilder := BuildProjection([]string{"V", "VERSION"})
+	projectionBuilder := BuildProjection([]string{"V"})
 	expr, err := expression.NewBuilder().WithProjection(projectionBuilder).Build()
 	CHECK(err)
 	res, err := DBClient.GetItem(&dynamodb.GetItemInput{
@@ -44,13 +44,13 @@ func LibReadSingleVersion(tablename string, key string) aws.JSONValue {
 
 func LibScanWithLast(tablename string, projection []string, last map[string]*dynamodb.AttributeValue) []aws.JSONValue {
 	var res *dynamodb.ScanOutput
-	var err error
+	var scanErr error
 	if last == nil {
 		if len(projection) == 0 {
 			expr, err := expression.NewBuilder().Build()
 			CHECK(err)
-			res, err = DBClient.Scan(&dynamodb.ScanInput{
-				TableName:                 aws.String(tablename),
+			res, scanErr = DBClient.Scan(&dynamodb.ScanInput{
+				TableName:                 aws.String(kTablePrefix + tablename),
 				ExpressionAttributeNames:  expr.Names(),
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
@@ -59,8 +59,8 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 		} else {
 			expr, err := expression.NewBuilder().WithProjection(BuildProjection(projection)).Build()
 			CHECK(err)
-			res, err = DBClient.Scan(&dynamodb.ScanInput{
-				TableName:                 aws.String(tablename),
+			res, scanErr = DBClient.Scan(&dynamodb.ScanInput{
+				TableName:                 aws.String(kTablePrefix + tablename),
 				ExpressionAttributeNames:  expr.Names(),
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
@@ -72,8 +72,8 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 		if len(projection) == 0 {
 			expr, err := expression.NewBuilder().Build()
 			CHECK(err)
-			res, err = DBClient.Scan(&dynamodb.ScanInput{
-				TableName:                 aws.String(tablename),
+			res, scanErr = DBClient.Scan(&dynamodb.ScanInput{
+				TableName:                 aws.String(kTablePrefix + tablename),
 				ExpressionAttributeNames:  expr.Names(),
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
@@ -83,8 +83,8 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 		} else {
 			expr, err := expression.NewBuilder().WithProjection(BuildProjection(projection)).Build()
 			CHECK(err)
-			res, err = DBClient.Scan(&dynamodb.ScanInput{
-				TableName:                 aws.String(tablename),
+			res, scanErr = DBClient.Scan(&dynamodb.ScanInput{
+				TableName:                 aws.String(kTablePrefix + tablename),
 				ExpressionAttributeNames:  expr.Names(),
 				ExpressionAttributeValues: expr.Values(),
 				FilterExpression:          expr.Filter(),
@@ -94,9 +94,9 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 			})
 		}
 	}
-	CHECK(err)
+	CHECK(scanErr)
 	var item []aws.JSONValue
-	err = dynamodbattribute.UnmarshalListOfMaps(res.Items, &item)
+	err := dynamodbattribute.UnmarshalListOfMaps(res.Items, &item)
 	CHECK(err)
 	if res.LastEvaluatedKey == nil || len(res.LastEvaluatedKey) == 0 {
 		return item
@@ -108,6 +108,30 @@ func LibScanWithLast(tablename string, projection []string, last map[string]*dyn
 
 func LibScan(tablename string, projection []string) []aws.JSONValue {
 	return LibScanWithLast(tablename, projection, nil)
+}
+
+func LibWrite(tablename string, key string,
+	update map[expression.NameBuilder]expression.OperandBuilder) {
+	Key, err := dynamodbattribute.MarshalMap(aws.JSONValue{"K": key + "_0"})
+	CHECK(err)
+	if len(update) == 0 {
+		panic("update never be empty")
+	}
+	updateBuilder := expression.UpdateBuilder{}
+	for k, v := range update {
+		updateBuilder = updateBuilder.Set(k, v)
+	}
+	builder := expression.NewBuilder().WithUpdate(updateBuilder)
+	expr, err := builder.Build()
+	CHECK(err)
+	_, err = DBClient.UpdateItem(&dynamodb.UpdateItemInput{
+		TableName:                 aws.String(kTablePrefix + tablename),
+		Key:                       Key,
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		UpdateExpression:          expr.Update(),
+	})
+	CHECK(err)
 }
 
 func LibWriteMultiVersion(tablename string, key string, version uint64,
@@ -164,21 +188,21 @@ func LibWriteSingleVersion(tablename string, key string, version uint64,
 	}
 }
 
-func Write(env *Env, tablename string, key string, update map[expression.NameBuilder]expression.OperandBuilder) {
+func Write(env *Env, tablename string, key string, update map[expression.NameBuilder]expression.OperandBuilder, dependent bool) {
 	if TYPE == "WRITELOG" {
-		WriteWithLog(env, tablename, key, update)
+		WriteWithLog(env, tablename, key, update, dependent)
 	} else {
-		WriteWithoutLog(env, tablename, key, update)
+		WriteWithoutLog(env, tablename, key, update, dependent)
 	}
 }
 
-func WriteWithLog(env *Env, tablename string, key string, update map[expression.NameBuilder]expression.OperandBuilder) {
+func WriteWithLog(env *Env, tablename string, key string, update map[expression.NameBuilder]expression.OperandBuilder, dependent bool) {
 	newLog, preWriteLog := ProposeNextStep(
 		env,
 		// []uint64{DatabaseKeyTag(tablename, key)},
 		nil,
 		aws.JSONValue{
-			"type": "PreWrite",
+			"type":  "PreWrite",
 			"key":   key,
 			"table": tablename,
 		})
@@ -194,19 +218,23 @@ func WriteWithLog(env *Env, tablename string, key string, update map[expression.
 		CheckLogDataField(preWriteLog, "key", key)
 		log.Printf("[INFO] Seen PreWrite log for step %d", preWriteLog.StepNumber)
 	}
-	LibWriteMultiVersion(tablename, key, env.SeqNum, update)
+	var version uint64
+	if !dependent {
+		version = env.SeqNum
+	}
+	LibWriteMultiVersion(tablename, key, version, update)
 	ProposeNextStep(
 		env,
 		[]uint64{DatabaseKeyTag(tablename, key)},
 		aws.JSONValue{
-			"type": "PostWrite",
+			"type":    "PostWrite",
 			"key":     key,
 			"table":   tablename,
-			"version": env.SeqNum,
+			"version": version,
 		})
 }
 
-func WriteWithoutLog(env *Env, tablename string, key string, update map[expression.NameBuilder]expression.OperandBuilder) {
+func WriteWithoutLog(env *Env, tablename string, key string, update map[expression.NameBuilder]expression.OperandBuilder, dependent bool) {
 	LibWriteSingleVersion(tablename, key, env.SeqNum, update)
 }
 
@@ -243,15 +271,16 @@ func getVersionFromLog(env *Env, tablename string, key string) (uint64, error) {
 
 func ReadWithoutLog(env *Env, tablename string, key string) interface{} {
 	// if version log is empty then version is 0 and err is set
-	version, _ := getVersionFromLog(env, tablename, key)
-	// if err != nil {
-	// 	log.Printf("[INFO] Read version not found instance %s step %d: table=%s key=%s, using the default version(0)", env.InstanceId, env.StepNumber, tablename, key)
-	// }
+	version, err := getVersionFromLog(env, tablename, key)
+	if err != nil {
+		log.Printf("[INFO] Read version not found table=%s key=%s, using the default version(0)", tablename, key)
+	}
 	item := LibReadMultiVersion(tablename, key, version)
 	var result interface{}
 	if value, ok := item["V"]; ok {
 		result = value
 	} else {
+		log.Printf("[INFO] Read without log table %s key %s return nil", tablename, key)
 		result = nil
 	}
 	return result
@@ -320,10 +349,11 @@ func ReadWithLog(env *Env, tablename string, key string) interface{} {
 	if value, ok := item["V"]; ok {
 		result = value
 	} else {
+		log.Printf("[INFO] Read with log table %s key %s return nil", tablename, key)
 		result = nil
 	}
 	newLog, _ := ProposeNextStep(env, nil, aws.JSONValue{
-		"type":   "PostRead",
+		"type": "PostRead",
 		// "key":    key,
 		// "table":  tablename,
 		"result": result,

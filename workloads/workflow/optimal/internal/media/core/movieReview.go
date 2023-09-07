@@ -1,6 +1,8 @@
 package core
 
 import (
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/eniac/Beldi/pkg/cayonlib"
@@ -16,18 +18,18 @@ func UploadMovieReview(env *cayonlib.Env, movieId string, reviewId string, times
 	if item == nil {
 		cayonlib.Write(env, TMovieReview(), movieId, map[expression.NameBuilder]expression.OperandBuilder{
 			expression.Name("V"): expression.Value(aws.JSONValue{"reviews": []ReviewInfo{reviewInfo}}),
-		})
+		}, true)
 	} else {
 		cayonlib.Write(env, TMovieReview(), movieId, map[expression.NameBuilder]expression.OperandBuilder{
-			//expression.Name("V.reviews"): expression.Name("V.reviews").ListAppend(expression.Value([]ReviewInfo{reviewInfo})),
-			expression.Name("V.reviews"): expression.Name("V.reviews"),
-		})
+			expression.Name("V.reviews"): expression.Name("V.reviews").ListAppend(expression.Value([]ReviewInfo{reviewInfo})),
+		}, true)
 	}
 }
 
 func ReadMovieReviews(env *cayonlib.Env, movieId string) []Review {
 	item := cayonlib.Read(env, TMovieReview(), movieId)
 	if item == nil {
+		log.Printf("no reviews for movie %s", movieId)
 		return []Review{}
 	}
 	var reviewInfos []ReviewInfo

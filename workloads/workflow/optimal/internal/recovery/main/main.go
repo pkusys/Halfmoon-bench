@@ -71,7 +71,7 @@ func runOnce(env *cayonlib.Env, keys []int) {
 	for i := nReads; i < int(nOps); i++ {
 		cayonlib.Write(env, table, strconv.Itoa(keys[i]), map[expression.NameBuilder]expression.OperandBuilder{
 			expression.Name("V"): expression.Value(value),
-		})
+		}, false)
 		// time.Sleep(sleepDuration)
 	}
 }

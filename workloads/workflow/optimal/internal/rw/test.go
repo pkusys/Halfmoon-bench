@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/eniac/Beldi/internal/rw/utils"
+	"github.com/eniac/Beldi/internal/utils"
 	"github.com/golang/snappy"
 )
 

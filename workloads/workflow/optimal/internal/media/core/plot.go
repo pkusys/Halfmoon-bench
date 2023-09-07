@@ -9,7 +9,7 @@ import (
 func WritePlot(env *cayonlib.Env, plotId string, plot string) {
 	cayonlib.Write(env, TPlot(), plotId, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V"): expression.Value(aws.JSONValue{"plotId": plotId, "plot": plot}),
-	})
+	}, false)
 }
 
 func ReadPlot(env *cayonlib.Env, plotId string) string {

@@ -83,9 +83,7 @@ def start_ec2_instance(name, instance_type, security_group_id, instance_role):
     }
 
 
-def request_ec2_spot_instance(
-    group_id, instance_type, security_group_id, instance_role
-):
+def request_ec2_spot_instance(group_id, instance_type, security_group_id, instance_role):
     launch_spec = {
         "ImageId": AMI_ID,
         "InstanceType": instance_type,
@@ -182,8 +180,7 @@ def start_spot_instances(machine_configs, waiting_time, instance_role):
             request_status = request_status["SpotInstanceRequests"][0]
             if request_status["Status"]["Code"] != "fulfilled":
                 raise Exception(
-                    "Spot request for %s is not fulfilled after %d seconds"
-                    % (name, waiting_time)
+                    "Spot request for %s is not fulfilled after %d seconds" % (name, waiting_time)
                 )
             instance_id = request_status["InstanceId"]
             instance_info = run_aws_ec2_command(
@@ -215,9 +212,7 @@ def start_spot_instances(machine_configs, waiting_time, instance_role):
 
 def setup_hostname_for_machines(machine_infos):
     for name, machine_info in machine_infos.items():
-        run_remote_command(
-            machine_info["dns"], ["sudo", "hostnamectl", "set-hostname", name]
-        )
+        run_remote_command(machine_info["dns"], ["sudo", "hostnamectl", "set-hostname", name])
 
 
 def setup_instance_storage(machine_configs, machine_infos):
@@ -322,9 +317,7 @@ def generate_docker_compose_main(base_dir):
             }
         elif "placement_label" in service_config:
             service_docker_compose["deploy"]["placement"] = {
-                "constraints": [
-                    "node.labels.%s == true" % (service_config["placement_label"],)
-                ],
+                "constraints": ["node.labels.%s == true" % (service_config["placement_label"],)],
                 "max_replicas_per_node": 1,
             }
         service_docker_compose["environment"] = []
@@ -431,9 +424,7 @@ def get_container_id_main(base_dir, service_name, machine_name, machine_host):
     )
     short_id = short_id.strip()
     if short_id != "":
-        container_info, _ = run_remote_command(
-            machine_host, ["docker", "inspect", short_id]
-        )
+        container_info, _ = run_remote_command(machine_host, ["docker", "inspect", short_id])
         container_info = json.loads(container_info)[0]
         print(container_info["Id"])
 
@@ -451,9 +442,7 @@ def collect_container_logs_main(base_dir, log_path):
         if machine_info["role"] == "client":
             continue
         print("Collecting logs from {}".format(machine_name))
-        container_ids, _ = run_remote_command(
-            machine_info["dns"], ["docker", "ps", "-qa"]
-        )
+        container_ids, _ = run_remote_command(machine_info["dns"], ["docker", "ps", "-qa"])
         container_ids = container_ids.strip().split()
         engine_name = None
         for container_id in container_ids:
@@ -465,7 +454,7 @@ def collect_container_logs_main(base_dir, log_path):
                 continue
             container_info = json.loads(container_info)[0]
             container_name = container_info["Name"][1:]  # remove prefix '/'
-            if "boki_boki" not in container_name:
+            if "boki" not in container_name:
                 continue
             if "engine" in container_name:
                 engine_name = container_name
@@ -481,6 +470,7 @@ def collect_container_logs_main(base_dir, log_path):
             with open(os.path.join(sys_log, "%s.stderr" % container_name), "w") as fout:
                 fout.write(log_stderr)
         if engine_name is not None:
+            print("Collecting output from {}".format(engine_name))
             engine_output_dir = os.path.join(func_log, engine_name)
             os.makedirs(engine_output_dir, exist_ok=True)
             ret = sp.run(

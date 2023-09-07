@@ -279,3 +279,9 @@ func Populate(tablename string, key string, value interface{}, baseline bool) {
 			})
 	}
 }
+
+func PopulateBaseline(tablename string, key string, value interface{}) {
+	LibWrite(tablename, aws.JSONValue{"K": key}, map[expression.NameBuilder]expression.OperandBuilder{
+		expression.Name("V"): expression.Value(value),
+	})
+}

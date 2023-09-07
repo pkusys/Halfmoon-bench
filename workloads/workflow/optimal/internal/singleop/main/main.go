@@ -45,7 +45,7 @@ func Handler(env *cayonlib.Env) interface{} {
 	} else {
 		cayonlib.Write(env, table, strconv.Itoa(rand.Intn(nKeys)), map[expression.NameBuilder]expression.OperandBuilder{
 			expression.Name("V"): expression.Value(value),
-		})
+		}, false)
 	}
 	results["Write"] = time.Since(start).Microseconds()
 

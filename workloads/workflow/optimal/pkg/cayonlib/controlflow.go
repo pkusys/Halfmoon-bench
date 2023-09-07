@@ -344,7 +344,7 @@ func TPLCommit(env *Env) {
 		for kk, vv := range txnLog.WriteOp["value"].(map[string]interface{}) {
 			update[expression.Name(kk)] = expression.Value(vv)
 		}
-		Write(env, tablename, key, update)
+		Write(env, tablename, key, update, true)
 		Unlock(env, tablename, key)
 	}
 	for _, txnLog := range txnLogs {

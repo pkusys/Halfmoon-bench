@@ -19,7 +19,7 @@ func newGeoIndex(env *beldilib.Env) *geoindex.ClusteringIndex {
 	return index
 }
 
-func getNearbyPoints(env *beldilib.Env, lat float64, lon float64) []geoindex.Point {
+func getNearbyPoints(env *beldilib.Env, lat float64, lon float64, kNearest int) []geoindex.Point {
 	center := &geoindex.GeoPoint{
 		Pid:  "",
 		Plat: lat,
@@ -28,17 +28,17 @@ func getNearbyPoints(env *beldilib.Env, lat float64, lon float64) []geoindex.Poi
 	index := newGeoIndex(env)
 	res := index.KNearest(
 		center,
-		5,
-		geoindex.Km(10), func(p geoindex.Point) bool {
+		kNearest,
+		geoindex.Km(100), func(p geoindex.Point) bool {
 			return true
 		},
 	)
 	return res
 }
 
-func Nearby(env *beldilib.Env, req Request) Result {
+func Nearby(env *beldilib.Env, req Request, kNearest int) Result {
 	var (
-		points = getNearbyPoints(env, req.Lat, req.Lon)
+		points = getNearbyPoints(env, req.Lat, req.Lon, kNearest)
 	)
 	res := Result{HotelIds: []string{}}
 	for _, p := range points {

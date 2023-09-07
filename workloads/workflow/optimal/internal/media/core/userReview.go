@@ -16,12 +16,11 @@ func UploadUserReview(env *cayonlib.Env, userId string, reviewId string, timesta
 	if item == nil {
 		cayonlib.Write(env, TUserReview(), userId, map[expression.NameBuilder]expression.OperandBuilder{
 			expression.Name("V"): expression.Value(aws.JSONValue{"reviews": []ReviewInfo{reviewInfo}}),
-		})
+		}, true)
 	} else {
 		cayonlib.Write(env, TUserReview(), userId, map[expression.NameBuilder]expression.OperandBuilder{
-			//expression.Name("V.reviews"): expression.Name("V.reviews").ListAppend(expression.Value([]ReviewInfo{reviewInfo})),
-			expression.Name("V.reviews"): expression.Name("V.reviews"),
-		})
+			expression.Name("V.reviews"): expression.Name("V.reviews").ListAppend(expression.Value([]ReviewInfo{reviewInfo})),
+		}, true)
 	}
 }
 

@@ -235,9 +235,9 @@ end
 
 request = function()
     -- cur_time = math.floor(socket.gettime())
-    local search_ratio = 0.6
-    local recommend_ratio = 0.39
-    local user_ratio = 0.005
+    local search_ratio = 0.9
+    local recommend_ratio = 0.005
+    local user_ratio = 0.09
     local reserve_ratio = 0.005
 
     --return search_hotel()

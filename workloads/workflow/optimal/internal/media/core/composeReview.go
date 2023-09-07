@@ -1,6 +1,7 @@
 package core
 
 import (
+	"log"
 	"sync"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -12,14 +13,14 @@ import (
 func UploadReq(env *cayonlib.Env, reqId string) {
 	cayonlib.Write(env, TComposeReview(), reqId, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V"): expression.Value(aws.JSONValue{"reqId": reqId, "counter": 0}),
-	})
+	}, true)
 }
 
 func UploadUniqueId(env *cayonlib.Env, reqId string, reviewId string) {
 	cayonlib.Write(env, TComposeReview(), reqId, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V.reviewId"): expression.Value(reviewId),
 		expression.Name("V.counter"):  expression.Name("V.counter").Plus(expression.Value(1)),
-	})
+	}, true)
 	TryComposeAndUpload(env, reqId)
 }
 
@@ -27,7 +28,7 @@ func UploadText(env *cayonlib.Env, reqId string, text string) {
 	cayonlib.Write(env, TComposeReview(), reqId, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V.text"):    expression.Value(text),
 		expression.Name("V.counter"): expression.Name("V.counter").Plus(expression.Value(1)),
-	})
+	}, true)
 	TryComposeAndUpload(env, reqId)
 }
 
@@ -35,7 +36,7 @@ func UploadRating(env *cayonlib.Env, reqId string, rating int32) {
 	cayonlib.Write(env, TComposeReview(), reqId, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V.rating"):  expression.Value(rating),
 		expression.Name("V.counter"): expression.Name("V.counter").Plus(expression.Value(1)),
-	})
+	}, true)
 	TryComposeAndUpload(env, reqId)
 }
 
@@ -43,7 +44,7 @@ func UploadUserId(env *cayonlib.Env, reqId string, userId string) {
 	cayonlib.Write(env, TComposeReview(), reqId, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V.userId"):  expression.Value(userId),
 		expression.Name("V.counter"): expression.Name("V.counter").Plus(expression.Value(1)),
-	})
+	}, true)
 	TryComposeAndUpload(env, reqId)
 }
 
@@ -51,7 +52,7 @@ func UploadMovieId(env *cayonlib.Env, reqId string, movieId string) {
 	cayonlib.Write(env, TComposeReview(), reqId, map[expression.NameBuilder]expression.OperandBuilder{
 		expression.Name("V.movieId"): expression.Value(movieId),
 		expression.Name("V.counter"): expression.Name("V.counter").Plus(expression.Value(1)),
-	})
+	}, true)
 	TryComposeAndUpload(env, reqId)
 }
 
@@ -95,6 +96,7 @@ func TryComposeAndUpload(env *cayonlib.Env, reqId string) {
 	}
 	item := cayonlib.Read(env, TComposeReview(), reqId)
 	if item == nil {
+		log.Printf("[ERROR] reqId %s not found", reqId)
 		return
 	}
 	res := item.(map[string]interface{})

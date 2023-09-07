@@ -12,7 +12,7 @@ func GetProfiles(env *cayonlib.Env, req Request) Result {
 		hotel := data.Hotel{}
 		res := cayonlib.Read(env, data.Tprofile(), i)
 		if res == nil {
-			return Result{}
+			continue
 		}
 		err := mapstructure.Decode(res, &hotel)
 		cayonlib.CHECK(err)
