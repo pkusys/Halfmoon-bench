@@ -363,9 +363,9 @@ func ReadWithLog(env *Env, tablename string, key string) interface{} {
 		result = nil
 	}
 	newLog, _ := ProposeNextStep(env, nil, aws.JSONValue{
-		"type": "PostRead",
-		// "key":    key,
-		// "table":  tablename,
+		"type":   "PostRead",
+		"key":    key,
+		"table":  tablename,
 		"result": result,
 	})
 	// a concurrent step log, must be a post read log but not necessarily the same version
