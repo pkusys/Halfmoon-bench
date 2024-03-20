@@ -218,7 +218,7 @@ func WriteWithLog(env *Env, tablename string, key string, update map[expression.
 		CheckLogDataField(preWriteLog, "key", key)
 		log.Printf("[INFO] Seen PreWrite log for step %d", preWriteLog.StepNumber)
 	}
-	postWriteLog := env.Fsm.GetStepLog(env.StepNumber + 1)
+	postWriteLog := env.Fsm.GetStepLog(env.StepNumber)
 	if postWriteLog != nil {
 		CheckLogDataField(postWriteLog, "type", "PostWrite")
 		CheckLogDataField(postWriteLog, "table", tablename)
